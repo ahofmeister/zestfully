@@ -9,7 +9,7 @@ import {useRouter} from "next/navigation";
 export function RecipeCard(props: { recipe: Recipe }) {
     const recipe = props.recipe;
     const router = useRouter()
-    return <Card onClick={() => router.push(`/dashboard/recipes/${recipe.id}`)}>
+    return <Card onClick={() => router.push(`/recipes/${recipe.id}`)}>
         <CardHeader>
             <CardTitle>{recipe.name}</CardTitle>
             <CardDescription className={"flex gap-x-4"}>

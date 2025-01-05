@@ -66,7 +66,6 @@ export default async function MealPrepPage(props: {
 
   return (
     <div className="p-2">
-      <h1 className="text-2xl font-bold mb-6">Weekly Meal Prep Planner</h1>
       <WeekNavigation currentDate={weekStart} />
 
       <div className="">
