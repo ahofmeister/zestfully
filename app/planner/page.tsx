@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AddEntry } from "@/app/planner/addEntry";
+import { AddMeal } from "@/app/planner/addMeal";
 
 function MealEntries(props: { data: MealPlan[]; date: Date }) {
   let mealPlans = props.data?.filter(
@@ -31,7 +31,7 @@ function MealEntries(props: { data: MealPlan[]; date: Date }) {
               <DeleteMealEntry id={entry.id} />
             </CardTitle>
             <CardDescription>
-              <Badge>{entry.meal_time}</Badge>
+              <Badge>{entry.meal_type}</Badge>
             </CardDescription>
           </CardHeader>
         </Card>
@@ -57,11 +57,11 @@ export default async function MealPrepPage(props: {
 
   const supabase = await createClient();
   const { data } = await supabase
-    .from("meal_plan")
+    .from("meal")
     .select("*")
     .in(
       "date",
-      weekDays.map((x) => format(x, "yyyy-MM-dd")),
+      weekDays.map((weekDay) => format(weekDay, "yyyy-MM-dd")),
     );
 
   return (
@@ -77,7 +77,7 @@ export default async function MealPrepPage(props: {
                   <div className="text-lg font-medium">
                     {format(date, "EEEE")}
                   </div>
-                  <AddEntry date={date} />
+                  <AddMeal date={date} />
                 </div>
 
                 <MealEntries data={data ?? []} date={date} />

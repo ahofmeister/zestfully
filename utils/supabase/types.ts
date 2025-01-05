@@ -8,5 +8,5 @@ export type NewRecipe = Database["public"]["Tables"]["recipe"]["Insert"] & {
 }
 
 
-export type NewMealPlan = Database["public"]["Tables"]["meal_plan"]["Insert"]
-export type MealPlan = Database["public"]["Tables"]["meal_plan"]["Row"]
+export type NewMealPlan = Database["public"]["Tables"]["meal"]["Insert"]
+export type MealPlan = Database["public"]["Tables"]["meal"]["Row"]

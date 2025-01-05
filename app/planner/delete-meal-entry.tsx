@@ -2,7 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {deleteEntry} from "@/app/planner/planner-actions";
+import {deleteMeal} from "@/app/planner/planner-actions";
 
 const DeleteMealEntry = (props: { id: string }) => {
   return (
@@ -10,7 +10,7 @@ const DeleteMealEntry = (props: { id: string }) => {
       <Button
         size={"sm"}
         variant={"outline"}
-        onClick={() => deleteEntry(props.id)}
+        onClick={() => deleteMeal(props.id)}
       >
         <X size={"12"} />
       </Button>

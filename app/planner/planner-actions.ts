@@ -3,9 +3,9 @@ import { createClient } from "@/utils/supabase/server";
 import { NewMealPlan } from "@/utils/supabase/types";
 import { revalidatePath } from "next/cache";
 
-export async function addPlanStuff(mealPlan: NewMealPlan) {
+export async function addMeal(mealPlan: NewMealPlan) {
   const supabase = await createClient();
-  const {  error } = await supabase.from("meal_plan").insert(mealPlan);
+  const {  error } = await supabase.from("meal").insert(mealPlan);
 
   if (error) {
     console.error(error);
@@ -14,9 +14,9 @@ export async function addPlanStuff(mealPlan: NewMealPlan) {
   }
 }
 
-export async function deleteEntry(id: string) {
+export async function deleteMeal(id: string) {
   const supabase = await createClient();
-  const { error } = await supabase.from("meal_plan").delete().eq("id", id);
+  const { error } = await supabase.from("meal").delete().eq("id", id);
 
   if (error) {
     console.error(error);

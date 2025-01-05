@@ -212,6 +212,44 @@ export type Database = {
           },
         ]
       }
+      meal: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          meal: string
+          meal_type: string
+          recipe_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          meal: string
+          meal_type: string
+          recipe_id?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          meal?: string
+          meal_type?: string
+          recipe_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plan_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_entry: {
         Row: {
           amount: number
@@ -257,44 +295,6 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "unit"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      meal_plan: {
-        Row: {
-          created_at: string
-          date: string
-          id: string
-          meal: string
-          meal_time: string
-          recipe_id: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          date: string
-          id?: string
-          meal?: string
-          meal_time: string
-          recipe_id?: string | null
-          user_id?: string
-        }
-        Update: {
-          created_at?: string
-          date?: string
-          id?: string
-          meal?: string
-          meal_time?: string
-          recipe_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "meal_plan_recipe_id_fkey"
-            columns: ["recipe_id"]
-            isOneToOne: false
-            referencedRelation: "recipe"
             referencedColumns: ["id"]
           },
         ]
