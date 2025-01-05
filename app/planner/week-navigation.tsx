@@ -20,25 +20,27 @@ export function WeekNavigation({ currentDate }: WeekNavigationProps) {
   };
 
   return (
-    <div className="flex items-center gap-4 mb-6">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => updateDate(addWeeks(date, -1))}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      <h2 className="text-lg font-semibold">
-        {format(date, "dd. MM yyyy")} -{" "}
-        {format(addDays(date, 7), "dd. MM yyyy")}
-      </h2>
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => updateDate(addWeeks(date, 1))}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className={"flex gap-4 items-center justify-center"}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => updateDate(addWeeks(date, -1))}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <h2 className="text-lg font-semibold">
+          {format(date, "dd. MM yyyy")} -{" "}
+          {format(addDays(date, 7), "dd. MM yyyy")}
+        </h2>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => updateDate(addWeeks(date, 1))}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
       <Button
         variant="outline"
         onClick={() => updateDate(startOfWeek(new Date(), { weekStartsOn: 1 }))}
