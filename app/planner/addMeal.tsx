@@ -46,7 +46,7 @@ export function AddMeal(props: { date: Date }) {
       <DialogContent>
         <form onSubmit={onSubmit}>
           <DialogHeader>
-            <DialogTitle>Create for {format(props.date, "EEEE")}</DialogTitle>
+            <DialogTitle>Add meal to {format(props.date, "EEEE")}</DialogTitle>
           </DialogHeader>
 
           <Input

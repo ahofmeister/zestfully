@@ -18,7 +18,11 @@ function MealEntries(props: { data: MealPlan[]; date: Date }) {
   );
 
   if (mealPlans.length === 0) {
-    return <div className={"text-muted-foreground"}>No meals yet</div>;
+    return <Card><CardHeader>
+      <CardTitle className={"text-muted-foreground"}>
+        No meals yet
+      </CardTitle>
+    </CardHeader></Card>;
   }
 
   return (
@@ -73,7 +77,7 @@ export default async function MealPrepPage(props: {
           {weekDays.map((date) => (
             <div key={date.toString()} className={"my-4"}>
               <div className="flex flex-col p-2 gap-y-6">
-                <div className="flex gap-x-4 w-full items-center">
+                <div className="flex gap-x-4 w-full items-center justify-between">
                   <div className="text-lg font-medium">
                     {format(date, "EEEE")}
                   </div>
