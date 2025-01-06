@@ -384,6 +384,33 @@ export type Database = {
           },
         ]
       }
+      shopping_list: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          owner_id: string
+          shared_with: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          owner_id?: string
+          shared_with?: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          shared_with?: Json
+        }
+        Relationships: []
+      }
       unit: {
         Row: {
           created_at: string
