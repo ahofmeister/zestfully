@@ -7,6 +7,8 @@ export type NewRecipe = Database["public"]["Tables"]["recipe"]["Insert"] & {
     ingredients:  NewIngredient[]
 }
 
-
 export type NewMealPlan = Database["public"]["Tables"]["meal"]["Insert"]
 export type MealPlan = Database["public"]["Tables"]["meal"]["Row"]
+
+
+export type ShoppingList = Database["public"]["Tables"]["shopping_list"]["Row"]
