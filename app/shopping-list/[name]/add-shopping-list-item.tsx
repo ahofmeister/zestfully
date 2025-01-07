@@ -63,8 +63,8 @@ export function AddShoppingListItem(props: { shoppingList: ShoppingList }) {
       </Button>
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent className={"min-w-full and h-screen"}>
-          <div className={"mt-5 flex flex-wrap gap-1 content-start "}>
+        <DialogContent className={"flex flex-col min-w-full and h-screen justify-between"}>
+          <div className={"mt-5 flex flex-wrap gap-1 content-start"}>
             {groceries
               .filter((item) =>
                 item.item.toLowerCase().includes(inputValue.toLowerCase()),
@@ -77,7 +77,7 @@ export function AddShoppingListItem(props: { shoppingList: ShoppingList }) {
                 />
               ))}
           </div>
-          <Input
+          <Input className={"mb-4"}
             value={inputValue}
             onChange={(e) => setInputValue(e.currentTarget.value)}
           />
