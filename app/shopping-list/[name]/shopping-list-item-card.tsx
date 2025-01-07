@@ -1,6 +1,9 @@
 "use client";
 import { ShoppingListItem } from "@/utils/supabase/types";
-import { addShoppingListItem } from "@/app/shopping-list/shopping-list-actions";
+import {
+  addShoppingListItem,
+  deleteShoppingListItem,
+} from "@/app/shopping-list/shopping-list-actions";
 
 export function ShoppingListItemCard(props: {
   item: ShoppingListItem;
@@ -10,7 +13,11 @@ export function ShoppingListItemCard(props: {
   return (
     <div
       onClick={() => {
-        void addShoppingListItem(item.item, props.shoppingListId);
+        return addShoppingListItem(item.item, props.shoppingListId);
+      }}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        return deleteShoppingListItem(item.id);
       }}
       key={item.id}
       className={

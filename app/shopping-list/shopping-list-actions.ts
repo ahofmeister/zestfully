@@ -40,3 +40,17 @@ export const addShoppingListItem = async (
     revalidatePath("/shopping-list", "page");
   }
 };
+
+export const deleteShoppingListItem = async (id: string) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("shopping_list_item")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.log(error);
+  } else {
+    revalidatePath("/shopping-list", "page");
+  }
+};
