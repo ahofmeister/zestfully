@@ -61,33 +61,7 @@ export default function RootLayout({
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link href="/planner" legacyBehavior passHref>
-                      <NavigationMenuLink
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        Planner
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link href="/recipes" legacyBehavior passHref>
-                      <NavigationMenuLink
-                          className={navigationMenuTriggerStyle()}
-                      >
-                        Recipes
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link href="/foods" legacyBehavior passHref>
-                      <NavigationMenuLink
-                          className={navigationMenuTriggerStyle()}
-                      >
-                        Foods
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
+
                 </NavigationMenuList>
               </NavigationMenu>
               <div className="flex items-center text-sm justify-self-end">
