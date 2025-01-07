@@ -12,3 +12,4 @@ export type MealPlan = Database["public"]["Tables"]["meal"]["Row"]
 
 
 export type ShoppingList = Database["public"]["Tables"]["shopping_list"]["Row"]
+export type ShoppingListItem = Database["public"]["Tables"]["shopping_list_item"]["Row"]

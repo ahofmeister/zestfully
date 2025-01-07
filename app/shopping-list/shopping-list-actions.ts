@@ -24,3 +24,19 @@ export const deleteShoppingList = async (id: string) => {
     revalidatePath("/shopping-list", "page");
   }
 };
+
+export const addShoppingListItem = async (
+  item: string,
+  shopping_list_id: string,
+) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("shopping_list_item")
+    .insert({ item, shopping_list_id });
+
+  if (error) {
+    console.log(error);
+  } else {
+    revalidatePath("/shopping-list", "page");
+  }
+};

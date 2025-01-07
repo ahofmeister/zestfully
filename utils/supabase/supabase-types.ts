@@ -411,6 +411,35 @@ export type Database = {
         }
         Relationships: []
       }
+      shopping_list_item: {
+        Row: {
+          created_at: string
+          id: string
+          item: string
+          shopping_list_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item: string
+          shopping_list_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item?: string
+          shopping_list_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_list_entry_shopping_list_id_fkey"
+            columns: ["shopping_list_id"]
+            isOneToOne: false
+            referencedRelation: "shopping_list"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       unit: {
         Row: {
           created_at: string
