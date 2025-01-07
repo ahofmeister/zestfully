@@ -1,0 +1,59 @@
+"use client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useState } from "react";
+import { SearchIcon } from "lucide-react";
+import {
+  Product,
+  ShoppingListWithEntriesAndProduct,
+} from "@/utils/supabase/types";
+import { ShoppingListProductCard } from "@/app/shopping-list/shopping-list-product-card";
+
+export function AddShoppingListItem(props: {
+  shoppingList: ShoppingListWithEntriesAndProduct;
+  products: Product[];
+}) {
+  const [openModal, setOpenModal] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [products, setProducts] = useState([...props.products]);
+
+  return (
+    <div className={"flex gap-x-4"}>
+      <Button size={"icon"} onFocus={() => setOpenModal(true)}>
+        <SearchIcon />
+      </Button>
+
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent
+          className={"flex flex-col min-w-full and h-screen justify-between"}
+        >
+          <DialogTitle className={""}>
+            Add to {props.shoppingList.name}
+          </DialogTitle>
+          <div className={"mt-5 flex flex-wrap gap-1 content-start flex-1"}>
+            {products
+              ?.filter((product) =>
+                product.name.toLowerCase().includes(inputValue.toLowerCase()),
+              )
+              .map((product) => (
+                <ShoppingListProductCard
+                  key={product.id}
+                  item={props.shoppingList.entries.find(
+                    (entry) => entry.product.id === product.id,
+                  )}
+                  product={product}
+                  shoppingListId={props.shoppingList.id}
+                />
+              ))}
+          </div>
+          <Input
+            className={"mb-4"}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.currentTarget.value)}
+          />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

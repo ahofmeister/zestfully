@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
-import { AddShoppingListItem } from "@/app/shopping-list/[name]/add-shopping-list-item";
-import { ShoppingListItems } from "@/app/shopping-list/[name]/shopping-list-items";
+import ShoppingListItems from "@/app/shopping-list/shopping-list-items";
+import { AddShoppingListItem } from "@/app/shopping-list/add-shopping-list-item";
 
 export default async function ShoppingListPage(props: {
   params: Promise<{ name: string }>;
@@ -10,7 +10,7 @@ export default async function ShoppingListPage(props: {
   const supabase = await createClient();
   const { data: shoppingList } = await supabase
     .from("shopping_list")
-    .select("*")
+    .select("*, entries:shopping_list_item(*, product(*))")
     .eq("name", decodeURIComponent(params.name))
     .single();
 
@@ -18,13 +18,18 @@ export default async function ShoppingListPage(props: {
     notFound();
   }
 
+  const { data: items } = await supabase.from("product").select("*");
+
   return (
     <div className={"p-2"}>
-      <div className={"flex justify-between sm:justify-evenly"}>
-        <div className={"text-xl"}>{shoppingList?.name}</div>
-        <AddShoppingListItem shoppingList={shoppingList} />
+      <div className={"flex justify-between"}>
+        <div className={"text-xl"}>{shoppingList.name}</div>
+        <AddShoppingListItem
+          shoppingList={shoppingList}
+          products={items ?? []}
+        />
       </div>
-      <ShoppingListItems shoppingList={shoppingList} />
+      <ShoppingListItems shoppingList={shoppingList ?? []} />
     </div>
   );
 }

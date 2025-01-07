@@ -328,6 +328,27 @@ export type Database = {
           },
         ]
       }
+      product: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       recipe: {
         Row: {
           description: string | null
@@ -391,7 +412,6 @@ export type Database = {
           id: string
           name: string
           owner_id: string
-          shared_with: Json
         }
         Insert: {
           created_at?: string
@@ -399,7 +419,6 @@ export type Database = {
           id?: string
           name: string
           owner_id?: string
-          shared_with?: Json
         }
         Update: {
           created_at?: string
@@ -407,7 +426,6 @@ export type Database = {
           id?: string
           name?: string
           owner_id?: string
-          shared_with?: Json
         }
         Relationships: []
       }
@@ -415,19 +433,19 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          item: string
+          product_id: string
           shopping_list_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          item: string
+          product_id: string
           shopping_list_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          item?: string
+          product_id?: string
           shopping_list_id?: string
         }
         Relationships: [
@@ -436,6 +454,13 @@ export type Database = {
             columns: ["shopping_list_id"]
             isOneToOne: false
             referencedRelation: "shopping_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_list_item_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
             referencedColumns: ["id"]
           },
         ]
