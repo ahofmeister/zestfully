@@ -2,13 +2,14 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchIcon } from "lucide-react";
 import {
   Product,
   ShoppingListWithEntriesAndProduct,
 } from "@/utils/supabase/types";
 import { ShoppingListProductCard } from "@/app/shopping-list/shopping-list-product-card";
+import { addEntryWithNewProduct } from "@/app/shopping-list/shopping-list-actions";
 
 export function AddShoppingListItem(props: {
   shoppingList: ShoppingListWithEntriesAndProduct;
@@ -16,7 +17,9 @@ export function AddShoppingListItem(props: {
 }) {
   const [openModal, setOpenModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [products, setProducts] = useState([...props.products]);
+  const [products, setProducts] = useState<
+    (Product | Pick<Product, "name" | "id">)[]
+  >(props.products);
 
   return (
     <div className={"flex gap-x-4"}>
@@ -46,6 +49,29 @@ export function AddShoppingListItem(props: {
                   shoppingListId={props.shoppingList.id}
                 />
               ))}
+            {inputValue &&
+              !products.find((product) => product.name === inputValue) && (
+                <div
+                  onClick={() =>
+                    addEntryWithNewProduct(
+                      inputValue,
+                      props.shoppingList.id,
+                    ).then((newProduct) => {
+                      if (newProduct) {
+                        setProducts([...products, newProduct.product]);
+                      }
+                    })
+                  }
+                >
+                  <ShoppingListProductCard
+                    product={{
+                      name: inputValue,
+                      id: Math.random().toString(36).slice(2, 7),
+                    }}
+                    shoppingListId={props.shoppingList.id}
+                  />
+                </div>
+              )}
           </div>
           <Input
             className={"mb-4"}

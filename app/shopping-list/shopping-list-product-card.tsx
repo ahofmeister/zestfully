@@ -2,13 +2,13 @@
 import { Product, ShoppingListItemWithProduct } from "@/utils/supabase/types";
 import { cn } from "@/lib/utils";
 import {
-  addShoppingListEntry,
+  addShoppingListItem,
   deleteShoppingListItem,
 } from "@/app/shopping-list/shopping-list-actions";
 
 export function ShoppingListProductCard(props: {
   item?: ShoppingListItemWithProduct;
-  product: Product;
+  product: Pick<Product, "name" | "id">;
   shoppingListId: string;
 }) {
   return (
@@ -17,7 +17,7 @@ export function ShoppingListProductCard(props: {
         if (props.item) {
           return deleteShoppingListItem(props.item.id);
         } else {
-          return addShoppingListEntry(props.product, props.shoppingListId);
+          return addShoppingListItem(props.product.id, props.shoppingListId);
         }
       }}
       key={props.product.id}

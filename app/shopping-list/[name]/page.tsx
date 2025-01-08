@@ -22,7 +22,7 @@ export default async function ShoppingListPage(props: {
 
   return (
     <div className={"p-2"}>
-      <div className={"flex justify-between"}>
+      <div className={"flex justify-between mb-2"}>
         <div className={"text-xl"}>{shoppingList.name}</div>
         <AddShoppingListItem
           shoppingList={shoppingList}
