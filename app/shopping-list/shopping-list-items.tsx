@@ -7,6 +7,7 @@ import {
   ShoppingListWithEntriesAndProduct,
 } from "@/utils/supabase/types";
 import { createClient } from "@/utils/supabase/client";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function ShoppingListItems(props: {
   shoppingList: ShoppingListWithEntriesAndProduct;
@@ -54,14 +55,14 @@ function ShoppingListItems(props: {
 
   return (
     <div className={"flex flex-wrap gap-1"}>
-      {items?.map((entry) => (
+        {items?.map((entry) => (
           <ShoppingListProductCard
             key={entry.id}
             item={entry}
             product={entry.product}
             shoppingListId={props.shoppingList.id}
           />
-      ))}
+        ))}
     </div>
   );
 }

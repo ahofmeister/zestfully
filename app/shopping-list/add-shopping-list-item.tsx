@@ -10,6 +10,7 @@ import {
 } from "@/utils/supabase/types";
 import { ShoppingListProductCard } from "@/app/shopping-list/shopping-list-product-card";
 import { addEntryWithNewProduct } from "@/app/shopping-list/shopping-list-actions";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function AddShoppingListItem(props: {
   shoppingList: ShoppingListWithEntriesAndProduct;
@@ -34,51 +35,53 @@ export function AddShoppingListItem(props: {
           <DialogTitle className={""}>
             Add to {props.shoppingList.name}
           </DialogTitle>
-          <div className={"mt-5 flex flex-wrap gap-1 content-start flex-1"}>
-            {products
-              ?.filter((product) =>
-                product.name.toLowerCase().includes(inputValue.toLowerCase()),
-              )
-              .sort((a, b) =>
-                a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-              )
-              .map((product) => (
-                <ShoppingListProductCard
-                  key={product.id}
-                  item={props.shoppingList.entries.find(
-                    (entry) => entry.product.id === product.id,
-                  )}
-                  product={product}
-                  shoppingListId={props.shoppingList.id}
-                />
-              ))}
-            {inputValue &&
-              !products.find(
-                (product) =>
-                  product.name.toLowerCase() === inputValue.toLowerCase(),
-              ) && (
-                <div
-                  onClick={() =>
-                    addEntryWithNewProduct(
-                      inputValue.trim(),
-                      props.shoppingList.id,
-                    ).then((newProduct) => {
-                      if (newProduct) {
-                        setProducts([...products, newProduct.product]);
-                      }
-                    })
-                  }
-                >
+          <ScrollArea className={"mt-5 flex flex-wrap gap-1 content-start flex-1"}>
+            <div className={"flex flex-wrap gap-1 content-start flex-1"}>
+              {products
+                ?.filter((product) =>
+                  product.name.toLowerCase().includes(inputValue.toLowerCase()),
+                )
+                .sort((a, b) =>
+                  a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+                )
+                .map((product) => (
                   <ShoppingListProductCard
-                    product={{
-                      name: inputValue,
-                      id: Math.random().toString(36).slice(2, 7),
-                    }}
+                    key={product.id}
+                    item={props.shoppingList.entries.find(
+                      (entry) => entry.product.id === product.id,
+                    )}
+                    product={product}
                     shoppingListId={props.shoppingList.id}
                   />
-                </div>
-              )}
-          </div>
+                ))}
+              {inputValue &&
+                !products.find(
+                  (product) =>
+                    product.name.toLowerCase() === inputValue.toLowerCase(),
+                ) && (
+                  <div
+                    onClick={() =>
+                      addEntryWithNewProduct(
+                        inputValue.trim(),
+                        props.shoppingList.id,
+                      ).then((newProduct) => {
+                        if (newProduct) {
+                          setProducts([...products, newProduct.product]);
+                        }
+                      })
+                    }
+                  >
+                    <ShoppingListProductCard
+                      product={{
+                        name: inputValue,
+                        id: Math.random().toString(36).slice(2, 7),
+                      }}
+                      shoppingListId={props.shoppingList.id}
+                    />
+                  </div>
+                )}
+            </div>
+          </ScrollArea>
           <Input
             className={"mb-4"}
             value={inputValue}
