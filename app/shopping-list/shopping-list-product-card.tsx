@@ -22,8 +22,8 @@ export function ShoppingListProductCard(props: {
       }}
       key={props.product.id}
       className={cn(
-        "bg-primary cursor-pointer content-start aspect-square size-24 line-clamp-3 rounded-sm flex text-center items-center justify-center",
-        { "bg-[#ba8787]": !props.item },
+        "bg-[#ba8787] cursor-pointer content-start aspect-square size-24 line-clamp-3 rounded-sm flex text-center items-center justify-center",
+        { "bg-primary": props.item },
       )}
     >
       <div className={"text-background"}>{props.product.name}</div>
