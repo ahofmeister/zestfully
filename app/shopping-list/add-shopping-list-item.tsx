@@ -39,6 +39,9 @@ export function AddShoppingListItem(props: {
               ?.filter((product) =>
                 product.name.toLowerCase().includes(inputValue.toLowerCase()),
               )
+              .sort((a, b) =>
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+              )
               .map((product) => (
                 <ShoppingListProductCard
                   key={product.id}
@@ -50,11 +53,14 @@ export function AddShoppingListItem(props: {
                 />
               ))}
             {inputValue &&
-              !products.find((product) => product.name === inputValue) && (
+              !products.find(
+                (product) =>
+                  product.name.toLowerCase() === inputValue.toLowerCase(),
+              ) && (
                 <div
                   onClick={() =>
                     addEntryWithNewProduct(
-                      inputValue,
+                      inputValue.trim(),
                       props.shoppingList.id,
                     ).then((newProduct) => {
                       if (newProduct) {
