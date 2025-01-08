@@ -10,7 +10,7 @@ export function ShoppingListCard(props: { list: ShoppingList }) {
   const router = useRouter();
   return (
     <Card
-      className="w-full max-w-md"
+      className="w-full max-w-md cursor-pointer"
       onClick={() =>
         router.push(`/shopping-list/${encodeURIComponent(props.list.name)}`)
       }

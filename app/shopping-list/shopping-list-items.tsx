@@ -53,7 +53,7 @@ function ShoppingListItems(props: {
   }, [supabase]);
 
   return (
-    <div className={"flex gap-x-1"}>
+    <div className={"flex flex-wrap gap-1"}>
       {items?.map((entry) => (
           <ShoppingListProductCard
             key={entry.id}
