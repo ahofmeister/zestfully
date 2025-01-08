@@ -23,7 +23,7 @@ export function AddShoppingListItem(props: {
 
   return (
     <div className={"flex gap-x-4"}>
-      <Button size={"icon"} onFocus={() => setOpenModal(true)}>
+      <Button size={"icon"} onClick={() => setOpenModal(true)}>
         <SearchIcon />
       </Button>
 
