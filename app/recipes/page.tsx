@@ -10,12 +10,12 @@ const RecipesPage = async () => {
     const {data: recipes} = await supabase.from("recipe").select("*")
     return (
         <div>
-            <Link href={"/app/recipes/new"}>
+            <Link href={"/recipes/new"}>
                 <Button size={"sm"}>
                     <PlusIcon/>
                 </Button>
             </Link>
-            <div className={"grid grid-cols-1 gap-y-2 mt-4"}>
+            <div className={"grid grid-cols-2 gap-2 mt-4 sm:grid-cols-3"}>
                 {recipes?.map((recipe) => (
                     <RecipeCard recipe={recipe}/>
                 ))}

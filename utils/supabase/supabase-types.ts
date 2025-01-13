@@ -75,6 +75,7 @@ export type Database = {
           created_at: string
           food_id: string | null
           id: string
+          recipe_id: string
           unit: string | null
         }
         Insert: {
@@ -82,6 +83,7 @@ export type Database = {
           created_at?: string
           food_id?: string | null
           id?: string
+          recipe_id: string
           unit?: string | null
         }
         Update: {
@@ -89,6 +91,7 @@ export type Database = {
           created_at?: string
           food_id?: string | null
           id?: string
+          recipe_id?: string
           unit?: string | null
         }
         Relationships: [
@@ -96,7 +99,14 @@ export type Database = {
             foreignKeyName: "ingredient_food_id_fkey"
             columns: ["food_id"]
             isOneToOne: false
-            referencedRelation: "food"
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingredient_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipe"
             referencedColumns: ["id"]
           },
         ]
@@ -355,6 +365,7 @@ export type Database = {
           id: string
           name: string
           portions: number | null
+          source: string | null
           time: number | null
           user_id: string
         }
@@ -363,6 +374,7 @@ export type Database = {
           id?: string
           name: string
           portions?: number | null
+          source?: string | null
           time?: number | null
           user_id?: string
         }
@@ -371,6 +383,7 @@ export type Database = {
           id?: string
           name?: string
           portions?: number | null
+          source?: string | null
           time?: number | null
           user_id?: string
         }
@@ -426,6 +439,27 @@ export type Database = {
           id?: string
           name?: string
           owner_id?: string
+        }
+        Relationships: []
+      }
+      shopping_list_category: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          position: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          position: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          position?: number
         }
         Relationships: []
       }

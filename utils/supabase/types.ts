@@ -4,9 +4,17 @@ export type Food = Database["public"]["Tables"]["food"]["Row"];
 export type Recipe = Database["public"]["Tables"]["recipe"]["Row"];
 export type NewIngredient =
   Database["public"]["Tables"]["ingredient"]["Insert"];
+
+export type Ingredient = Database["public"]["Tables"]["ingredient"]["Row"];
 export type NewRecipe = Database["public"]["Tables"]["recipe"]["Insert"] & {
   ingredients: NewIngredient[];
 };
+
+export type FulLRecipe = Recipe & {
+  ingredients: IngredientWithProduct[];
+};
+
+type IngredientWithProduct = Ingredient & { product: Product };
 
 export type NewMealPlan = Database["public"]["Tables"]["meal"]["Insert"];
 export type MealPlan = Database["public"]["Tables"]["meal"]["Row"];
