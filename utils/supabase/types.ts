@@ -1,17 +1,17 @@
-import { Database } from "@/utils/supabase/supabase-types";
+import type { Database } from "@/utils/supabase/supabase-types";
 
 export type Food = Database["public"]["Tables"]["food"]["Row"];
 export type Recipe = Database["public"]["Tables"]["recipe"]["Row"];
 export type NewIngredient =
-  Database["public"]["Tables"]["ingredient"]["Insert"];
+	Database["public"]["Tables"]["ingredient"]["Insert"];
 
 export type Ingredient = Database["public"]["Tables"]["ingredient"]["Row"];
 export type NewRecipe = Database["public"]["Tables"]["recipe"]["Insert"] & {
-  ingredients: NewIngredient[];
+	ingredients: NewIngredient[];
 };
 
 export type FulLRecipe = Recipe & {
-  ingredients: IngredientWithProduct[];
+	ingredients: IngredientWithProduct[];
 };
 
 type IngredientWithProduct = Ingredient & { product: Product };
@@ -21,13 +21,13 @@ export type MealPlan = Database["public"]["Tables"]["meal"]["Row"];
 
 export type ShoppingList = Database["public"]["Tables"]["shopping_list"]["Row"];
 export type ShoppingListItem =
-  Database["public"]["Tables"]["shopping_list_item"]["Row"];
+	Database["public"]["Tables"]["shopping_list_item"]["Row"];
 export type Product = Database["public"]["Tables"]["product"]["Row"];
 
 export type ShoppingListWithEntriesAndProduct = ShoppingList & {
-  entries: ShoppingListItemWithProduct[];
+	entries: ShoppingListItemWithProduct[];
 };
 
 export type ShoppingListItemWithProduct = ShoppingListItem & {
-  product: Product;
+	product: Product;
 };
