@@ -1,0 +1,264 @@
+{
+	"id": "03f81ad5-b708-4d34-96f0-a2cd7946541e",
+	"prevId": "00000000-0000-0000-0000-000000000000",
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.food": {
+			"name": "food",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "timezone\n        ('utc'::text, now())"
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "auth\n        .\n        uid\n        ()"
+				},
+				"energy": {
+					"name": "energy",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"protein": {
+					"name": "protein",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"fat": {
+					"name": "fat",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"carbohydrates": {
+					"name": "carbohydrates",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"sugar": {
+					"name": "sugar",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"fibre": {
+					"name": "fibre",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"salt": {
+					"name": "salt",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {
+				"Authenticated users can insert their own food": {
+					"name": "Authenticated users can insert their own food",
+					"as": "PERMISSIVE",
+					"for": "INSERT",
+					"to": ["authenticated"],
+					"withCheck": "(auth.uid()\n                     = user_id)"
+				},
+				"Enable delete for users based on user_id": {
+					"name": "Enable delete for users based on user_id",
+					"as": "PERMISSIVE",
+					"for": "DELETE",
+					"to": ["public"]
+				},
+				"User can only select their own foods": {
+					"name": "User can only select their own foods",
+					"as": "PERMISSIVE",
+					"for": "SELECT",
+					"to": ["authenticated"]
+				}
+			},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.meal_items": {
+			"name": "meal_items",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"food_id": {
+					"name": "food_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"date": {
+					"name": "date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"meal_type": {
+					"name": "meal_type",
+					"type": "varchar(20)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"quantity": {
+					"name": "quantity",
+					"type": "numeric(8, 2)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"unit": {
+					"name": "unit",
+					"type": "varchar(20)",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "'g'"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"meal_items_date_idx": {
+					"name": "meal_items_date_idx",
+					"columns": [
+						{
+							"expression": "date",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"meal_items_user_id_idx": {
+					"name": "meal_items_user_id_idx",
+					"columns": [
+						{
+							"expression": "user_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"meal_items_food_id_food_id_fk": {
+					"name": "meal_items_food_id_food_id_fk",
+					"tableFrom": "meal_items",
+					"tableTo": "food",
+					"columnsFrom": ["food_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {
+				"Users can view own meal items": {
+					"name": "Users can view own meal items",
+					"as": "PERMISSIVE",
+					"for": "SELECT",
+					"to": ["authenticated"],
+					"using": "auth.uid() = \"meal_items\".\"user_id\""
+				},
+				"Users can insert own meal items": {
+					"name": "Users can insert own meal items",
+					"as": "PERMISSIVE",
+					"for": "INSERT",
+					"to": ["authenticated"],
+					"withCheck": "auth.uid() =\"meal_items\".\"user_id\""
+				}
+			},
+			"checkConstraints": {
+				"quantity_positive": {
+					"name": "quantity_positive",
+					"value": "\"meal_items\".\"quantity\" > 0"
+				}
+			},
+			"isRLSEnabled": false
+		}
+	},
+	"enums": {
+		"public.MealTime": {
+			"name": "MealTime",
+			"schema": "public",
+			"values": ["breakfast", "lunch", "dinner", "snack"]
+		},
+		"public.measurement": {
+			"name": "measurement",
+			"schema": "public",
+			"values": ["mass", "volume"]
+		}
+	},
+	"schemas": {},
+	"sequences": {},
+	"roles": {},
+	"policies": {},
+	"views": {},
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	}
+}
