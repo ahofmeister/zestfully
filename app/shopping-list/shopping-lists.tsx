@@ -7,7 +7,7 @@ export async function ShoppingLists() {
 	return (
 		<div className={"flex flex-col gap-y-4"}>
 			{lists?.map((list) => (
-				<ShoppingListCard list={list} />
+				<ShoppingListCard key={list.id} list={list} />
 			))}
 		</div>
 	);

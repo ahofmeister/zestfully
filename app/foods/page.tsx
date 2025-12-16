@@ -1,4 +1,3 @@
-import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import type { Food } from "@/utils/supabase/types";
 
@@ -12,7 +11,7 @@ const FoodPage = async () => {
 	return (
 		<div>
 			{foods?.map((food) => (
-				<FoodCard food={food} />
+				<FoodCard key={food.id} food={food} />
 			))}
 		</div>
 	);

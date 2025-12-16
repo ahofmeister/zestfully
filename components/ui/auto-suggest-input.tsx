@@ -27,7 +27,7 @@ export const ProductAutoComplete = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [isOpen, setOpen] = useState(false);
-	const [selected, setSelected] = useState<Product | undefined>(value);
+	const [_selected, setSelected] = useState<Product | undefined>(value);
 	const [inputValue, setInputValue] = useState<string>(value?.name || "");
 
 	const handleKeyDown = useCallback(
@@ -58,12 +58,12 @@ export const ProductAutoComplete = ({
 				input.blur();
 			}
 		},
-		[isOpen, products, onValueChange],
+		[isOpen, products, onValueChange, inputValue],
 	);
 
 	const handleBlur = useCallback(() => {
 		setOpen(false);
-	}, [selected]);
+	}, []);
 
 	const handleSelectOption = useCallback(
 		(selectedOption: Product) => {
@@ -101,7 +101,7 @@ export const ProductAutoComplete = ({
 									return (
 										<CommandItem
 											key={option.id}
-											value={option.id?.toString() + " " + option.name}
+											value={`${option.id?.toString()} ${option.name}`}
 											onMouseDown={(event: any) => {
 												event.preventDefault();
 												event.stopPropagation();

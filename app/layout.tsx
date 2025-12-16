@@ -46,7 +46,7 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					<main>
-						<nav className="sticky top-0 backdrop-blur  w-full justify-between flex border-b border-b-foreground/10 h-14">
+						<nav className="sticky top-0 backdrop-blur-sm  w-full justify-between flex border-b border-b-foreground/10 h-14">
 							<NavigationMenu>
 								<NavigationMenuList>
 									<NavigationMenuItem>

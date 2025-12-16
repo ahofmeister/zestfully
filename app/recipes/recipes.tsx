@@ -1,4 +1,3 @@
-import React from "react";
 import { RecipeCard } from "@/app/recipes/recipe-card";
 import { createClient } from "@/utils/supabase/server";
 
@@ -18,7 +17,7 @@ export async function Recipes(props: { searchTerm: string }) {
 	return (
 		<div className={"grid grid-cols-2 gap-2 mt-4 sm:grid-cols-4"}>
 			{recipes?.map((recipe) => (
-				<RecipeCard recipe={recipe} />
+				<RecipeCard key={recipe.id} recipe={recipe} />
 			))}
 		</div>
 	);

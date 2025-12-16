@@ -3,6 +3,7 @@ import {
 	addShoppingListItem,
 	deleteShoppingListItem,
 } from "@/app/shopping-list/shopping-list-actions";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type {
 	Product,
@@ -15,7 +16,7 @@ export function ShoppingListProductCard(props: {
 	shoppingListId: string;
 }) {
 	return (
-		<div
+		<Button
 			onClick={() => {
 				if (props.item) {
 					return deleteShoppingListItem(props.item.id);
@@ -30,6 +31,6 @@ export function ShoppingListProductCard(props: {
 			)}
 		>
 			<div className={"text-background"}>{props.product.name}</div>
-		</div>
+		</Button>
 	);
 }

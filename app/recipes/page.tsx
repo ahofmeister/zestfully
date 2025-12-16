@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { RecipeSearchBar } from "@/app/recipes/recipe-search-bar";
 import { Recipes } from "@/app/recipes/recipes";
 import { Button } from "@/components/ui/button";

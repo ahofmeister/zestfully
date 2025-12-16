@@ -4,7 +4,6 @@ import { type DrizzleConfig, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { type JwtPayload, jwtDecode } from "jwt-decode";
 import postgres from "postgres";
-
 import * as schema from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 
@@ -13,21 +12,25 @@ const config = {
 	schema,
 } satisfies DrizzleConfig<typeof schema>;
 
-declare namespace global {
-	let postgresSqlClient: ReturnType<typeof postgres> | undefined;
+declare global {
+	var globalPostgresClient: ReturnType<typeof postgres> | undefined;
 }
-
-let postgresSqlClient;
 
 const databaseUrl = process.env.DATABASE_URL;
 
+if (!databaseUrl) {
+	throw new Error("DATABASE_URL environment variable is not set");
+}
+
+let postgresSqlClient: ReturnType<typeof postgres>;
+
 if (process.env.NODE_ENV !== "production") {
-	if (!global.postgresSqlClient) {
-		global.postgresSqlClient = postgres(databaseUrl!, { prepare: false });
+	if (!global.globalPostgresClient) {
+		global.globalPostgresClient = postgres(databaseUrl, { prepare: false });
 	}
-	postgresSqlClient = global.postgresSqlClient;
+	postgresSqlClient = global.globalPostgresClient;
 } else {
-	postgresSqlClient = postgres(databaseUrl!, { prepare: false });
+	postgresSqlClient = postgres(databaseUrl, { prepare: false });
 }
 
 export const db = drizzle({
@@ -46,19 +49,18 @@ export async function getDrizzleSupabaseClient() {
 		return db.transaction(async (tx) => {
 			try {
 				await tx.execute(sql`
-                    select set_config('request.jwt.claims', '${sql.raw(JSON.stringify(token))}', TRUE);
-                    select set_config('request.jwt.claim.sub', '${sql.raw(token.sub ?? "")}', TRUE);
-                    set local role ${sql.raw(token.role ?? "anon")};
-                `);
+					select set_config('request.jwt.claims', '${sql.raw(JSON.stringify(token))}', TRUE);
+					select set_config('request.jwt.claim.sub', '${sql.raw(token.sub ?? "")}', TRUE);
+					set local role ${sql.raw(token.role ?? "anon")};
+				`);
 
 				const result = await transaction(tx);
 
 				await tx.execute(sql`
-          select set_config('request.jwt.claims', NULL, TRUE);
-          select set_config('request.jwt.claim.sub', NULL, TRUE);
-          reset
-          role;
-        `);
+					select set_config('request.jwt.claims', NULL, TRUE);
+					select set_config('request.jwt.claim.sub', NULL, TRUE);
+					reset role;
+				`);
 
 				return result;
 			} catch (error) {

@@ -1,4 +1,3 @@
-import React from "react";
 import { CreateShoppingList } from "@/app/shopping-list/create-shopping-list";
 import { ShoppingLists } from "@/app/shopping-list/shopping-lists";
 

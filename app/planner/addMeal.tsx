@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -23,7 +22,7 @@ export function AddMeal(props: { date: Date }) {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 
-		const meal = formData!.get("meal") as string;
+		const meal = formData?.get("meal") as string;
 
 		if (meal.length === 0) {
 			return;

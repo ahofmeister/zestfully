@@ -1,6 +1,6 @@
 "use client";
 import { SearchIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { addEntryWithNewProduct } from "@/app/shopping-list/shopping-list-actions";
 import { ShoppingListProductCard } from "@/app/shopping-list/shopping-list-product-card";
 import { Button } from "@/components/ui/button";
@@ -61,7 +61,7 @@ export function AddShoppingListItem(props: {
 									(product) =>
 										product.name.toLowerCase() === inputValue.toLowerCase(),
 								) && (
-									<div
+									<Button
 										onClick={() =>
 											addEntryWithNewProduct(
 												inputValue.trim(),
@@ -80,7 +80,7 @@ export function AddShoppingListItem(props: {
 											}}
 											shoppingListId={props.shoppingList.id}
 										/>
-									</div>
+									</Button>
 								)}
 						</div>
 					</ScrollArea>

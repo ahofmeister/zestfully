@@ -10,13 +10,13 @@ export async function deleteMealItem(id: string) {
 		await db.delete(mealItems).where(eq(mealItems.id, id));
 		revalidatePath("/track");
 		return { success: true };
-	} catch (error) {
+	} catch (_error) {
 		return { success: false, error: "Failed to delete" };
 	}
 }
 
 export async function addMealItem(
-	prevState: any,
+	_prevState: any,
 	formData: FormData,
 ): Promise<{ success: boolean; error?: string } | null> {
 	try {
@@ -36,7 +36,7 @@ export async function addMealItem(
 		});
 
 		return { success: true };
-	} catch (error) {
+	} catch (_error) {
 		return { success: false, error: "Failed to add meal item" };
 	}
 }

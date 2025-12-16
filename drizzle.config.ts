@@ -1,6 +1,6 @@
+import { resolve } from "node:path";
 import * as dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import { resolve } from "path";
 
 dotenv.config({ path: resolve(process.cwd(), ".env.local") });
 

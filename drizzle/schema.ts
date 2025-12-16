@@ -48,7 +48,7 @@ export const food = pgTable(
 		fibre: real(),
 		salt: real(),
 	},
-	(table) => [
+	(_table) => [
 		pgPolicy("Authenticated users can insert their own food", {
 			as: "permissive",
 			for: "insert",

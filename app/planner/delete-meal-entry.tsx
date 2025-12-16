@@ -1,6 +1,5 @@
 "use client";
 import { X } from "lucide-react";
-import React from "react";
 import { deleteMeal } from "@/app/planner/planner-actions";
 import { Button } from "@/components/ui/button";
 

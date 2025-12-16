@@ -45,7 +45,7 @@ export function AddItemStuff(props: {
 	const [open, setOpen] = useState(false);
 	const [comboboxOpen, setComboboxOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [message, formAction, isPending] = useActionState<
+	const [_message, formAction, isPending] = useActionState<
 		ActionState,
 		FormData
 	>(addMealItem, null);

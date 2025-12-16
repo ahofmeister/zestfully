@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingListProductCard } from "@/app/shopping-list/shopping-list-product-card";
 import { createClient } from "@/utils/supabase/client";
 import type {

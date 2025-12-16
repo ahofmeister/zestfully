@@ -1,5 +1,5 @@
 "use client";
-import React, { type FormEvent } from "react";
+import type { FormEvent } from "react";
 import { createShoppingList } from "@/app/shopping-list/shopping-list-actions";
 import { Button } from "@/components/ui/button";
 import {
