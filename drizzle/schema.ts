@@ -76,7 +76,14 @@ export const mealItems = pgTable(
 	"meal_items",
 	{
 		id: uuid("id").defaultRandom().primaryKey(),
-		userId: uuid("user_id").notNull(),
+		userId: uuid("user_id")
+			.default(
+				sql`auth
+        .
+        uid
+        ()`,
+			)
+			.notNull(),
 		foodId: uuid("food_id")
 			.notNull()
 			.references(() => food.id, { onDelete: "cascade" }),
