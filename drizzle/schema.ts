@@ -1,25 +1,18 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	check,
 	date,
 	index,
-	pgEnum,
+	integer,
 	pgPolicy,
 	pgTable,
 	real,
 	text,
 	timestamp,
+	unique,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-
-export const mealTime = pgEnum("MealTime", [
-	"breakfast",
-	"lunch",
-	"dinner",
-	"snack",
-]);
-export const measurement = pgEnum("measurement", ["mass", "volume"]);
 
 export const food = pgTable(
 	"food",
@@ -118,4 +111,111 @@ export const mealItems = pgTable(
 			}),
 		];
 	},
+);
+
+export const habitSchema = pgTable(
+	"habit",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		userId: uuid("user_id").notNull(),
+		name: text("name").notNull(),
+		frequencyType: text("frequency_type", {
+			enum: ["daily", "per_week", "specific_days"],
+		})
+			.notNull()
+			.default("daily"),
+		frequencyTarget: integer("frequency_target"),
+		frequencyDays: text("frequency_days").array(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => [
+		index("habits_user_id_idx").on(table.userId),
+		index("habits_user_created_idx").on(table.userId, table.createdAt),
+		pgPolicy("users_view_own_habits", {
+			as: "permissive",
+			for: "select",
+			to: "authenticated",
+			using: sql`auth.uid() = user_id`,
+		}),
+		pgPolicy("users_insert_own_habits", {
+			as: "permissive",
+			for: "insert",
+			to: "authenticated",
+			withCheck: sql`auth.uid() = user_id`,
+		}),
+		pgPolicy("users_update_own_habits", {
+			as: "permissive",
+			for: "update",
+			to: "authenticated",
+			using: sql`auth.uid() = user_id`,
+		}),
+		pgPolicy("users_delete_own_habits", {
+			as: "permissive",
+			for: "delete",
+			to: "authenticated",
+			using: sql`auth.uid() = user_id`,
+		}),
+	],
+).enableRLS();
+
+export const habitCompletion = pgTable(
+	"habit_completions",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		habitId: uuid("habit_id")
+			.notNull()
+			.references(() => habitSchema.id, { onDelete: "cascade" }),
+		completedAt: date("completed_at").notNull(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => [
+		index("habit_completions_habit_id_idx").on(table.habitId),
+		index("habit_completions_completed_at_idx").on(table.completedAt),
+		unique("habit_completion_unique").on(table.habitId, table.completedAt),
+		pgPolicy("users_view_own_completions", {
+			as: "permissive",
+			for: "select",
+			to: "authenticated",
+			using: sql`EXISTS (
+        SELECT 1 FROM habit 
+        WHERE habit.id = habit_id 
+        AND habit.user_id = auth.uid()
+      )`,
+		}),
+		pgPolicy("users_insert_own_completions", {
+			as: "permissive",
+			for: "insert",
+			to: "authenticated",
+			withCheck: sql`EXISTS (
+        SELECT 1 FROM habit 
+        WHERE habit.id = habit_id 
+        AND habit.user_id = auth.uid()
+      )`,
+		}),
+		pgPolicy("users_delete_own_completions", {
+			as: "permissive",
+			for: "delete",
+			to: "authenticated",
+			using: sql`EXISTS (
+        SELECT 1 FROM habit 
+        WHERE habit.id = habit_id 
+        AND habit.user_id = auth.uid()
+      )`,
+		}),
+	],
+).enableRLS();
+
+export const habitRelations = relations(habitSchema, ({ many }) => ({
+	completions: many(habitCompletion),
+}));
+
+export const habitCompletionRelations = relations(
+	habitCompletion,
+	({ one }) => ({
+		habit: one(habitSchema, {
+			fields: [habitCompletion.habitId],
+			references: [habitSchema.id],
+		}),
+	}),
 );

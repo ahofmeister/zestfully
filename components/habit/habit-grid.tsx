@@ -1,0 +1,231 @@
+"use client";
+import { CalendarIcon, ClockIcon, Trash2Icon } from "lucide-react";
+import { useOptimistic, useState, useTransition } from "react";
+import {
+	formatDate,
+	generateYearWeeks,
+	getMonthLabels,
+	isDateToday,
+} from "@/components/dates";
+import {
+	deleteHabit,
+	toggleHabitCompletion,
+	trackHabitDay,
+} from "@/components/habit/habit-actions";
+import { Button } from "@/components/ui/button";
+import type { habitCompletion, habitSchema } from "@/drizzle/schema";
+import { cn } from "@/lib/utils";
+
+export default function HabitGrid({
+	habit,
+}: {
+	habit: typeof habitSchema.$inferSelect & {
+		completions: (typeof habitCompletion.$inferSelect)[];
+	};
+}) {
+	const [hoveredDate, setHoveredDate] = useState<string | null>(null);
+	const [isPending, startTransition] = useTransition();
+
+	const [optimisticCompletions, setOptimisticCompletions] = useOptimistic(
+		habit.completions,
+		(state, newCompletion: { action: "add" | "remove"; date: string }) => {
+			if (newCompletion.action === "add") {
+				return [
+					...state,
+					{
+						id: crypto.randomUUID(),
+						habitId: habit.id,
+						completedAt: newCompletion.date,
+						createdAt: new Date(),
+					},
+				];
+			}
+			return state.filter((c) => c.completedAt !== newCompletion.date);
+		},
+	);
+
+	const weeks = generateYearWeeks();
+	const monthLabels = getMonthLabels(weeks);
+
+	const totalDays = optimisticCompletions.length;
+
+	const today = formatDate(new Date());
+	const yesterday = (() => {
+		const d = new Date();
+		d.setDate(d.getDate() - 1);
+		return formatDate(d);
+	})();
+
+	const completionDates = new Set(
+		optimisticCompletions.map((c) => c.completedAt),
+	);
+
+	const isTodayTracked = completionDates.has(today);
+	const isYesterdayTracked = completionDates.has(yesterday);
+
+	const handleToggleDay = async (habitId: string, date: string) => {
+		const isCompleted = completionDates.has(date);
+
+		startTransition(async () => {
+			setOptimisticCompletions({
+				action: isCompleted ? "remove" : "add",
+				date,
+			});
+
+			await toggleHabitCompletion(habitId, date);
+		});
+	};
+
+	const handleTrackToday = async () => {
+		startTransition(async () => {
+			setOptimisticCompletions({ action: "add", date: today });
+			await trackHabitDay(habit.id, today);
+		});
+	};
+
+	const handleTrackYesterday = async () => {
+		startTransition(async () => {
+			setOptimisticCompletions({ action: "add", date: yesterday });
+			await trackHabitDay(habit.id, yesterday);
+		});
+	};
+
+	const handleRemove = async () => {
+		if (!confirm(`Delete "${habit.name}"? This cannot be undone.`)) return;
+
+		startTransition(async () => {
+			await deleteHabit(habit.id);
+		});
+	};
+
+	return (
+		<div className="space-y-3">
+			<div className="flex items-center justify-between">
+				<div className="space-y-1">
+					<div className="flex items-center gap-2">
+						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
+					</div>
+					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
+						<span>{totalDays} days</span>
+						{/* Add streak calculations here later */}
+					</div>
+				</div>
+				<div className="flex items-center gap-2">
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={handleTrackToday}
+						disabled={isTodayTracked || isPending}
+						className="gap-1.5"
+					>
+						<CalendarIcon className="h-3 w-3" />
+						Today
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={handleTrackYesterday}
+						disabled={isYesterdayTracked || isPending}
+						className="gap-1.5"
+					>
+						<ClockIcon className="h-3 w-3" />
+						Yesterday
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={handleRemove}
+						disabled={isPending}
+						className="text-muted-foreground hover:text-destructive"
+					>
+						<Trash2Icon className="h-4 w-4" />
+					</Button>
+				</div>
+			</div>
+
+			<div className="overflow-x-auto pb-2">
+				<div className="inline-flex gap-1">
+					{/* Day labels column */}
+					<div className="mr-2 flex w-8 flex-col gap-1">
+						<div className="h-4" />
+						{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+							<div
+								key={day}
+								className="flex h-[18px] items-center justify-end font-mono text-[10px] text-muted-foreground"
+							>
+								{day}
+							</div>
+						))}
+					</div>
+
+					{/* Calendar grid */}
+					<div className="flex flex-col">
+						<div className="flex gap-1">
+							{weeks.map((week, weekIndex) => {
+								const firstDate = week.find((d) => d);
+								const weekKey = firstDate
+									? formatDate(firstDate)
+									: `week-${weekIndex}`;
+
+								return (
+									<div key={weekKey} className="flex flex-col gap-1">
+										{/* Month label */}
+										<div className="h-4 font-mono text-[10px] text-muted-foreground">
+											{monthLabels[weekIndex]}
+										</div>
+
+										{/* Days in week */}
+										{week.map((date, dayIndex) => {
+											if (!date) {
+												return (
+													<div
+														key={`${weekKey}-empty-${dayIndex}`}
+														className="h-[18px] w-[18px]"
+													/>
+												);
+											}
+
+											const dateStr = formatDate(date);
+											const isCompleted = completionDates.has(dateStr);
+											const isToday = isDateToday(date);
+
+											return (
+												<Button
+													size="icon"
+													key={dateStr}
+													onClick={() => handleToggleDay(habit.id, dateStr)}
+													onMouseEnter={() => setHoveredDate(dateStr)}
+													onMouseLeave={() => setHoveredDate(null)}
+													className={cn(
+														"h-[18px] w-[18px] rounded-sm border p-0 transition-all hover:scale-110",
+														isCompleted
+															? "border-emerald-500/50 bg-emerald-500 shadow-sm shadow-emerald-500/50"
+															: "border-border bg-secondary/30 hover:border-accent",
+														isToday &&
+															"ring-2 ring-primary/50 ring-offset-1 ring-offset-background",
+													)}
+													title={`${habit.name} - ${dateStr}${isCompleted ? " ✓" : ""}`}
+												/>
+											);
+										})}
+									</div>
+								);
+							})}
+						</div>
+
+						{/* Hovered date display */}
+						<div className="mt-2 h-5 font-mono text-xs text-muted-foreground">
+							{hoveredDate &&
+								new Date(hoveredDate).toLocaleDateString("en-US", {
+									weekday: "short",
+									month: "short",
+									day: "numeric",
+									year: "numeric",
+								})}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
