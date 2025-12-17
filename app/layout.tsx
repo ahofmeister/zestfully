@@ -4,6 +4,7 @@ import HeaderAuth from "@/components/header-auth";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import "./globals.css";
 import type { Viewport } from "next";
+import Link from "next/link";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import {
 	NavigationMenu,
@@ -50,9 +51,12 @@ export default function RootLayout({
 							<NavigationMenu>
 								<NavigationMenuList>
 									<NavigationMenuItem>
-										<NavigationMenuLink>
+										<NavigationMenuLink href={"/"}>
 											<div className={"text-primary ml-4"}>Zestfully</div>
 										</NavigationMenuLink>
+									</NavigationMenuItem>
+									<NavigationMenuItem>
+										<NavigationMenuLink href={"/home"}>Home</NavigationMenuLink>
 									</NavigationMenuItem>
 								</NavigationMenuList>
 							</NavigationMenu>
