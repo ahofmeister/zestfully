@@ -1,9 +1,17 @@
+import {
+	drizzle,
+	type PostgresJsQueryResultHKT,
+} from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import "server-only";
 
-import { type DrizzleConfig, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/postgres-js";
+import {
+	type DrizzleConfig,
+	type ExtractTablesWithRelations,
+	sql,
+} from "drizzle-orm";
+import type { PgTransaction } from "drizzle-orm/pg-core";
 import { type JwtPayload, jwtDecode } from "jwt-decode";
-import postgres from "postgres";
 import * as schema from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 
@@ -12,9 +20,11 @@ const config = {
 	schema,
 } satisfies DrizzleConfig<typeof schema>;
 
-declare global {
-	var globalPostgresClient: ReturnType<typeof postgres> | undefined;
+declare namespace global {
+	let postgresSqlClient: ReturnType<typeof postgres> | undefined;
 }
+
+let postgresSqlClient: ReturnType<typeof postgres>;
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -22,13 +32,11 @@ if (!databaseUrl) {
 	throw new Error("DATABASE_URL environment variable is not set");
 }
 
-let postgresSqlClient: ReturnType<typeof postgres>;
-
 if (process.env.NODE_ENV !== "production") {
-	if (!global.globalPostgresClient) {
-		global.globalPostgresClient = postgres(databaseUrl, { prepare: false });
+	if (!global.postgresSqlClient) {
+		global.postgresSqlClient = postgres(databaseUrl, { prepare: false });
 	}
-	postgresSqlClient = global.globalPostgresClient;
+	postgresSqlClient = global.postgresSqlClient;
 } else {
 	postgresSqlClient = postgres(databaseUrl, { prepare: false });
 }
@@ -39,7 +47,7 @@ export const db = drizzle({
 	logger: false,
 });
 
-export async function getDrizzleSupabaseClient() {
+export async function rlsDb() {
 	const client = await createClient();
 	const { data } = await client.auth.getSession();
 	const accessToken = data.session?.access_token ?? "";
@@ -87,4 +95,17 @@ function decode(accessToken: string) {
 	} catch {
 		return { role: "anon" } as JwtPayload & { role: string };
 	}
+}
+
+export async function dbTransaction<T>(
+	fn: (
+		tx: PgTransaction<
+			PostgresJsQueryResultHKT,
+			typeof schema,
+			ExtractTablesWithRelations<typeof schema>
+		>,
+	) => Promise<T>,
+): Promise<T> {
+	const client = await rlsDb();
+	return client.runTransaction(fn);
 }

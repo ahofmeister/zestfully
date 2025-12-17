@@ -51,7 +51,7 @@ export default function RootLayout({
 								<NavigationMenuList>
 									<NavigationMenuItem>
 										<NavigationMenuLink>
-											<div className={"text-primary"}>Zestfully</div>
+											<div className={"text-primary ml-4"}>Zestfully</div>
 										</NavigationMenuLink>
 									</NavigationMenuItem>
 								</NavigationMenuList>

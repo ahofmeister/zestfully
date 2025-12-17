@@ -15,6 +15,13 @@
 			"when": 1762079755984,
 			"tag": "0001_busy_thunderbolts",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1765905332474,
+			"tag": "0002_faulty_sersi",
+			"breakpoints": true
 		}
 	]
 }

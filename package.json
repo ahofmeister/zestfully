@@ -60,7 +60,6 @@
 		"prettier-plugin-sql": "^0.19.2",
 		"tailwind-merge": "^2.5.2",
 		"tailwindcss": "4.1.18",
-		"tailwindcss-animate": "^1.0.7",
 		"typescript": "5.7.2"
 	}
 }
