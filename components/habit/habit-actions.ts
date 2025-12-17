@@ -77,3 +77,34 @@ export async function deleteHabit(habitId: string) {
 		return { success: false, error: "Failed to delete habit" };
 	}
 }
+
+export async function renameHabit(
+	_prevState: { success?: boolean; error?: string } | null,
+	formData: FormData,
+) {
+	const habitId = formData.get("habitId") as string;
+	const name = formData.get("name") as string;
+
+	if (!habitId || !name?.trim()) {
+		return { error: "Habit name is required" };
+	}
+
+	if (name.trim().length > 100) {
+		return { error: "Habit name must be less than 100 characters" };
+	}
+
+	try {
+		await dbTransaction(async (tx) => {
+			await tx
+				.update(habitSchema)
+				.set({ name: name.trim() })
+				.where(eq(habitSchema.id, habitId));
+		});
+
+		revalidatePath("/habits");
+		return { success: true };
+	} catch (error) {
+		console.error("Failed to rename habit:", error);
+		return { error: "Failed to rename habit. Please try again." };
+	}
+}

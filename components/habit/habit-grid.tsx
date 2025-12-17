@@ -7,6 +7,7 @@ import {
 	getMonthLabels,
 	isDateToday,
 } from "@/components/dates";
+import EditHabitName from "@/components/habit/edit-habit-name";
 import {
 	deleteHabit,
 	toggleHabitCompletion,
@@ -104,6 +105,7 @@ export default function HabitGrid({
 				<div className="space-y-1">
 					<div className="flex items-center gap-2">
 						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
+						<EditHabitName habit={habit} />
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
 						<span>{totalDays} days</span>
@@ -204,7 +206,6 @@ export default function HabitGrid({
 														isToday &&
 															"ring-2 ring-primary/50 ring-offset-1 ring-offset-background",
 													)}
-													title={`${habit.name} - ${dateStr}${isCompleted ? " ✓" : ""}`}
 												/>
 											);
 										})}
@@ -213,8 +214,7 @@ export default function HabitGrid({
 							})}
 						</div>
 
-						{/* Hovered date display */}
-						<div className="mt-2 h-5 font-mono text-xs text-muted-foreground">
+						<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">
 							{hoveredDate &&
 								new Date(hoveredDate).toLocaleDateString("en-US", {
 									weekday: "short",
