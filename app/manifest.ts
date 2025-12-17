@@ -4,8 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
 	return {
 		name: "Zestfully",
 		short_name: "Zestfully",
-		description: "Simple meals made zestfully perfect",
-		start_url: "/",
+		description: "Start here, every day",
+		start_url: "/home",
 		display: "standalone",
 		background_color: "#030303",
 		theme_color: "#030303",
