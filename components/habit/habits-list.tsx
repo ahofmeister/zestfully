@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { dbTransaction, rlsDb } from "@/drizzle/client";
+import { dbTransaction } from "@/drizzle/client";
 import { habitSchema } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 import DayHabits from "./day-habits";

@@ -4,7 +4,6 @@ import HeaderAuth from "@/components/header-auth";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import "./globals.css";
 import type { Viewport } from "next";
-import Link from "next/link";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import {
 	NavigationMenu,
