@@ -66,6 +66,17 @@ export default function HabitGrid({
 	const isYesterdayTracked = completionDates.has(yesterday);
 
 	const handleToggleDay = async (habitId: string, date: string) => {
+		const selectedDate = new Date(date);
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		selectedDate.setHours(0, 0, 0, 0);
+
+		const isFutureDate = selectedDate.getTime() > today.getTime();
+
+		if (isFutureDate) {
+			return;
+		}
+
 		const isCompleted = completionDates.has(date);
 
 		startTransition(async () => {
@@ -204,6 +215,7 @@ export default function HabitGrid({
 												<Button
 													size="icon"
 													key={dateStr}
+													disabled={new Date(dateStr) > new Date()}
 													onClick={() => handleToggleDay(habit.id, dateStr)}
 													onMouseEnter={() => setHoveredDate(dateStr)}
 													onMouseLeave={() => setHoveredDate(null)}
