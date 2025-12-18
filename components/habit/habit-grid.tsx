@@ -1,6 +1,8 @@
 "use client";
+import confetti from "canvas-confetti";
 import { CalendarIcon, ClockIcon, Flame, Trash2Icon } from "lucide-react";
 import { useOptimistic, useState, useTransition } from "react";
+
 import {
 	formatDate,
 	generateYearWeeks,
@@ -65,15 +67,17 @@ export default function HabitGrid({
 	const isTodayTracked = completionDates.has(today);
 	const isYesterdayTracked = completionDates.has(yesterday);
 
-	const handleToggleDay = async (habitId: string, date: string) => {
+	const handleToggleDay = async (
+		habitId: string,
+		date: string,
+		event: React.MouseEvent<HTMLButtonElement>,
+	) => {
 		const selectedDate = new Date(date);
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		selectedDate.setHours(0, 0, 0, 0);
 
-		const isFutureDate = selectedDate.getTime() > today.getTime();
-
-		if (isFutureDate) {
+		if (selectedDate.getTime() > today.getTime()) {
 			return;
 		}
 
@@ -84,6 +88,23 @@ export default function HabitGrid({
 				action: isCompleted ? "remove" : "add",
 				date,
 			});
+
+			if (!isCompleted) {
+				const rect = event.currentTarget.getBoundingClientRect();
+				const x = (rect.left + rect.width / 2) / window.innerWidth;
+				const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+				confetti({
+					particleCount: 8,
+					spread: 25,
+					origin: { x, y },
+					// colors: ["#10b981", "#34d399", "#6ee7b7"],
+					scalar: 0.5,
+					gravity: 1.5,
+					ticks: 50,
+					startVelocity: 10,
+				});
+			}
 
 			await toggleHabitCompletion(habitId, date);
 		});
@@ -216,7 +237,7 @@ export default function HabitGrid({
 													size="icon"
 													key={dateStr}
 													disabled={new Date(dateStr) > new Date()}
-													onClick={() => handleToggleDay(habit.id, dateStr)}
+													onClick={(e) => handleToggleDay(habit.id, dateStr, e)}
 													onMouseEnter={() => setHoveredDate(dateStr)}
 													onMouseLeave={() => setHoveredDate(null)}
 													className={cn(
