@@ -179,11 +179,10 @@ export default function HabitGrid({
 						Yesterday
 					</Button>
 					<Button
-						variant="ghost"
-						size="icon"
+						variant="destructive"
+						size="sm"
 						onClick={handleRemove}
 						disabled={isPending}
-						className="text-muted-foreground hover:text-destructive"
 					>
 						<Trash2Icon className="h-4 w-4" />
 					</Button>
