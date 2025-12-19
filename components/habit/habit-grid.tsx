@@ -15,6 +15,7 @@ import {
 	toggleHabitCompletion,
 	trackHabitDay,
 } from "@/components/habit/habit-actions";
+import { HabitFrequency } from "@/components/habit/habit-frequency";
 import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
 import { Button } from "@/components/ui/button";
 import type { habitCompletion, habitSchema } from "@/drizzle/schema";
@@ -253,6 +254,10 @@ export default function HabitGrid({
 									</div>
 								);
 							})}
+						</div>
+
+						<div className={"mt-3"}>
+							<HabitFrequency habit={habit} />
 						</div>
 
 						<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">
