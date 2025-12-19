@@ -5,6 +5,7 @@
 		"dev": "next dev --experimental-https",
 		"build": "next build",
 		"start": "next start --turbo",
+		"test": "vitest",
 		"generate:supabase-types": "npx supabase gen types --lang=typescript --project-id \"junifvskmfdfxmginxry\" --schema public > utils/supabase/supabase-types.ts"
 	},
 	"dependencies": {

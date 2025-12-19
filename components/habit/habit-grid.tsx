@@ -9,6 +9,7 @@ import {
 	getMonthLabels,
 	isDateToday,
 } from "@/components/dates";
+import EditHabitFrequency from "@/components/habit/edit-habit-frequency";
 import EditHabitName from "@/components/habit/edit-habit-name";
 import {
 	deleteHabit,
@@ -136,6 +137,7 @@ export default function HabitGrid({
 	const currentStreak = calculateCurrentStreak(
 		optimisticCompletions.map((c) => c.completedAt),
 		habit.frequencyType,
+		habit.frequencyTarget || 1,
 	);
 
 	return (
@@ -256,8 +258,9 @@ export default function HabitGrid({
 							})}
 						</div>
 
-						<div className={"mt-3"}>
+						<div className={"flex mt-3 items-center gap-x-2"}>
 							<HabitFrequency habit={habit} />
+							<EditHabitFrequency habit={habit} />
 						</div>
 
 						<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">

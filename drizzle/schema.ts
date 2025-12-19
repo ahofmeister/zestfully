@@ -14,7 +14,19 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 
-export type Weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+export const WEEKDAYS = [
+	"mon",
+	"tue",
+	"wed",
+	"thu",
+	"fri",
+	"sat",
+	"sun",
+] as const;
+export type Weekday = (typeof WEEKDAYS)[number];
+
+export const FREQUENCY_TYPES = ["daily", "per_week", "specific_days"] as const;
+export type FrequencyType = (typeof FREQUENCY_TYPES)[number];
 
 export const food = pgTable(
 	"food",
@@ -121,13 +133,12 @@ export const habitSchema = pgTable(
 		id: uuid("id").defaultRandom().primaryKey(),
 		userId: uuid("user_id").notNull(),
 		name: text("name").notNull(),
-		frequencyType: text("frequency_type", {
-			enum: ["daily", "per_week", "specific_days"],
-		})
+		frequencyType: text("frequency_type")
+			.$type<FrequencyType>()
 			.notNull()
 			.default("daily"),
 		frequencyTarget: integer("frequency_target"),
-		frequencyDays: text("frequency_days").$type<Weekday>().array(),
+		frequencyDays: text("frequency_days").array().$type<Weekday[]>(),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},

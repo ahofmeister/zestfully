@@ -2,8 +2,9 @@
 
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import type { FrequencyType } from "@/components/habit/streak-calculator";
 import { dbTransaction } from "@/drizzle/client";
-import { habitCompletion, habitSchema } from "@/drizzle/schema";
+import { habitCompletion, habitSchema, type Weekday } from "@/drizzle/schema";
 
 export async function toggleHabitCompletion(habitId: string, date: string) {
 	try {
@@ -106,5 +107,69 @@ export async function renameHabit(
 	} catch (error) {
 		console.error("Failed to rename habit:", error);
 		return { error: "Failed to rename habit. Please try again." };
+	}
+}
+
+type FrequencyFormState = {
+	success: boolean;
+	error?: string;
+};
+
+export async function updateHabitFrequency(
+	_prevState: FrequencyFormState,
+	formData: FormData,
+): Promise<FrequencyFormState> {
+	const habitId = formData.get("habitId") as string;
+	const frequencyType = formData.get("frequencyType") as FrequencyType;
+	const frequencyTarget = formData.get("frequencyTarget");
+	const frequencyDays = formData.getAll("frequencyDays") as Weekday[];
+
+	if (!habitId || !frequencyType) {
+		return {
+			success: false,
+			error: "Habit ID and frequency type are required",
+		};
+	}
+
+	if (frequencyType === "per_week") {
+		const targetNum = Number(frequencyTarget);
+		if (!targetNum || targetNum < 1 || targetNum > 7) {
+			return {
+				success: false,
+				error: "Frequency target must be between 1 and 7",
+			};
+		}
+	}
+
+	if (
+		frequencyType === "specific_days" &&
+		(!frequencyDays || frequencyDays.length === 0)
+	) {
+		return { success: false, error: "Please select at least one day" };
+	}
+
+	try {
+		await dbTransaction(async (tx) => {
+			await tx
+				.update(habitSchema)
+				.set({
+					frequencyType,
+					frequencyTarget:
+						frequencyType === "per_week" ? Number(frequencyTarget) : null,
+					frequencyDays: frequencyType === "specific_days" ? frequencyDays : [],
+					updatedAt: new Date(),
+				})
+				.where(eq(habitSchema.id, habitId));
+		});
+
+		revalidatePath("/habits");
+
+		return { success: true };
+	} catch (error) {
+		console.error("Failed to update habit frequency:", error);
+		return {
+			success: false,
+			error: "Failed to update habit frequency. Please try again.",
+		};
 	}
 }
