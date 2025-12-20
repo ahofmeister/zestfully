@@ -1,5 +1,3 @@
-// app/dashboard/page.tsx
-
 import { DateSelector } from "@/components/dashboard/date-selector";
 import HabitsList from "@/components/habit/habits-list";
 

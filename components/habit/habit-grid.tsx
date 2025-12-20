@@ -100,7 +100,6 @@ export default function HabitGrid({
 					particleCount: 8,
 					spread: 25,
 					origin: { x, y },
-					// colors: ["#10b981", "#34d399", "#6ee7b7"],
 					scalar: 0.5,
 					gravity: 1.5,
 					ticks: 50,
@@ -134,11 +133,12 @@ export default function HabitGrid({
 		});
 	};
 
-	const currentStreak = calculateCurrentStreak(
-		optimisticCompletions.map((c) => c.completedAt),
-		habit.frequencyType,
-		habit.frequencyTarget || 1,
-	);
+	const currentStreak = calculateCurrentStreak({
+		completions: optimisticCompletions.map((c) => c.completedAt),
+		frequencyType: habit.frequencyType,
+		frequencyTarget: habit.frequencyTarget ?? 0,
+		frequencyDays: habit.frequencyDays ?? [],
+	});
 
 	return (
 		<div className="space-y-3">
@@ -150,11 +150,11 @@ export default function HabitGrid({
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
 						<div className="flex gap-4 font-mono text-xs text-muted-foreground">
-							<span>{totalDays} days</span>
+							<span>{totalDays}x</span>
 							{currentStreak > 0 && (
 								<span className="flex items-center gap-1 text-orange-500">
 									<Flame className="h-3 w-3" />
-									{currentStreak} day streak
+									{currentStreak}x streak
 								</span>
 							)}
 						</div>

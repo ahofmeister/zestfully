@@ -25,7 +25,7 @@ export const WEEKDAYS = [
 ] as const;
 export type Weekday = (typeof WEEKDAYS)[number];
 
-export const FREQUENCY_TYPES = ["daily", "per_week", "specific_days"] as const;
+export const FREQUENCY_TYPES = ["daily", "per_week", "scheduled_days"] as const;
 export type FrequencyType = (typeof FREQUENCY_TYPES)[number];
 
 export const food = pgTable(

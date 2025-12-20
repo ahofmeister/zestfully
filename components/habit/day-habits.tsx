@@ -1,4 +1,3 @@
-// components/dashboard/habits-client.tsx
 "use client";
 import { CheckCircle2, Circle } from "lucide-react";
 import Link from "next/link";
