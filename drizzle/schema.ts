@@ -141,6 +141,7 @@ export const habitSchema = pgTable(
 		frequencyDays: text("frequency_days").array().$type<Weekday[]>(),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+		color: text("color").default("#10b981").notNull(),
 	},
 	(table) => [
 		index("habits_user_id_idx").on(table.userId),

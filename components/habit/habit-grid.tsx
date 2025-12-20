@@ -9,15 +9,18 @@ import {
 	getMonthLabels,
 	isDateToday,
 } from "@/components/dates";
+import EditHabit from "@/components/habit/edit-habit";
 import EditHabitFrequency from "@/components/habit/edit-habit-frequency";
-import EditHabitName from "@/components/habit/edit-habit-name";
 import {
 	deleteHabit,
 	toggleHabitCompletion,
 	trackHabitDay,
 } from "@/components/habit/habit-actions";
 import { HabitFrequency } from "@/components/habit/habit-frequency";
-import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
+import {
+	calculateCompletionPercentage,
+	calculateCurrentStreak,
+} from "@/components/habit/streak-calculator";
 import { Button } from "@/components/ui/button";
 import type { habitCompletion, habitSchema } from "@/drizzle/schema";
 import { cn } from "@/lib/utils";
@@ -140,13 +143,20 @@ export default function HabitGrid({
 		frequencyDays: habit.frequencyDays ?? [],
 	});
 
+	const completionPercentage = calculateCompletionPercentage(
+		optimisticCompletions.map((c) => c.completedAt),
+		habit.frequencyType,
+		habit.frequencyTarget,
+		habit.frequencyDays,
+	);
+
 	return (
 		<div className="space-y-3">
 			<div className="flex items-center justify-between">
 				<div className="space-y-1">
 					<div className="flex items-center gap-2">
 						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
-						<EditHabitName habit={habit} />
+						<EditHabit habit={habit} />
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
 						<div className="flex gap-4 font-mono text-xs text-muted-foreground">
@@ -157,6 +167,7 @@ export default function HabitGrid({
 									{currentStreak}x streak
 								</span>
 							)}
+							<span>{completionPercentage}% complete</span>
 						</div>
 					</div>
 				</div>
@@ -239,17 +250,22 @@ export default function HabitGrid({
 													size="icon"
 													key={dateStr}
 													variant={"ghost"}
+													style={
+														isCompleted
+															? {
+																	backgroundColor: habit.color,
+																	borderColor: `${habit.color}80`,
+																}
+															: undefined
+													}
 													disabled={new Date(dateStr) > new Date()}
 													onClick={(e) => handleToggleDay(habit.id, dateStr, e)}
 													onMouseEnter={() => setHoveredDate(dateStr)}
 													onMouseLeave={() => setHoveredDate(null)}
 													className={cn(
 														"h-[18px] w-[18px] rounded-sm border p-0 transition-all hover:scale-110",
-														isCompleted
-															? "border-emerald-500/50 bg-emerald-500 shadow-sm shadow-emerald-500/50"
-															: "bg-secondary/30",
-														isToday &&
-															"ring-2 ring-primary/50 ring-offset-1 ring-offset-background",
+														isCompleted ? "shadow-sm" : "bg-secondary/30",
+														isToday && "ring-1 ring-accent/80",
 													)}
 												/>
 											);

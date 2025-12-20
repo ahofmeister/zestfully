@@ -8,7 +8,12 @@ import {
 	subDays,
 	subWeeks,
 } from "date-fns";
-import { type FrequencyType, WEEKDAYS, type Weekday } from "@/drizzle/schema";
+import {
+	type FrequencyType,
+	type habitSchema,
+	WEEKDAYS,
+	type Weekday,
+} from "@/drizzle/schema";
 
 export type StreakOptions = {
 	completions: string[];
@@ -171,4 +176,60 @@ function findStartingPoint(
 	}
 
 	return null;
+}
+
+export function calculateCompletionPercentage(
+	completions: string[],
+	frequencyType: typeof habitSchema.$inferSelect.frequencyType,
+	frequencyTarget: number | null,
+	frequencyDays: string[] | null,
+): number {
+	const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+	const today = new Date();
+
+	let expectedDays = 0;
+
+	switch (frequencyType) {
+		case "daily": {
+			expectedDays =
+				Math.floor(
+					(today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24),
+				) + 1;
+			break;
+		}
+		case "per_week": {
+			const weeksPassed =
+				Math.floor(
+					(today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24 * 7),
+				) + 1;
+			expectedDays = weeksPassed * (frequencyTarget || 0);
+			break;
+		}
+		case "scheduled_days": {
+			if (!frequencyDays || frequencyDays.length === 0) return 0;
+
+			let count = 0;
+			const checkDate = new Date(startOfYear);
+
+			while (checkDate <= today) {
+				const dayIndex = checkDate.getDay();
+				const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+				const weekday = WEEKDAYS[adjustedIndex];
+
+				if (frequencyDays.includes(weekday)) {
+					count++;
+				}
+
+				checkDate.setDate(checkDate.getDate() + 1);
+			}
+
+			expectedDays = count;
+			break;
+		}
+	}
+
+	if (expectedDays === 0) return 0;
+
+	const completedDays = completions.length;
+	return Math.round((completedDays / expectedDays) * 100);
 }

@@ -89,6 +89,7 @@ export async function renameHabit(
 ) {
 	const habitId = formData.get("habitId") as string;
 	const name = formData.get("name") as string;
+	const color = formData.get("color") as string;
 
 	if (!habitId || !name?.trim()) {
 		return { error: "Habit name is required" };
@@ -102,7 +103,7 @@ export async function renameHabit(
 		await dbTransaction(async (tx) => {
 			await tx
 				.update(habitSchema)
-				.set({ name: name.trim() })
+				.set({ name: name.trim(), color })
 				.where(eq(habitSchema.id, habitId));
 		});
 
