@@ -259,19 +259,21 @@ export default function HabitGrid({
 							})}
 						</div>
 
-						<div className={"flex mt-3 items-center gap-x-2"}>
-							<HabitFrequency habit={habit} />
-							<EditHabitFrequency habit={habit} />
-						</div>
+						<div className={"flex justify-between"}>
+							<div className={"flex mt-3 items-center gap-x-2"}>
+								<HabitFrequency habit={habit} />
+								<EditHabitFrequency habit={habit} />
+							</div>
 
-						<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">
-							{hoveredDate &&
-								new Date(hoveredDate).toLocaleDateString("en-US", {
-									weekday: "short",
-									month: "short",
-									day: "numeric",
-									year: "numeric",
-								})}
+							<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">
+								{hoveredDate &&
+									new Date(hoveredDate).toLocaleDateString("en-US", {
+										weekday: "short",
+										month: "short",
+										day: "numeric",
+										year: "numeric",
+									})}
+							</div>
 						</div>
 					</div>
 				</div>
