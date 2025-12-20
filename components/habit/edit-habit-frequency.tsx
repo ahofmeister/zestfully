@@ -112,7 +112,7 @@ export default function EditHabitFrequency(props: {
 									? "Daily"
 									: type === "per_week"
 										? "X / week"
-										: "Specific days"}
+										: "Scheduled Days"}
 							</Button>
 						))}
 					</div>
