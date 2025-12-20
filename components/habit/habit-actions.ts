@@ -2,9 +2,13 @@
 
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import type { FrequencyType } from "@/components/habit/streak-calculator";
 import { dbTransaction } from "@/drizzle/client";
-import { habitCompletion, habitSchema, type Weekday } from "@/drizzle/schema";
+import {
+	type FrequencyType,
+	habitCompletion,
+	habitSchema,
+	type Weekday,
+} from "@/drizzle/schema";
 
 export async function toggleHabitCompletion(habitId: string, date: string) {
 	try {
@@ -142,7 +146,7 @@ export async function updateHabitFrequency(
 	}
 
 	if (
-		frequencyType === "specific_days" &&
+		frequencyType === "scheduled_days" &&
 		(!frequencyDays || frequencyDays.length === 0)
 	) {
 		return { success: false, error: "Please select at least one day" };
@@ -156,7 +160,8 @@ export async function updateHabitFrequency(
 					frequencyType,
 					frequencyTarget:
 						frequencyType === "per_week" ? Number(frequencyTarget) : null,
-					frequencyDays: frequencyType === "specific_days" ? frequencyDays : [],
+					frequencyDays:
+						frequencyType === "scheduled_days" ? frequencyDays : [],
 					updatedAt: new Date(),
 				})
 				.where(eq(habitSchema.id, habitId));

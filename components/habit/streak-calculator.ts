@@ -1,4 +1,5 @@
 import {
+	getDay,
 	getISOWeek,
 	getYear,
 	parseISO,
@@ -7,18 +8,27 @@ import {
 	subDays,
 	subWeeks,
 } from "date-fns";
+import { type FrequencyType, WEEKDAYS, type Weekday } from "@/drizzle/schema";
 
-export type FrequencyType = "daily" | "per_week" | "specific_days";
+export type StreakOptions = {
+	completions: string[];
+	frequencyType: FrequencyType;
+	frequencyTarget?: number;
+	frequencyDays?: Weekday[];
+};
 
 function parseDate(dateStr: string): number {
 	return startOfDay(parseISO(dateStr)).getTime();
 }
 
-export function calculateCurrentStreak(
-	completions: string[],
-	frequencyType: FrequencyType,
-	frequencyTarget: number,
-): number {
+export function calculateCurrentStreak(options: StreakOptions): number {
+	const {
+		completions,
+		frequencyType,
+		frequencyTarget = 0,
+		frequencyDays,
+	} = options;
+
 	if (completions.length === 0) {
 		return 0;
 	}
@@ -28,8 +38,8 @@ export function calculateCurrentStreak(
 			return calculateDailyStreak(completions);
 		case "per_week":
 			return calculateWeeklyStreak(completions, frequencyTarget);
-		case "specific_days":
-			return 0;
+		case "scheduled_days":
+			return calculateScheduledDaysStreak(completions, frequencyDays ?? null);
 	}
 }
 
@@ -88,4 +98,77 @@ export function calculateWeeklyStreak(
 	}
 
 	return streak;
+}
+
+function calculateScheduledDaysStreak(
+	completions: string[],
+	days: Weekday[] | null,
+) {
+	if (!days || days.length === 0) {
+		return 0;
+	}
+
+	const completionDates = new Set(completions.map(parseDate));
+	const today = startOfDay(new Date());
+
+	let checkDate = findStartingPoint(today, completionDates, days);
+
+	if (!checkDate) {
+		return 0;
+	}
+
+	let streak = 0;
+
+	while (true) {
+		if (isScheduledDay(checkDate, days)) {
+			if (completionDates.has(checkDate.getTime())) {
+				streak++;
+				checkDate = startOfDay(subDays(checkDate, 1));
+			} else {
+				break;
+			}
+		} else {
+			checkDate = startOfDay(subDays(checkDate, 1));
+		}
+	}
+
+	return streak;
+}
+
+const isScheduledDay = (date: Date, days: Weekday[]): boolean => {
+	const dayIndex = getDay(date);
+	const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+	const weekday = WEEKDAYS[adjustedIndex];
+	return days.includes(weekday);
+};
+
+function findStartingPoint(
+	today: Date,
+	completionDates: Set<number>,
+	days: Weekday[],
+): Date | null {
+	let checkDate = today;
+
+	for (let i = 0; i < 7; i++) {
+		if (isScheduledDay(checkDate, days)) {
+			if (completionDates.has(checkDate.getTime())) {
+				return checkDate;
+			}
+			checkDate = startOfDay(subDays(checkDate, 1));
+
+			for (let j = 0; j < 7; j++) {
+				if (isScheduledDay(checkDate, days)) {
+					if (completionDates.has(checkDate.getTime())) {
+						return checkDate;
+					}
+					return null;
+				}
+				checkDate = startOfDay(subDays(checkDate, 1));
+			}
+			return null;
+		}
+		checkDate = startOfDay(subDays(checkDate, 1));
+	}
+
+	return null;
 }

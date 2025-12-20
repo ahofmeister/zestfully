@@ -15,6 +15,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+	FREQUENCY_TYPES,
 	type FrequencyType,
 	type habitSchema,
 	WEEKDAYS,
@@ -84,13 +85,13 @@ export default function EditHabitFrequency(props: {
 							value={frequencyTarget}
 						/>
 					)}
-					{frequencyType === "specific_days" &&
+					{frequencyType === "scheduled_days" &&
 						frequencyDays.map((day) => (
 							<input key={day} type="hidden" name="frequencyDays" value={day} />
 						))}
 
 					<div className="flex gap-2 py-6">
-						{["daily", "per_week", "specific_days"].map((type) => (
+						{FREQUENCY_TYPES.map((type) => (
 							<Button
 								key={type}
 								type="button"
@@ -101,7 +102,7 @@ export default function EditHabitFrequency(props: {
 									if (type === "per_week") {
 										setFrequencyTarget(1);
 									}
-									if (type === "specific_days") {
+									if (type === "scheduled_days") {
 										setFrequencyDays([]);
 									}
 								}}
@@ -151,7 +152,7 @@ export default function EditHabitFrequency(props: {
 						</div>
 					)}
 
-					{frequencyType === "specific_days" && (
+					{frequencyType === "scheduled_days" && (
 						<div className="space-y-3 py-4 mb-2">
 							<p className="text-sm text-muted-foreground text-center">
 								Select the days you want to perform this habit
