@@ -238,6 +238,7 @@ export default function HabitGrid({
 												<Button
 													size="icon"
 													key={dateStr}
+													variant={"ghost"}
 													disabled={new Date(dateStr) > new Date()}
 													onClick={(e) => handleToggleDay(habit.id, dateStr, e)}
 													onMouseEnter={() => setHoveredDate(dateStr)}
@@ -246,7 +247,7 @@ export default function HabitGrid({
 														"h-[18px] w-[18px] rounded-sm border p-0 transition-all hover:scale-110",
 														isCompleted
 															? "border-emerald-500/50 bg-emerald-500 shadow-sm shadow-emerald-500/50"
-															: "border-border bg-secondary/30 hover:border-accent",
+															: "bg-secondary/30",
 														isToday &&
 															"ring-2 ring-primary/50 ring-offset-1 ring-offset-background",
 													)}
