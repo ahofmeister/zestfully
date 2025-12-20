@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 export function DateSelector() {
 	const [date, setDate] = useQueryState(
 		"date",
-		parseAsIsoDate.withDefault(new Date()),
+		parseAsIsoDate.withDefault(new Date()).withOptions({
+			shallow: false,
+		}),
 	);
 
 	const isTodaySelected = isToday(date);
