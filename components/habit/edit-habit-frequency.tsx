@@ -1,7 +1,6 @@
 "use client";
 
 import { PencilIcon } from "lucide-react";
-import type React from "react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { updateHabitFrequency } from "@/components/habit/habit-actions";
 import { Button } from "@/components/ui/button";
