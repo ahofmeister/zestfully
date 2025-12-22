@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import HabitGrid from "@/components/habit/habit-grid";
 import { dbTransaction } from "@/drizzle/client";
-import { habitSchema, profileSchema } from "@/drizzle/schema";
+import { profileSchema } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function ProfilePage(props: {

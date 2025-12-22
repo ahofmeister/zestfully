@@ -18,28 +18,20 @@ export async function giveSpark(habitId: string) {
 
 	try {
 		await dbTransaction(async (tx) => {
-			const profile = await tx.query.profileSchema.findFirst({
-				where: eq(profileSchema.userId, user.id),
-			});
-
-			if (!profile) {
-				throw new Error("Profile not found");
-			}
-
-			await tx.insert(sparkSchema).values({
-				profileId: profile.id,
-				habitId,
-			});
+			await tx
+				.insert(sparkSchema)
+				.values({
+					userId: user.id,
+					habitId,
+				})
+				.onConflictDoNothing();
 		});
 
 		revalidatePath("/[username]");
-
 		return { success: true };
 	} catch (error) {
-		console.error("Failed to give spark:", error);
-		return {
-			error: "Failed to give spark. You may have already sparked this habit.",
-		};
+		console.error(error);
+		return { error: "Failed to give spark" };
 	}
 }
 
@@ -55,20 +47,12 @@ export async function removeSpark(habitId: string) {
 
 	try {
 		await dbTransaction(async (tx) => {
-			const profile = await tx.query.profileSchema.findFirst({
-				where: eq(profileSchema.userId, user.id),
-			});
-
-			if (!profile) {
-				throw new Error("Profile not found");
-			}
-
 			await tx
 				.delete(sparkSchema)
 				.where(
 					and(
 						eq(sparkSchema.habitId, habitId),
-						eq(sparkSchema.profileId, profile.id),
+						eq(sparkSchema.userId, user.id),
 					),
 				);
 		});
@@ -120,7 +104,7 @@ export async function hasUserSparked(habitId: string): Promise<boolean> {
 			const spark = await tx.query.sparkSchema.findFirst({
 				where: and(
 					eq(sparkSchema.habitId, habitId),
-					eq(sparkSchema.profileId, profile.id),
+					eq(sparkSchema.userId, user.id),
 				),
 			});
 

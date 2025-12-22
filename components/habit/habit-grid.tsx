@@ -4,7 +4,6 @@ import {
 	CalendarDays,
 	CalendarIcon,
 	ClockIcon,
-	Flame,
 	Trash2Icon,
 } from "lucide-react";
 import { useOptimistic, useState, useTransition } from "react";
@@ -23,6 +22,7 @@ import {
 	trackHabitDay,
 } from "@/components/habit/habit-actions";
 import { HabitFrequency } from "@/components/habit/habit-frequency";
+import { HabitVisibility } from "@/components/habit/habit-visibility";
 import SparkButton from "@/components/habit/spark/spark-button";
 import {
 	calculateCompletionPercentage,
@@ -169,6 +169,7 @@ export default function HabitGrid({
 				<div className="space-y-1">
 					<div className="flex items-center gap-2">
 						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
+						{isOwner && <HabitVisibility visibility={habit.visibility} />}
 						{isOwner && <EditHabit habit={habit} />}
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
@@ -176,7 +177,7 @@ export default function HabitGrid({
 							<span>{totalDays}x</span>
 							{currentStreak > 0 && <span>🔥 {currentStreak}x streak</span>}
 							<span>{completionPercentage}% complete</span>
-							{sparkCount > 0 && <span>✨ {sparkCount} sparks</span>}
+							{sparkCount > 0 && <span>✨ {sparkCount}</span>}
 						</div>
 					</div>
 				</div>
@@ -214,6 +215,7 @@ export default function HabitGrid({
 						</>
 					) : (
 						<SparkButton
+							isLoggedIn={isOwner}
 							habitId={habit.id}
 							initialCount={sparkCount}
 							initialSparked={hasSparked}

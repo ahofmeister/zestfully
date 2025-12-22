@@ -5,6 +5,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import "./globals.css";
 import type { Viewport } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import type React from "react";
 import {
 	NavigationMenu,
 	NavigationMenuItem,
