@@ -36,6 +36,20 @@
       "when": 1766252288362,
       "tag": "0004_skinny_sasquatch",
       "breakpoints": true
-    }
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766381321818,
+      "tag": "0005_safe_fat_cobra",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766381336733,
+      "tag": "0006_free_wallow",
+      "breakpoints": true
+    },
   ]
 }

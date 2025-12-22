@@ -1,6 +1,12 @@
 "use client";
 import confetti from "canvas-confetti";
-import { CalendarIcon, ClockIcon, Flame, Trash2Icon } from "lucide-react";
+import {
+	CalendarDays,
+	CalendarIcon,
+	ClockIcon,
+	Flame,
+	Trash2Icon,
+} from "lucide-react";
 import { useOptimistic, useState, useTransition } from "react";
 
 import {
@@ -17,6 +23,7 @@ import {
 	trackHabitDay,
 } from "@/components/habit/habit-actions";
 import { HabitFrequency } from "@/components/habit/habit-frequency";
+import SparkButton from "@/components/habit/spark/spark-button";
 import {
 	calculateCompletionPercentage,
 	calculateCurrentStreak,
@@ -27,10 +34,16 @@ import { cn } from "@/lib/utils";
 
 export default function HabitGrid({
 	habit,
+	isOwner,
+	sparkCount = 0,
+	hasSparked = false,
 }: {
 	habit: typeof habitSchema.$inferSelect & {
 		completions: (typeof habitCompletion.$inferSelect)[];
 	};
+	isOwner: boolean;
+	sparkCount?: number;
+	hasSparked?: boolean;
 }) {
 	const [hoveredDate, setHoveredDate] = useState<string | null>(null);
 	const [isPending, startTransition] = useTransition();
@@ -156,53 +169,58 @@ export default function HabitGrid({
 				<div className="space-y-1">
 					<div className="flex items-center gap-2">
 						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
-						<EditHabit habit={habit} />
+						{isOwner && <EditHabit habit={habit} />}
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
 						<div className="flex gap-4 font-mono text-xs text-muted-foreground">
 							<span>{totalDays}x</span>
-							{currentStreak > 0 && (
-								<span className="flex items-center gap-1 text-orange-500">
-									<Flame className="h-3 w-3" />
-									{currentStreak}x streak
-								</span>
-							)}
+							{currentStreak > 0 && <span>🔥 {currentStreak}x streak</span>}
 							<span>{completionPercentage}% complete</span>
+							{sparkCount > 0 && <span>✨ {sparkCount} sparks</span>}
 						</div>
 					</div>
 				</div>
 				<div className="flex items-center gap-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={handleTrackToday}
-						disabled={isTodayTracked || isPending}
-						className="gap-1.5"
-					>
-						<CalendarIcon className="h-3 w-3" />
-						Today
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={handleTrackYesterday}
-						disabled={isYesterdayTracked || isPending}
-						className="gap-1.5"
-					>
-						<ClockIcon className="h-3 w-3" />
-						Yesterday
-					</Button>
-					<Button
-						variant="destructive"
-						size="sm"
-						onClick={handleRemove}
-						disabled={isPending}
-					>
-						<Trash2Icon className="h-4 w-4" />
-					</Button>
+					{isOwner ? (
+						<>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={handleTrackToday}
+								disabled={isTodayTracked || isPending}
+								className="gap-1.5"
+							>
+								<CalendarIcon className="h-3 w-3" />
+								Today
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={handleTrackYesterday}
+								disabled={isYesterdayTracked || isPending}
+								className="gap-1.5"
+							>
+								<ClockIcon className="h-3 w-3" />
+								Yesterday
+							</Button>
+							<Button
+								variant="destructive"
+								size="sm"
+								onClick={handleRemove}
+								disabled={isPending}
+							>
+								<Trash2Icon className="h-4 w-4" />
+							</Button>
+						</>
+					) : (
+						<SparkButton
+							habitId={habit.id}
+							initialCount={sparkCount}
+							initialSparked={hasSparked}
+						/>
+					)}
 				</div>
 			</div>
-
 			<div className="overflow-x-auto pb-2">
 				<div className="inline-flex gap-1">
 					<div className="mr-2 flex w-8 flex-col gap-1">
@@ -259,7 +277,13 @@ export default function HabitGrid({
 															: undefined
 													}
 													disabled={new Date(dateStr) > new Date()}
-													onClick={(e) => handleToggleDay(habit.id, dateStr, e)}
+													onClick={(e) => {
+														if (!isOwner) {
+															return;
+														}
+
+														return handleToggleDay(habit.id, dateStr, e);
+													}}
 													onMouseEnter={() => setHoveredDate(dateStr)}
 													onMouseLeave={() => setHoveredDate(null)}
 													className={cn(
@@ -276,9 +300,12 @@ export default function HabitGrid({
 						</div>
 
 						<div className={"flex justify-between"}>
-							<div className={"flex mt-3 items-center gap-x-2"}>
-								<HabitFrequency habit={habit} />
-								<EditHabitFrequency habit={habit} />
+							<div className="flex mt-3 items-center gap-x-2">
+								<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+									<CalendarDays className="h-3 w-3" />
+									<HabitFrequency habit={habit} />
+								</div>
+								{isOwner && <EditHabitFrequency habit={habit} />}
 							</div>
 
 							<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">

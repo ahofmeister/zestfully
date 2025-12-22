@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+	boolean,
 	check,
 	date,
 	index,
@@ -27,6 +28,9 @@ export type Weekday = (typeof WEEKDAYS)[number];
 
 export const FREQUENCY_TYPES = ["daily", "per_week", "scheduled_days"] as const;
 export type FrequencyType = (typeof FREQUENCY_TYPES)[number];
+
+export const VISIBILITY_TYPES = ["private", "members", "public"] as const;
+export type Visibility = (typeof VISIBILITY_TYPES)[number];
 
 export const food = pgTable(
 	"food",
@@ -142,6 +146,9 @@ export const habitSchema = pgTable(
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 		color: text("color").default("#10b981").notNull(),
+		visibility: text("visibility", { enum: VISIBILITY_TYPES })
+			.notNull()
+			.default("private"),
 	},
 	(table) => [
 		index("habits_user_id_idx").on(table.userId),
@@ -150,25 +157,38 @@ export const habitSchema = pgTable(
 			as: "permissive",
 			for: "select",
 			to: "authenticated",
-			using: sql`auth.uid() = user_id`,
+			using: sql`user_id = auth.uid()`,
+		}),
+		pgPolicy("users_view_public_habits", {
+			as: "permissive",
+			for: "select",
+			to: "public",
+			using: sql`visibility = 'public'`,
+		}),
+		pgPolicy("members_view_member_habits", {
+			as: "permissive",
+			for: "select",
+			to: "authenticated",
+			using: sql`visibility = 'members'`,
 		}),
 		pgPolicy("users_insert_own_habits", {
 			as: "permissive",
 			for: "insert",
 			to: "authenticated",
-			withCheck: sql`auth.uid() = user_id`,
+			withCheck: sql`user_id = auth.uid()`,
 		}),
 		pgPolicy("users_update_own_habits", {
 			as: "permissive",
 			for: "update",
 			to: "authenticated",
-			using: sql`auth.uid() = user_id`,
+			using: sql`user_id = auth.uid()`,
+			withCheck: sql`user_id = auth.uid()`,
 		}),
 		pgPolicy("users_delete_own_habits", {
 			as: "permissive",
 			for: "delete",
 			to: "authenticated",
-			using: sql`auth.uid() = user_id`,
+			using: sql`user_id = auth.uid()`,
 		}),
 	],
 ).enableRLS();
@@ -192,36 +212,150 @@ export const habitCompletion = pgTable(
 			for: "select",
 			to: "authenticated",
 			using: sql`EXISTS (
-        SELECT 1 FROM habit 
-        WHERE habit.id = habit_id 
-        AND habit.user_id = auth.uid()
-      )`,
+    SELECT 1 FROM habit 
+    WHERE habit.id = habit_id 
+    AND habit.user_id = auth.uid()
+  )`,
+		}),
+		pgPolicy("users_view_public_completions", {
+			as: "permissive",
+			for: "select",
+			to: "public",
+			using: sql`EXISTS (
+    SELECT 1 FROM habit 
+    WHERE habit.id = habit_id 
+    AND habit.visibility = 'public'
+  )`,
+		}),
+		pgPolicy("members_view_member_completions", {
+			as: "permissive",
+			for: "select",
+			to: "authenticated",
+			using: sql`EXISTS (
+    SELECT 1 FROM habit 
+    WHERE habit.id = habit_id 
+    AND habit.visibility = 'members'
+  )`,
 		}),
 		pgPolicy("users_insert_own_completions", {
 			as: "permissive",
 			for: "insert",
 			to: "authenticated",
 			withCheck: sql`EXISTS (
-        SELECT 1 FROM habit 
-        WHERE habit.id = habit_id 
-        AND habit.user_id = auth.uid()
-      )`,
+    SELECT 1 FROM habit 
+    WHERE habit.id = habit_id 
+    AND habit.user_id = auth.uid()
+  )`,
 		}),
 		pgPolicy("users_delete_own_completions", {
 			as: "permissive",
 			for: "delete",
 			to: "authenticated",
 			using: sql`EXISTS (
-        SELECT 1 FROM habit 
-        WHERE habit.id = habit_id 
-        AND habit.user_id = auth.uid()
-      )`,
+    SELECT 1 FROM habit 
+    WHERE habit.id = habit_id 
+    AND habit.user_id = auth.uid()
+  )`,
+		}),
+	],
+).enableRLS();
+
+export const profileSchema = pgTable(
+	"profile",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		userId: uuid("user_id").notNull().unique(),
+		username: text("username").notNull().unique(),
+		bio: text("bio"),
+		isPublic: boolean("is_public").notNull().default(false),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	},
+	(table) => [
+		index("profile_username_idx").on(table.username),
+		index("profile_user_id_idx").on(table.userId),
+		check(
+			"username_length",
+			sql`char_length(${table.username}) >= 3 AND char_length(${table.username}) <= 20`,
+		),
+		check("username_format", sql`${table.username} ~ '^[a-zA-Z0-9_-]+$'`),
+		check(
+			"bio_length",
+			sql`${table.bio} IS NULL OR char_length(${table.bio}) <= 200`,
+		),
+		pgPolicy("users_view_own_profile", {
+			as: "permissive",
+			for: "select",
+			to: "authenticated",
+			using: sql`user_id = auth.uid()`,
+		}),
+		pgPolicy("users_view_public_profiles", {
+			as: "permissive",
+			for: "select",
+			to: "public",
+			using: sql`is_public = true`,
+		}),
+		pgPolicy("users_update_own_profile", {
+			as: "permissive",
+			for: "update",
+			to: "authenticated",
+			using: sql`user_id = auth.uid()`,
+			withCheck: sql`user_id = auth.uid()`,
+		}),
+	],
+).enableRLS();
+
+export const sparkSchema = pgTable(
+	"spark",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => profileSchema.id, { onDelete: "cascade" }),
+		habitId: uuid("habit_id")
+			.notNull()
+			.references(() => habitSchema.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		unique("spark_profile_habit_unique").on(table.habitId, table.userId),
+		index("spark_habit_id_idx").on(table.habitId),
+		index("spark_user_id_idx").on(table.userId),
+		pgPolicy("users_insert_own_sparks", {
+			as: "permissive",
+			for: "insert",
+			to: "authenticated",
+			withCheck: sql`user_id = auth.uid()`,
+		}),
+		pgPolicy("users_view_all_sparks", {
+			as: "permissive",
+			for: "select",
+			to: "public",
+			using: sql`true`,
+		}),
+		pgPolicy("users_delete_own_sparks", {
+			as: "permissive",
+			for: "delete",
+			to: "authenticated",
+			withCheck: sql`user_id = auth.uid()`,
 		}),
 	],
 ).enableRLS();
 
 export const habitRelations = relations(habitSchema, ({ many }) => ({
 	completions: many(habitCompletion),
+	sparks: many(sparkSchema),
+}));
+
+export const sparkRelations = relations(sparkSchema, ({ one }) => ({
+	habit: one(habitSchema, {
+		fields: [sparkSchema.habitId],
+		references: [habitSchema.id],
+	}),
+	profile: one(profileSchema, {
+		fields: [sparkSchema.userId],
+		references: [profileSchema.id],
+	}),
 }));
 
 export const habitCompletionRelations = relations(
