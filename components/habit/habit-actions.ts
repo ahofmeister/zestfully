@@ -7,6 +7,7 @@ import {
 	type FrequencyType,
 	habitCompletion,
 	habitSchema,
+	type Visibility,
 	type Weekday,
 } from "@/drizzle/schema";
 
@@ -177,5 +178,25 @@ export async function updateHabitFrequency(
 			success: false,
 			error: "Failed to update habit frequency. Please try again.",
 		};
+	}
+}
+
+export async function updateHabitVisibility(
+	habitId: string,
+	visibility: Visibility,
+) {
+	try {
+		await dbTransaction(async (tx) => {
+			await tx
+				.update(habitSchema)
+				.set({ visibility, updatedAt: new Date() })
+				.where(eq(habitSchema.id, habitId));
+		});
+
+		revalidatePath("/habits");
+		return { success: true };
+	} catch (error) {
+		console.error("Failed to update visibility:", error);
+		return { error: "Failed to update visibility" };
 	}
 }

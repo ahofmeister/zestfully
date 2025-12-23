@@ -169,7 +169,12 @@ export default function HabitGrid({
 				<div className="space-y-1">
 					<div className="flex items-center gap-2">
 						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
-						{isOwner && <HabitVisibility visibility={habit.visibility} />}
+						{isOwner && (
+							<HabitVisibility
+								visibility={habit.visibility}
+								habitId={habit.id}
+							/>
+						)}
 						{isOwner && <EditHabit habit={habit} />}
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
