@@ -13,7 +13,7 @@ export async function giveSpark(habitId: string) {
 	} = await supabase.auth.getUser();
 
 	if (!user) {
-		return { error: "You must be logged in to give sparks" };
+		return { error: "NOT_AUTHENTICATED" };
 	}
 
 	try {
@@ -42,7 +42,7 @@ export async function removeSpark(habitId: string) {
 	} = await supabase.auth.getUser();
 
 	if (!user) {
-		return { error: "You must be logged in to remove sparks" };
+		return { error: "NOT_AUTHENTICATED" };
 	}
 
 	try {

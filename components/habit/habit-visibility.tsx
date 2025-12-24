@@ -64,33 +64,28 @@ export function HabitVisibility({
 	};
 
 	return (
-		<TooltipProvider>
-			<Tooltip>
-				<TooltipTrigger asChild>
-					<DropdownMenu>
-						<DropdownMenuTrigger disabled={isPending}>
-							<Icon className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-accent" />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							{VISIBILITY_CONFIG.map(({ value, icon: MenuIcon, label }) => (
-								<DropdownMenuItem
-									key={value}
-									onClick={() => handleChange(value)}
-								>
-									<MenuIcon className="mr-2 h-4 w-4" />
-									{label}
-									{optimisticVisibility === value && (
-										<Check className="ml-auto h-4 w-4" />
-									)}
-								</DropdownMenuItem>
-							))}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</TooltipTrigger>
-				<TooltipContent>
-					<p>{label}</p>
-				</TooltipContent>
-			</Tooltip>
-		</TooltipProvider>
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<DropdownMenu>
+					<DropdownMenuTrigger disabled={isPending}>
+						<Icon className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-accent" />
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						{VISIBILITY_CONFIG.map(({ value, icon: MenuIcon, label }) => (
+							<DropdownMenuItem key={value} onClick={() => handleChange(value)}>
+								<MenuIcon className="mr-2 h-4 w-4" />
+								{label}
+								{optimisticVisibility === value && (
+									<Check className="ml-auto h-4 w-4" />
+								)}
+							</DropdownMenuItem>
+						))}
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</TooltipTrigger>
+			<TooltipContent>
+				<p>{label}</p>
+			</TooltipContent>
+		</Tooltip>
 	);
 }

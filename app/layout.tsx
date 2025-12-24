@@ -12,6 +12,7 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const defaultUrl = process.env.VERCEL_URL
 	? `https://${process.env.VERCEL_URL}`
@@ -66,7 +67,9 @@ export default function RootLayout({
 							</div>
 						</nav>
 						<div className="mx-2 mt-8 md:mt-4 flex-1 overflow-y-auto">
-							<NuqsAdapter>{children}</NuqsAdapter>
+							<NuqsAdapter>
+								<TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+							</NuqsAdapter>
 						</div>
 					</main>
 				</ThemeProvider>

@@ -78,6 +78,9 @@ export default async function ProfilePage(props: {
 							habit={habit}
 							isOwner={isOwnProfile}
 							sparkCount={habit.sparks.length}
+							hasSparked={
+								!!user && habit.sparks.some((s) => s.userId === user.id)
+							}
 						/>
 					</div>
 				))}

@@ -6,6 +6,7 @@ import {
 	ClockIcon,
 	Trash2Icon,
 } from "lucide-react";
+import type React from "react";
 import { useOptimistic, useState, useTransition } from "react";
 
 import {
@@ -178,16 +179,21 @@ export default function HabitGrid({
 						{isOwner && <EditHabit habit={habit} />}
 					</div>
 					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
-						<div className="flex gap-4 font-mono text-xs text-muted-foreground">
+						<div className="flex gap-4 font-mono text-xs text-muted-foreground items-center">
 							<span>{totalDays}x</span>
 							{currentStreak > 0 && <span>🔥 {currentStreak}x streak</span>}
 							<span>{completionPercentage}% complete</span>
-							{sparkCount > 0 && <span>✨ {sparkCount}</span>}
+							<SparkButton
+								habitId={habit.id}
+								initialCount={sparkCount}
+								initialSparked={hasSparked}
+								isOwner={isOwner}
+							/>
 						</div>
 					</div>
 				</div>
 				<div className="flex items-center gap-2">
-					{isOwner ? (
+					{isOwner && (
 						<>
 							<Button
 								variant="outline"
@@ -218,13 +224,6 @@ export default function HabitGrid({
 								<Trash2Icon className="h-4 w-4" />
 							</Button>
 						</>
-					) : (
-						<SparkButton
-							isLoggedIn={isOwner}
-							habitId={habit.id}
-							initialCount={sparkCount}
-							initialSparked={hasSparked}
-						/>
 					)}
 				</div>
 			</div>

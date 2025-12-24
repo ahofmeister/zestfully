@@ -1,22 +1,26 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { giveSpark, removeSpark } from "@/components/habit/spark/spark-actions";
 import { Button } from "@/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export default function SparkButton({
 	habitId,
 	initialCount,
 	initialSparked,
-	isLoggedIn,
+	isOwner,
 }: {
 	habitId: string;
 	initialCount: number;
 	initialSparked: boolean;
-	isLoggedIn: boolean;
+	isOwner: boolean;
 }) {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -31,19 +35,21 @@ export default function SparkButton({
 	);
 
 	const handleToggleSpark = () => {
-		if (!isLoggedIn) {
-			setShowPrompt(true);
-			setTimeout(() => setShowPrompt(false), 3000);
+		if (isOwner) {
 			return;
 		}
 
 		startTransition(async () => {
 			setOptimisticState(optimisticState.sparked ? "remove" : "add");
 
-			if (optimisticState.sparked) {
-				await removeSpark(habitId);
-			} else {
-				await giveSpark(habitId);
+			const result = optimisticState.sparked
+				? await removeSpark(habitId)
+				: await giveSpark(habitId);
+
+			if (result?.error === "NOT_AUTHENTICATED") {
+				setShowPrompt(true);
+				setTimeout(() => setShowPrompt(false), 3000);
+				setOptimisticState(optimisticState.sparked ? "add" : "remove");
 			}
 		});
 	};
@@ -51,30 +57,36 @@ export default function SparkButton({
 	if (showPrompt) {
 		return (
 			<Button
-				variant="outline"
+				variant="ghost"
 				size="sm"
 				onClick={() => router.push(`/sign-in?redirect=${pathname}`)}
 				className="gap-1.5 animate-in fade-in"
 			>
-				<Sparkles className="h-3 w-3" />
 				<span className="text-xs">Sign in to spark</span>
 			</Button>
 		);
 	}
 
-	return (
+	const button = (
 		<Button
-			variant={optimisticState.sparked ? "default" : "outline"}
+			variant="ghost"
 			size="sm"
 			onClick={handleToggleSpark}
-			disabled={isPending}
-			className={cn(
-				"gap-1.5 transition-all",
-				optimisticState.sparked && "bg-orange-500 hover:bg-orange-600",
-			)}
+			disabled={isPending || isOwner}
+			className={cn("gap-1.5 transition-all")}
 		>
-			<Sparkles className="h-3 w-3" />
-			<span>{optimisticState.count}</span>
+			✨<span>{optimisticState.count}</span>
 		</Button>
+	);
+
+	return isOwner ? (
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<span className="inline-flex">{button}</span>
+			</TooltipTrigger>
+			<TooltipContent>You can't spark your own habit</TooltipContent>
+		</Tooltip>
+	) : (
+		button
 	);
 }
