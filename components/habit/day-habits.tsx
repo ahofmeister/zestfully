@@ -1,5 +1,5 @@
 "use client";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, CheckIcon, Circle, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { useTransition } from "react";
 import { toggleHabitCompletion } from "@/components/habit/habit-actions";
@@ -24,78 +24,55 @@ export default function DayHabits({
 		});
 	};
 
-	const completedCount = habits.filter((h) =>
-		h.completions.some((c) => c.completedAt === selectedDate),
-	).length;
-
 	return (
-		<div className="space-y-6">
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center justify-between">
-						<span>Habits</span>
-						<span className="text-sm font-normal text-muted-foreground">
-							{completedCount}/{habits.length} completed
-						</span>
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					{habits.length === 0 ? (
-						<div className="text-center py-8">
-							<p className="text-muted-foreground mb-4">No habits yet</p>
-							<Link href="/habits">
-								<Button>Create your first habit</Button>
-							</Link>
-						</div>
-					) : (
-						<div className="space-y-2">
-							{habits.map((habit) => {
-								const isCompleted = habit.completions.some(
-									(c) => c.completedAt === selectedDate,
-								);
+		<div className="space-y-2">
+			<Link href="/habits">
+				<Button variant="link">View All Habits →</Button>
+			</Link>
 
-								return (
-									<div
-										key={habit.id}
-										className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors"
-									>
-										<div className="flex items-center gap-3 flex-1">
-											{isCompleted ? (
-												<CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-											) : (
-												<Circle className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-											)}
-											<span
-												className={
-													isCompleted
-														? "line-through text-muted-foreground"
-														: ""
-												}
-											>
-												{habit.name}
-											</span>
-										</div>
+			<div className={"bg-secondary rounded-xl"}>
+				{habits.length === 0 ? (
+					<div className="text-center">
+						<p className="text-muted-foreground mb-4">No habits yet</p>
+						<Link href="/habits">
+							<Button>Create your first habit</Button>
+						</Link>
+					</div>
+				) : (
+					<div className="space-y-2">
+						{habits.map((habit) => {
+							const isCompleted = habit.completions.some(
+								(c) => c.completedAt === selectedDate,
+							);
 
-										<Button
-											size="sm"
-											variant={isCompleted ? "outline" : "default"}
-											onClick={() => handleToggle(habit.id)}
-											disabled={isPending}
+							return (
+								<div
+									key={habit.id}
+									className="flex items-center justify-between p-3 rounded-lg transition-colors"
+								>
+									<div className="flex items-center gap-3 flex-1">
+										<span
+											className={
+												isCompleted ? "line-through text-muted-foreground" : ""
+											}
 										>
-											{isCompleted ? "Untrack" : "Track"}
-										</Button>
+											{habit.name}
+										</span>
 									</div>
-								);
-							})}
-						</div>
-					)}
-				</CardContent>
-			</Card>
 
-			<div className="flex justify-center">
-				<Link href="/habits">
-					<Button variant="outline">View All Habits →</Button>
-				</Link>
+									<Button
+										size="sm"
+										variant={"ghost"}
+										onClick={() => handleToggle(habit.id)}
+										disabled={isPending}
+									>
+										{isCompleted ? <CheckIcon /> : <PlusIcon />}
+									</Button>
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		</div>
 	);

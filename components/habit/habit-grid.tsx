@@ -1,5 +1,6 @@
 "use client";
 import confetti from "canvas-confetti";
+import { isToday } from "date-fns";
 import {
 	CalendarDays,
 	CalendarIcon,
@@ -8,7 +9,6 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { useOptimistic, useState, useTransition } from "react";
-
 import {
 	formatDate,
 	generateYearWeeks,
@@ -267,7 +267,6 @@ export default function HabitGrid({
 
 											const dateStr = formatDate(date);
 											const isCompleted = completionDates.has(dateStr);
-											const isToday = isDateToday(date);
 
 											return (
 												<Button
@@ -295,7 +294,7 @@ export default function HabitGrid({
 													className={cn(
 														"h-[18px] w-[18px] rounded-sm border p-0 transition-all hover:scale-110",
 														isCompleted ? "shadow-sm" : "bg-secondary/30",
-														isToday && "ring-1 ring-accent/80",
+														isToday(date) && "ring-1 ring-accent/80",
 													)}
 												/>
 											);
