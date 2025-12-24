@@ -59,6 +59,12 @@ export default function RootLayout({
 									<NavigationMenuItem>
 										<NavigationMenuLink href={"/home"}>Home</NavigationMenuLink>
 									</NavigationMenuItem>
+
+									<NavigationMenuItem>
+										<NavigationMenuLink href={"/habits"}>
+											Habits
+										</NavigationMenuLink>
+									</NavigationMenuItem>
 								</NavigationMenuList>
 							</NavigationMenu>
 							<div className="flex items-center text-sm justify-self-end">
