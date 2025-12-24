@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import CreateHabit from "@/components/habit/create-habit";
 import HabitGrid from "@/components/habit/habit-grid";
 import { dbTransaction } from "@/drizzle/client";
 import { habitSchema } from "@/drizzle/schema";
@@ -27,6 +28,7 @@ const HabitsPage = async () => {
 
 	return (
 		<div className="mx-auto w-full max-w-7xl px-4 py-8 space-y-8">
+			<CreateHabit />
 			{habits.map((habit) => (
 				<HabitGrid
 					key={habit.id}

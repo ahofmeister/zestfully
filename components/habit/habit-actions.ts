@@ -2,6 +2,7 @@
 
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import type { BaseFormState } from "@/components/form-utils";
 import { dbTransaction } from "@/drizzle/client";
 import {
 	type FrequencyType,
@@ -116,15 +117,10 @@ export async function renameHabit(
 	}
 }
 
-type FrequencyFormState = {
-	success: boolean;
-	error?: string;
-};
-
 export async function updateHabitFrequency(
-	_prevState: FrequencyFormState,
+	_prevState: BaseFormState,
 	formData: FormData,
-): Promise<FrequencyFormState> {
+): Promise<BaseFormState> {
 	const habitId = formData.get("habitId") as string;
 	const frequencyType = formData.get("frequencyType") as FrequencyType;
 	const frequencyTarget = formData.get("frequencyTarget");
@@ -199,4 +195,26 @@ export async function updateHabitVisibility(
 		console.error("Failed to update visibility:", error);
 		return { error: "Failed to update visibility" };
 	}
+}
+
+export async function createHabit(
+	_: BaseFormState,
+	formData: FormData,
+): Promise<BaseFormState> {
+	const name = formData.get("name") as string;
+	const color = formData.get("color") as string;
+
+	if (!name || !color) {
+		return { error: "Name and color are required", success: false };
+	}
+
+	await dbTransaction(async (tx) => {
+		await tx.insert(habitSchema).values({
+			name,
+			color,
+		});
+	});
+
+	revalidatePath("/");
+	return { success: true };
 }

@@ -1,7 +1,7 @@
 "use client";
-import { PencilIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { renameHabit } from "@/components/habit/habit-actions";
+import { createHabit } from "@/components/habit/habit-actions";
 import HabitForm from "@/components/habit/habit-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,15 +13,13 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import type { habitSchema } from "@/drizzle/schema";
 
-export default function EditHabit({
-	habit,
-}: {
-	habit: typeof habitSchema.$inferSelect;
-}) {
+export default function CreateHabit() {
 	const [open, setOpen] = useState(false);
-	const [state, formAction, isPending] = useActionState(renameHabit, null);
+	const [state, formAction, isPending] = useActionState(createHabit, {
+		error: undefined,
+		success: false,
+	});
 	const formRef = useRef<HTMLFormElement>(null);
 
 	useEffect(() => {
@@ -34,23 +32,19 @@ export default function EditHabit({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="ghost" size="iconSm">
-					<PencilIcon size={12} />
+				<Button variant="default" size="sm" className="gap-1.5">
+					<PlusIcon className="h-4 w-4" />
+					New Habit
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<form ref={formRef} action={formAction}>
 					<DialogHeader>
-						<DialogTitle>Edit Habit</DialogTitle>
+						<DialogTitle>Create New Habit</DialogTitle>
 					</DialogHeader>
 
 					<div className="py-4">
-						<input type="hidden" name="habitId" value={habit.id} />
-						<HabitForm
-							defaultName={habit.name}
-							defaultColor={habit.color}
-							isPending={isPending}
-						/>
+						<HabitForm isPending={isPending} />
 
 						{state?.error && (
 							<p className="text-sm text-destructive mt-4">{state.error}</p>
@@ -69,7 +63,7 @@ export default function EditHabit({
 							</Button>
 						</DialogClose>
 						<Button type="submit" size="sm" disabled={isPending}>
-							{isPending ? "Saving..." : "Save"}
+							{isPending ? "Creating..." : "Create Habit"}
 						</Button>
 					</DialogFooter>
 				</form>

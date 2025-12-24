@@ -135,7 +135,13 @@ export const habitSchema = pgTable(
 	"habit",
 	{
 		id: uuid("id").defaultRandom().primaryKey(),
-		userId: uuid("user_id").notNull(),
+		userId: uuid("user_id")
+			.default(
+				sql`auth.
+        uid
+        ()`,
+			)
+			.notNull(),
 		name: text("name").notNull(),
 		frequencyType: text("frequency_type")
 			.$type<FrequencyType>()

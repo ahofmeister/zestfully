@@ -74,7 +74,9 @@ export default function RootLayout({
 						</nav>
 						<div className="mx-2 mt-8 md:mt-4 flex-1 overflow-y-auto">
 							<NuqsAdapter>
-								<TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+								<TooltipProvider delayDuration={300}>
+									{children}
+								</TooltipProvider>
 							</NuqsAdapter>
 						</div>
 					</main>

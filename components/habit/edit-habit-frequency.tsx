@@ -33,9 +33,8 @@ export default function EditHabitFrequency(props: {
 	const [frequencyTarget, setFrequencyTarget] = useState<number>(
 		props.habit.frequencyTarget || 1,
 	);
-	const frequencyDays1 = props.habit.frequencyDays;
 	const [frequencyDays, setFrequencyDays] = useState<Weekday[]>(
-		frequencyDays1 || [],
+		props.habit.frequencyDays || [],
 	);
 
 	const [state, formAction, isPending] = useActionState(updateHabitFrequency, {
