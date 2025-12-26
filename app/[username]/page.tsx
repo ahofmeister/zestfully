@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import HabitGrid from "@/components/habit/habit-grid";
+import MilestonesList from "@/components/milestone/milestone-list";
 import { dbTransaction } from "@/drizzle/client";
 import { profileSchema } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
@@ -65,13 +66,16 @@ export default async function ProfilePage(props: {
 	return (
 		<div className="container mx-auto max-w-7xl p-8">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold">@{profile.username}</h1>
+				<h1 className="text-3xl font-bold">{profile.username}</h1>
 				{profile.bio && (
 					<p className="text-muted-foreground mt-2">{profile.bio}</p>
 				)}
 			</div>
 
 			<div className="space-y-6">
+				<section>
+					<MilestonesList username={profile.username} />
+				</section>
 				{habits.map((habit) => (
 					<div key={habit.id}>
 						<HabitGrid

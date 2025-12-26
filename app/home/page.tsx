@@ -1,5 +1,7 @@
 import { DateSelector } from "@/components/dashboard/date-selector";
 import HabitsList from "@/components/habit/habits-list";
+import MilestoneDialog from "@/components/milestone/milestone-form";
+import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage(props: {
 	searchParams: Promise<{
@@ -11,12 +13,20 @@ export default async function DashboardPage(props: {
 		searchParams.date || new Date().toISOString().split("T")[0];
 
 	return (
-		<div className="mx-auto max-w-xl px-2">
+		<div className="mx-auto max-w-xl px-2 space-y-6">
 			<div className="mb-8">
 				<DateSelector />
 			</div>
 
-			<HabitsList selectedDate={selectedDate} />
+			<section>
+				<HabitsList selectedDate={selectedDate} />
+			</section>
+
+			<section>
+				<MilestoneDialog>
+					<Button>Create Milestone</Button>
+				</MilestoneDialog>
+			</section>
 		</div>
 	);
 }
