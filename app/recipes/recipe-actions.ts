@@ -17,7 +17,7 @@ export async function saveRecipe(recipe: NewRecipe) {
 
 	if (newRecipe) {
 		ingredients.map(async (ingredient) => {
-			const { data, error } = await supabase
+			const { error } = await supabase
 				.from("ingredient")
 				.insert({ ...ingredient, recipe_id: newRecipe.id });
 			console.log(error);
