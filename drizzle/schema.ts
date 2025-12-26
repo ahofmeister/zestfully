@@ -373,3 +373,66 @@ export const habitCompletionRelations = relations(
 		}),
 	}),
 );
+
+export const milestones = pgTable(
+	"milestone",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		userId: uuid("user_id").default(sql`auth.uid()`).notNull(),
+		name: text("name").notNull(),
+		description: text("description"),
+		color: text("color").default("#10b981").notNull(),
+		visibility: text("visibility")
+			.$type<Visibility>()
+			.notNull()
+			.default("private"),
+		startDate: timestamp("start_date").notNull(),
+		resetAt: timestamp("reset_at"),
+		celebrations: integer("celebrations")
+			.array()
+			.default([7, 30, 100, 365])
+			.notNull(),
+		resetCount: integer("reset_count").default(0).notNull(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	},
+	(table) => [
+		index("milestones_user_id_idx").on(table.userId),
+		index("milestones_visibility_idx").on(table.visibility),
+
+		pgPolicy("users_view_own_milestones", {
+			as: "permissive",
+			for: "select",
+			to: "authenticated",
+			using: sql`user_id = auth.uid()`,
+		}),
+		pgPolicy("users_view_public_milestones", {
+			as: "permissive",
+			for: "select",
+			to: "public",
+			using: sql`visibility = 'public'`,
+		}),
+
+		pgPolicy("users_insert_own_milestones", {
+			as: "permissive",
+			for: "insert",
+			to: "authenticated",
+			withCheck: sql`user_id = auth.uid()`,
+		}),
+
+		pgPolicy("users_update_own_milestones", {
+			as: "permissive",
+			for: "update",
+			to: "authenticated",
+			using: sql`user_id = auth.uid()`,
+			withCheck: sql`user_id = auth.uid()`,
+		}),
+
+		pgPolicy("users_delete_own_milestones", {
+			as: "permissive",
+			for: "delete",
+			to: "authenticated",
+			using: sql`user_id = auth.uid()`,
+		}),
+	],
+).enableRLS();

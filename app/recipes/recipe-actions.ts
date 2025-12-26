@@ -20,7 +20,6 @@ export async function saveRecipe(recipe: NewRecipe) {
 			const { data, error } = await supabase
 				.from("ingredient")
 				.insert({ ...ingredient, recipe_id: newRecipe.id });
-			console.log(data);
 			console.log(error);
 		});
 	}

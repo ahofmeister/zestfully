@@ -1,6 +1,6 @@
 {
-	"id": "5fa8d3b5-3117-4e17-919f-4fe45a94b59b",
-	"prevId": "a51dd06b-d759-4648-b421-294ad8de5316",
+	"id": "44649b12-97a9-49aa-aed8-136ed4e7d3a8",
+	"prevId": "5fa8d3b5-3117-4e17-919f-4fe45a94b59b",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -521,6 +521,153 @@
 				}
 			},
 			"isRLSEnabled": false
+		},
+		"public.milestone": {
+			"name": "milestone",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "auth.uid()"
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"color": {
+					"name": "color",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "'#10b981'"
+				},
+				"visibility": {
+					"name": "visibility",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "'private'"
+				},
+				"start_date": {
+					"name": "start_date",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"reset_at": {
+					"name": "reset_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"reset_count": {
+					"name": "reset_count",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 0
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"milestones_user_id_idx": {
+					"name": "milestones_user_id_idx",
+					"columns": [
+						{
+							"expression": "user_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"milestones_visibility_idx": {
+					"name": "milestones_visibility_idx",
+					"columns": [
+						{
+							"expression": "visibility",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {
+				"users_view_own_and_public_milestones": {
+					"name": "users_view_own_and_public_milestones",
+					"as": "PERMISSIVE",
+					"for": "SELECT",
+					"to": ["authenticated"],
+					"using": "user_id = auth.uid() OR visibility IN ('public')"
+				},
+				"users_insert_own_milestones": {
+					"name": "users_insert_own_milestones",
+					"as": "PERMISSIVE",
+					"for": "INSERT",
+					"to": ["authenticated"],
+					"withCheck": "user_id = auth.uid()"
+				},
+				"users_update_own_milestones": {
+					"name": "users_update_own_milestones",
+					"as": "PERMISSIVE",
+					"for": "UPDATE",
+					"to": ["authenticated"],
+					"using": "user_id = auth.uid()",
+					"withCheck": "user_id = auth.uid()"
+				},
+				"users_delete_own_milestones": {
+					"name": "users_delete_own_milestones",
+					"as": "PERMISSIVE",
+					"for": "DELETE",
+					"to": ["authenticated"],
+					"using": "user_id = auth.uid()"
+				}
+			},
+			"checkConstraints": {},
+			"isRLSEnabled": true
 		},
 		"public.profile": {
 			"name": "profile",
