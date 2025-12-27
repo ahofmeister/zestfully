@@ -1,6 +1,6 @@
 "use client";
 
-import { PencilIcon } from "lucide-react";
+import { Bold, PencilIcon } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { updateHabitFrequency } from "@/components/habit/habit-actions";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
 	FREQUENCY_TYPES,
 	type FrequencyType,
@@ -73,7 +74,6 @@ export default function EditHabitFrequency(props: {
 						<DialogTitle className="text-xl">Edit Habit Frequency</DialogTitle>
 					</DialogHeader>
 
-					{/* Hidden inputs for form data */}
 					<input type="hidden" name="habitId" value={props.habit.id} />
 					<input type="hidden" name="frequencyType" value={frequencyType} />
 					{frequencyType === "per_week" && (
@@ -139,7 +139,7 @@ export default function EditHabitFrequency(props: {
 							<Button
 								type="button"
 								variant="outline"
-								size="icon"
+								size="iconSm"
 								onClick={incrementTarget}
 								disabled={isPending || frequencyTarget >= 7}
 								className="h-10 w-10 shrink-0 transition-all hover:scale-105"
@@ -151,34 +151,30 @@ export default function EditHabitFrequency(props: {
 					)}
 
 					{frequencyType === "scheduled_days" && (
-						<div className="space-y-3 py-4 mb-2">
+						<div className="space-y-3 py-4 mb-2 justify-self-center">
 							<p className="text-sm text-muted-foreground text-center">
 								Select the days you want to perform this habit
 							</p>
-							<div className="grid grid-cols-7 gap-2">
+							<ToggleGroup
+								type="multiple"
+								variant="outline"
+								defaultValue={frequencyDays}
+							>
 								{WEEKDAYS.map((day) => {
-									const isSelected = frequencyDays.includes(day as Weekday);
 									return (
-										<Button
-											key={day}
-											type="button"
-											variant={isSelected ? "default" : "outline"}
-											className={`
-												h-14 flex flex-col items-center justify-center gap-1 transition-all
-												${isSelected ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "hover:border-primary/50"}
-											`}
+										<ToggleGroupItem
 											onClick={() => toggleDay(day as Weekday)}
+											className={"uppercase text-xs"}
 											disabled={isPending}
-											aria-label={`${day}, ${isSelected ? "selected" : "not selected"}`}
-											aria-pressed={isSelected}
+											key={day}
+											value={day}
+											aria-label="Toggle ${day} selection"
 										>
-											<span className="text-xs font-semibold uppercase tracking-wide">
-												{day.slice(0, 3)}
-											</span>
-										</Button>
+											{day.slice(0, 3)}
+										</ToggleGroupItem>
 									);
 								})}
-							</div>
+							</ToggleGroup>
 							{frequencyDays.length > 0 && (
 								<p className="text-xs text-center text-muted-foreground">
 									{frequencyDays.length}{" "}

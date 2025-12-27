@@ -72,7 +72,7 @@ export default function SparkButton({
 			variant="ghost"
 			size="sm"
 			onClick={handleToggleSpark}
-			disabled={isPending || isOwner}
+			disabled={isPending}
 			className={cn("gap-1.5 transition-all")}
 		>
 			✨<span>{optimisticState.count}</span>
