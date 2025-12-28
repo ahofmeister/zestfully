@@ -119,14 +119,17 @@ export async function createHabit(
 	return { success: true };
 }
 
-export async function updateHabit(_: BaseFormState, formData: FormData) {
+export async function updateHabit(
+	_: BaseFormState,
+	formData: FormData,
+): Promise<BaseFormState> {
 	const supabase = await createClient();
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 
 	if (!user) {
-		return { error: "Not authenticated" };
+		return { error: "Not authenticated", success: false };
 	}
 
 	const habitId = formData.get("habitId") as string;
@@ -137,7 +140,7 @@ export async function updateHabit(_: BaseFormState, formData: FormData) {
 	const frequencyTarget = formData.get("frequencyTarget") as string;
 
 	if (!habitId || !name || !color) {
-		return { error: "Required fields missing" };
+		return { error: "Required fields missing", success: false };
 	}
 
 	try {
@@ -161,6 +164,6 @@ export async function updateHabit(_: BaseFormState, formData: FormData) {
 		return { success: true };
 	} catch (error) {
 		console.error("Error updating habit:", error);
-		return { error: "Failed to update habit" };
+		return { error: "Failed to update habit", success: false };
 	}
 }

@@ -56,7 +56,10 @@ export default function HabitSettings({
 	habit: typeof habitSchema.$inferSelect;
 }) {
 	const [open, setOpen] = useState(false);
-	const [state, formAction, isPending] = useActionState(updateHabit, null);
+	const [state, formAction, isPending] = useActionState(updateHabit, {
+		error: undefined,
+		success: false,
+	});
 	const formRef = useRef<HTMLFormElement>(null);
 
 	const [selectedColor, setSelectedColor] = useState(habit.color);
