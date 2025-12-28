@@ -113,7 +113,7 @@ export default function HabitGrid({
 	return (
 		<div className="group space-y-2">
 			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-2 min-h-[24px]">
+				<div className="flex items-center gap-2">
 					<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
 					{isOwner && (
 						<div className="flex items-center gap-0.5 transition-opacity text-muted-foreground">
@@ -124,6 +124,11 @@ export default function HabitGrid({
 			</div>
 
 			<div className="flex items-center gap-5 text-xs font-mono text-muted-foreground">
+				<div className="flex items-center gap-2 text-xs text-muted-foreground">
+					<CalendarDays className="h-3 w-3" />
+					<HabitFrequency habit={habit} />
+				</div>
+
 				<span>{totalDays} days</span>
 
 				{currentStreak > 0 && <span>🔥 {currentStreak} streak</span>}
@@ -137,8 +142,8 @@ export default function HabitGrid({
 			</div>
 
 			<div className="overflow-x-auto py-1">
-				<div className="inline-flex gap-1">
-					<div className="mr-2 flex w-8 flex-col gap-1">
+				<div className="inline-flex gap-2">
+					<div className="flex flex-col gap-1">
 						<div className="h-3" />
 						{["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
 							<div
@@ -212,11 +217,6 @@ export default function HabitGrid({
 				</div>
 			</div>
 			<div className="flex items-center justify-between mt-2 pt-2 border-t min-h-[24px]">
-				<div className="flex items-center gap-2 text-xs text-muted-foreground">
-					<CalendarDays className="h-3 w-3" />
-					<HabitFrequency habit={habit} />
-				</div>
-
 				{hoveredDate && (
 					<div className="font-mono text-[10px] text-muted-foreground">
 						{new Date(hoveredDate).toLocaleDateString("en-US", {
