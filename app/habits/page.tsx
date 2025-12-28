@@ -27,7 +27,7 @@ const HabitsPage = async () => {
 	});
 
 	return (
-		<div className="mx-auto w-full max-w-7xl px-4 py-8 space-y-8">
+		<div className="mx-auto w-full px-4 py-8 space-y-8">
 			<CreateHabit />
 			{habits.map((habit) => (
 				<HabitGrid

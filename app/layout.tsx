@@ -72,7 +72,7 @@ export default function RootLayout({
 								<ThemeSwitcher />
 							</div>
 						</nav>
-						<div className="mx-2 mt-8 md:mt-4 flex-1 overflow-y-auto">
+						<div className="p-4 flex-1 overflow-y-auto">
 							<NuqsAdapter>
 								<TooltipProvider delayDuration={300}>
 									{children}

@@ -56,17 +56,7 @@ export default async function MilestonesList({
 		return null;
 	}
 
-	return (
-		<div className="space-y-4">
-			<div className="flex gap-3 flex-wrap">
-				{userMilestones.map((milestone) => (
-					<MilestoneCard
-						key={milestone.id}
-						milestone={milestone}
-						isOwner={isOwner}
-					/>
-				))}
-			</div>
-		</div>
-	);
+	return userMilestones.map((milestone) => (
+		<MilestoneCard key={milestone.id} milestone={milestone} isOwner={isOwner} />
+	));
 }

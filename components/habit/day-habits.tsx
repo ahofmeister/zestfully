@@ -1,10 +1,9 @@
 "use client";
-import { CheckCircle2, CheckIcon, Circle, PlusIcon } from "lucide-react";
+import { CheckIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { useTransition } from "react";
 import { toggleHabitCompletion } from "@/components/habit/habit-actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { habitCompletion, habitSchema } from "@/drizzle/schema";
 
 export default function DayHabits({
