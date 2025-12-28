@@ -64,6 +64,27 @@
 			"when": 1766585139612,
 			"tag": "0008_magenta_sunset_bain",
 			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1766645097927,
+			"tag": "0009_happy_paladin",
+			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1766748402879,
+			"tag": "0010_typical_baron_zemo",
+			"breakpoints": true
+		},
+		{
+			"idx": 11,
+			"version": "7",
+			"when": 1766768272302,
+			"tag": "0011_clean_gunslinger",
+			"breakpoints": true
 		}
 	]
 }
