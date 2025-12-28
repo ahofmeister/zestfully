@@ -9,7 +9,6 @@ import {
 	habitCompletion,
 	habitSchema,
 	type Visibility,
-	type Weekday,
 } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 

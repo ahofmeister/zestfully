@@ -8,12 +8,7 @@ import {
 	subDays,
 	subWeeks,
 } from "date-fns";
-import {
-	type FrequencyType,
-	type habitSchema,
-	WEEKDAYS,
-	type Weekday,
-} from "@/drizzle/schema";
+import { type FrequencyType, WEEKDAYS, type Weekday } from "@/drizzle/schema";
 
 export type StreakOptions = {
 	completions: string[];
