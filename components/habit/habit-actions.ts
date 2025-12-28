@@ -119,7 +119,7 @@ export async function createHabit(
 	return { success: true };
 }
 
-export async function updateHabit(prevState: any, formData: FormData) {
+export async function updateHabit(_: BaseFormState, formData: FormData) {
 	const supabase = await createClient();
 	const {
 		data: { user },
