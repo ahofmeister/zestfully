@@ -5,6 +5,7 @@ import {
 	date,
 	index,
 	integer,
+	jsonb,
 	pgPolicy,
 	pgTable,
 	real,
@@ -388,10 +389,13 @@ export const milestones = pgTable(
 			.default("private"),
 		startDate: timestamp("start_date").notNull(),
 		resetAt: timestamp("reset_at"),
-		celebrations: integer("celebrations")
-			.array()
-			.default([7, 30, 100, 365])
-			.notNull(),
+		celebrations:
+			jsonb("celebrations").$type<
+				Array<{
+					value: number;
+					unit: "days" | "weeks" | "months" | "years";
+				}>
+			>(),
 		resetCount: integer("reset_count").default(0).notNull(),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -1,6 +1,6 @@
 import { DateSelector } from "@/components/dashboard/date-selector";
 import HabitsList from "@/components/habit/habits-list";
-import MilestoneDialog from "@/components/milestone/milestone-form";
+import MilestoneSettings from "@/components/milestone/milestone-form";
 import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage(props: {
@@ -23,9 +23,9 @@ export default async function DashboardPage(props: {
 			</section>
 
 			<section>
-				<MilestoneDialog>
+				<MilestoneSettings>
 					<Button>Create Milestone</Button>
-				</MilestoneDialog>
+				</MilestoneSettings>
 			</section>
 		</div>
 	);
