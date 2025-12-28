@@ -13,7 +13,6 @@ import {
 	formatDate,
 	generateYearWeeks,
 	getMonthLabels,
-	isDateToday,
 } from "@/components/dates";
 import EditHabit from "@/components/habit/edit-habit";
 import EditHabitFrequency from "@/components/habit/edit-habit-frequency";
