@@ -11,6 +11,7 @@ import {
 	type Visibility,
 	type Weekday,
 } from "@/drizzle/schema";
+import { createClient } from "@/utils/supabase/server";
 
 export async function toggleHabitCompletion(habitId: string, date: string) {
 	try {
@@ -48,26 +49,6 @@ export async function toggleHabitCompletion(habitId: string, date: string) {
 	} catch (error) {
 		console.error("Failed to toggle completion:", error);
 		return { success: false, error: "Failed to update habit" };
-	}
-}
-
-export async function trackHabitDay(habitId: string, date: string) {
-	try {
-		await dbTransaction(async (tx) => {
-			await tx
-				.insert(habitCompletion)
-				.values({
-					habitId,
-					completedAt: date,
-				})
-				.onConflictDoNothing();
-		});
-
-		revalidatePath("/habits");
-		return { success: true };
-	} catch (error) {
-		console.error("Failed to track habit:", error);
-		return { success: false, error: "Failed to track habit" };
 	}
 }
 
@@ -117,86 +98,6 @@ export async function renameHabit(
 	}
 }
 
-export async function updateHabitFrequency(
-	_prevState: BaseFormState,
-	formData: FormData,
-): Promise<BaseFormState> {
-	const habitId = formData.get("habitId") as string;
-	const frequencyType = formData.get("frequencyType") as FrequencyType;
-	const frequencyTarget = formData.get("frequencyTarget");
-	const frequencyDays = formData.getAll("frequencyDays") as Weekday[];
-
-	if (!habitId || !frequencyType) {
-		return {
-			success: false,
-			error: "Habit ID and frequency type are required",
-		};
-	}
-
-	if (frequencyType === "per_week") {
-		const targetNum = Number(frequencyTarget);
-		if (!targetNum || targetNum < 1 || targetNum > 7) {
-			return {
-				success: false,
-				error: "Frequency target must be between 1 and 7",
-			};
-		}
-	}
-
-	if (
-		frequencyType === "scheduled_days" &&
-		(!frequencyDays || frequencyDays.length === 0)
-	) {
-		return { success: false, error: "Please select at least one day" };
-	}
-
-	try {
-		await dbTransaction(async (tx) => {
-			await tx
-				.update(habitSchema)
-				.set({
-					frequencyType,
-					frequencyTarget:
-						frequencyType === "per_week" ? Number(frequencyTarget) : null,
-					frequencyDays:
-						frequencyType === "scheduled_days" ? frequencyDays : [],
-					updatedAt: new Date(),
-				})
-				.where(eq(habitSchema.id, habitId));
-		});
-
-		revalidatePath("/habits");
-
-		return { success: true };
-	} catch (error) {
-		console.error("Failed to update habit frequency:", error);
-		return {
-			success: false,
-			error: "Failed to update habit frequency. Please try again.",
-		};
-	}
-}
-
-export async function updateHabitVisibility(
-	habitId: string,
-	visibility: Visibility,
-) {
-	try {
-		await dbTransaction(async (tx) => {
-			await tx
-				.update(habitSchema)
-				.set({ visibility, updatedAt: new Date() })
-				.where(eq(habitSchema.id, habitId));
-		});
-
-		revalidatePath("/habits");
-		return { success: true };
-	} catch (error) {
-		console.error("Failed to update visibility:", error);
-		return { error: "Failed to update visibility" };
-	}
-}
-
 export async function createHabit(
 	_: BaseFormState,
 	formData: FormData,
@@ -217,4 +118,50 @@ export async function createHabit(
 
 	revalidatePath("/");
 	return { success: true };
+}
+
+export async function updateHabit(prevState: any, formData: FormData) {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return { error: "Not authenticated" };
+	}
+
+	const habitId = formData.get("habitId") as string;
+	const name = formData.get("name") as string;
+	const color = formData.get("color") as string;
+	const visibility = formData.get("visibility") as Visibility;
+	const frequencyType = formData.get("frequencyType") as FrequencyType;
+	const frequencyTarget = formData.get("frequencyTarget") as string;
+
+	if (!habitId || !name || !color) {
+		return { error: "Required fields missing" };
+	}
+
+	try {
+		await dbTransaction(async (tx) => {
+			await tx
+				.update(habitSchema)
+				.set({
+					name: name.trim(),
+					color,
+					visibility,
+					frequencyType,
+					frequencyTarget: frequencyTarget
+						? parseInt(frequencyTarget, 10)
+						: null,
+					updatedAt: new Date(),
+				})
+				.where(eq(habitSchema.id, habitId));
+		});
+
+		revalidatePath("/");
+		return { success: true };
+	} catch (error) {
+		console.error("Error updating habit:", error);
+		return { error: "Failed to update habit" };
+	}
 }

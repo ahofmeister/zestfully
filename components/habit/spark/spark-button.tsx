@@ -67,26 +67,34 @@ export default function SparkButton({
 		);
 	}
 
-	const button = (
-		<Button
-			variant="ghost"
-			size="sm"
+	const SparkInline = (
+		<button
+			type="button"
 			onClick={handleToggleSpark}
-			disabled={isPending}
-			className={cn("gap-1.5 transition-all")}
+			disabled={isPending || isOwner}
+			className={cn(
+				"inline-flex items-center gap-1 font-mono text-xs",
+				"select-none rounded-sm px-1",
+				"bg-transparent border-0",
+				"transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+				isOwner
+					? "opacity-50 cursor-not-allowed"
+					: "cursor-pointer hover:bg-muted/40 active:scale-95",
+			)}
 		>
-			✨<span>{optimisticState.count}</span>
-		</Button>
+			<span aria-hidden>✨</span>
+			<span>{optimisticState.count}</span>
+		</button>
 	);
 
 	return isOwner ? (
 		<Tooltip>
 			<TooltipTrigger asChild>
-				<span className="inline-flex">{button}</span>
+				<span className="inline-flex">{SparkInline}</span>
 			</TooltipTrigger>
 			<TooltipContent>You can't spark your own habit</TooltipContent>
 		</Tooltip>
 	) : (
-		button
+		SparkInline
 	);
 }

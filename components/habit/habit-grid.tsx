@@ -1,12 +1,7 @@
 "use client";
 import confetti from "canvas-confetti";
 import { isToday } from "date-fns";
-import {
-	CalendarDays,
-	CalendarIcon,
-	ClockIcon,
-	Trash2Icon,
-} from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import type React from "react";
 import { useOptimistic, useState, useTransition } from "react";
 import {
@@ -14,20 +9,11 @@ import {
 	generateYearWeeks,
 	getMonthLabels,
 } from "@/components/dates";
-import EditHabit from "@/components/habit/edit-habit";
-import EditHabitFrequency from "@/components/habit/edit-habit-frequency";
-import {
-	deleteHabit,
-	toggleHabitCompletion,
-	trackHabitDay,
-} from "@/components/habit/habit-actions";
+import { toggleHabitCompletion } from "@/components/habit/habit-actions";
 import { HabitFrequency } from "@/components/habit/habit-frequency";
-import { HabitVisibility } from "@/components/habit/habit-visibility";
+import HabitSettings from "@/components/habit/habit-settings";
 import SparkButton from "@/components/habit/spark/spark-button";
-import {
-	calculateCompletionPercentage,
-	calculateCurrentStreak,
-} from "@/components/habit/streak-calculator";
+import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
 import { Button } from "@/components/ui/button";
 import type { habitCompletion, habitSchema } from "@/drizzle/schema";
 import { cn } from "@/lib/utils";
@@ -46,7 +32,7 @@ export default function HabitGrid({
 	hasSparked?: boolean;
 }) {
 	const [hoveredDate, setHoveredDate] = useState<string | null>(null);
-	const [isPending, startTransition] = useTransition();
+	const [_, startTransition] = useTransition();
 
 	const [optimisticCompletions, setOptimisticCompletions] = useOptimistic(
 		habit.completions,
@@ -71,19 +57,9 @@ export default function HabitGrid({
 
 	const totalDays = optimisticCompletions.length;
 
-	const today = formatDate(new Date());
-	const yesterday = (() => {
-		const d = new Date();
-		d.setDate(d.getDate() - 1);
-		return formatDate(d);
-	})();
-
 	const completionDates = new Set(
 		optimisticCompletions.map((c) => c.completedAt),
 	);
-
-	const isTodayTracked = completionDates.has(today);
-	const isYesterdayTracked = completionDates.has(yesterday);
 
 	const handleToggleDay = async (
 		habitId: string,
@@ -127,28 +103,6 @@ export default function HabitGrid({
 		});
 	};
 
-	const handleTrackToday = async () => {
-		startTransition(async () => {
-			setOptimisticCompletions({ action: "add", date: today });
-			await trackHabitDay(habit.id, today);
-		});
-	};
-
-	const handleTrackYesterday = async () => {
-		startTransition(async () => {
-			setOptimisticCompletions({ action: "add", date: yesterday });
-			await trackHabitDay(habit.id, yesterday);
-		});
-	};
-
-	const handleRemove = async () => {
-		if (!confirm(`Delete "${habit.name}"? This cannot be undone.`)) return;
-
-		startTransition(async () => {
-			await deleteHabit(habit.id);
-		});
-	};
-
 	const currentStreak = calculateCurrentStreak({
 		completions: optimisticCompletions.map((c) => c.completedAt),
 		frequencyType: habit.frequencyType,
@@ -156,84 +110,40 @@ export default function HabitGrid({
 		frequencyDays: habit.frequencyDays ?? [],
 	});
 
-	const completionPercentage = calculateCompletionPercentage(
-		optimisticCompletions.map((c) => c.completedAt),
-		habit.frequencyType,
-		habit.frequencyTarget,
-		habit.frequencyDays,
-	);
-
 	return (
-		<div className="space-y-3">
+		<div className="group space-y-2">
 			<div className="flex items-center justify-between">
-				<div className="space-y-1">
-					<div className="flex items-center gap-2">
-						<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
-						{isOwner && (
-							<HabitVisibility
-								visibility={habit.visibility}
-								habitId={habit.id}
-							/>
-						)}
-						{isOwner && <EditHabit habit={habit} />}
-					</div>
-					<div className="flex gap-4 font-mono text-xs text-muted-foreground">
-						<div className="flex gap-4 font-mono text-xs text-muted-foreground items-center">
-							<span>{totalDays}x</span>
-							{currentStreak > 0 && <span>🔥 {currentStreak}x streak</span>}
-							<span>{completionPercentage}% complete</span>
-							<SparkButton
-								habitId={habit.id}
-								initialCount={sparkCount}
-								initialSparked={hasSparked}
-								isOwner={isOwner}
-							/>
-						</div>
-					</div>
-				</div>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 min-h-[24px]">
+					<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
 					{isOwner && (
-						<>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={handleTrackToday}
-								disabled={isTodayTracked || isPending}
-								className="gap-1.5"
-							>
-								<CalendarIcon className="h-3 w-3" />
-								Today
-							</Button>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={handleTrackYesterday}
-								disabled={isYesterdayTracked || isPending}
-								className="gap-1.5"
-							>
-								<ClockIcon className="h-3 w-3" />
-								Yesterday
-							</Button>
-							<Button
-								variant="destructive"
-								size="sm"
-								onClick={handleRemove}
-								disabled={isPending}
-							>
-								<Trash2Icon className="h-4 w-4" />
-							</Button>
-						</>
+						<div className="flex items-center gap-0.5 transition-opacity text-muted-foreground">
+							<HabitSettings habit={habit} />
+						</div>
 					)}
 				</div>
 			</div>
-			<div className="overflow-x-auto pb-2">
+
+			<div className="flex items-center gap-5 text-xs font-mono text-muted-foreground">
+				<span>{totalDays} days</span>
+
+				{currentStreak > 0 && <span>🔥 {currentStreak} streak</span>}
+
+				<SparkButton
+					habitId={habit.id}
+					initialCount={sparkCount}
+					initialSparked={hasSparked}
+					isOwner={isOwner}
+				/>
+			</div>
+
+			<div className="overflow-x-auto py-1">
 				<div className="inline-flex gap-1">
 					<div className="mr-2 flex w-8 flex-col gap-1">
-						<div className="h-4" />
-						{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+						<div className="h-3" />
+						{["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
 							<div
-								key={day}
-								className="flex h-[18px] items-center justify-end font-mono text-[10px] text-muted-foreground"
+								key={`${day}-${i}`}
+								className="flex h-[16px] items-center justify-end font-mono text-[9px] text-muted-foreground"
 							>
 								{day}
 							</div>
@@ -250,7 +160,7 @@ export default function HabitGrid({
 
 								return (
 									<div key={weekKey} className="flex flex-col gap-1">
-										<div className="h-4 font-mono text-[10px] text-muted-foreground">
+										<div className="h-3 font-mono text-[9px] text-muted-foreground">
 											{monthLabels[weekIndex]}
 										</div>
 
@@ -259,19 +169,20 @@ export default function HabitGrid({
 												return (
 													<div
 														key={`${weekKey}-empty-${dayIndex}`}
-														className="h-[18px] w-[18px]"
+														className="h-[16px] w-[16px]"
 													/>
 												);
 											}
 
 											const dateStr = formatDate(date);
 											const isCompleted = completionDates.has(dateStr);
+											const isTodayDate = isToday(date);
 
 											return (
 												<Button
 													size="icon"
 													key={dateStr}
-													variant={"ghost"}
+													variant="ghost"
 													style={
 														isCompleted
 															? {
@@ -280,20 +191,15 @@ export default function HabitGrid({
 																}
 															: undefined
 													}
-													disabled={new Date(dateStr) > new Date()}
-													onClick={(e) => {
-														if (!isOwner) {
-															return;
-														}
-
-														return handleToggleDay(habit.id, dateStr, e);
-													}}
+													disabled={new Date(dateStr) > new Date() || !isOwner}
+													onClick={(e) => handleToggleDay(habit.id, dateStr, e)}
 													onMouseEnter={() => setHoveredDate(dateStr)}
 													onMouseLeave={() => setHoveredDate(null)}
 													className={cn(
-														"h-[18px] w-[18px] rounded-sm border p-0 transition-all hover:scale-110",
+														"h-[16px] w-[16px] rounded-sm border p-0 transition-all hover:scale-110",
 														isCompleted ? "shadow-sm" : "bg-secondary/30",
-														isToday(date) && "ring-1 ring-accent/80",
+														isTodayDate && "ring-1 ring-primary",
+														isOwner && "cursor-pointer",
 													)}
 												/>
 											);
@@ -302,28 +208,25 @@ export default function HabitGrid({
 								);
 							})}
 						</div>
-
-						<div className={"flex justify-between"}>
-							<div className="flex mt-3 items-center gap-x-2">
-								<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-									<CalendarDays className="h-3 w-3" />
-									<HabitFrequency habit={habit} />
-								</div>
-								{isOwner && <EditHabitFrequency habit={habit} />}
-							</div>
-
-							<div className="mt-2 h-5 font-mono text-xs text-muted-foreground self-end">
-								{hoveredDate &&
-									new Date(hoveredDate).toLocaleDateString("en-US", {
-										weekday: "short",
-										month: "short",
-										day: "numeric",
-										year: "numeric",
-									})}
-							</div>
-						</div>
 					</div>
 				</div>
+			</div>
+			<div className="flex items-center justify-between mt-2 pt-2 border-t min-h-[24px]">
+				<div className="flex items-center gap-2 text-xs text-muted-foreground">
+					<CalendarDays className="h-3 w-3" />
+					<HabitFrequency habit={habit} />
+				</div>
+
+				{hoveredDate && (
+					<div className="font-mono text-[10px] text-muted-foreground">
+						{new Date(hoveredDate).toLocaleDateString("en-US", {
+							weekday: "short",
+							month: "short",
+							day: "numeric",
+							year: "numeric",
+						})}
+					</div>
+				)}
 			</div>
 		</div>
 	);
