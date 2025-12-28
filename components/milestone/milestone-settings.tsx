@@ -184,7 +184,7 @@ export default function MilestoneSettings({
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
-			<SheetContent className="max-h-[90vh]">
+			<SheetContent>
 				<form
 					ref={formRef}
 					action={formAction}
