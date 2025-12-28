@@ -418,20 +418,49 @@ export default function MilestoneSettings({
 					</div>
 
 					<SheetFooter>
-						<Button type="submit" disabled={isPending}>
-							{isPending
-								? isEditMode
-									? "Saving..."
-									: "Creating..."
-								: isEditMode
-									? "Save Changes"
-									: "Create Milestone"}
-						</Button>
-						<SheetClose asChild>
-							<Button variant="outline" disabled={isPending}>
-								Cancel
+						<AlertDialog
+							open={showDeleteDialog}
+							onOpenChange={setShowDeleteDialog}
+						>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>Delete Milestone?</AlertDialogTitle>
+									<AlertDialogDescription>
+										Are you sure you want to delete "{milestone?.name}"? This
+										action cannot be undone.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel disabled={isDeleting}>
+										Cancel
+									</AlertDialogCancel>
+									<AlertDialogAction
+										onClick={handleDelete}
+										disabled={isDeleting}
+										className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+									>
+										{isDeleting ? "Deleting..." : "Delete"}
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+
+						<div className={"flex gap-x-2"}>
+							<Button type="submit" disabled={isPending}>
+								{isPending
+									? isEditMode
+										? "Saving..."
+										: "Creating..."
+									: isEditMode
+										? "Save Changes"
+										: "Create Milestone"}
 							</Button>
-						</SheetClose>
+							<SheetClose asChild>
+								<Button variant="outline" disabled={isPending}>
+									Cancel
+								</Button>
+							</SheetClose>
+						</div>
 						{isEditMode && (
 							<Button
 								type="button"
@@ -446,30 +475,6 @@ export default function MilestoneSettings({
 						)}
 					</SheetFooter>
 				</form>
-
-				<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Delete Milestone?</AlertDialogTitle>
-							<AlertDialogDescription>
-								Are you sure you want to delete "{milestone?.name}"? This action
-								cannot be undone.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel disabled={isDeleting}>
-								Cancel
-							</AlertDialogCancel>
-							<AlertDialogAction
-								onClick={handleDelete}
-								disabled={isDeleting}
-								className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-							>
-								{isDeleting ? "Deleting..." : "Delete"}
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
 			</SheetContent>
 		</Sheet>
 	);

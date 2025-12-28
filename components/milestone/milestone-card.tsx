@@ -1,15 +1,12 @@
 "use client";
 import { differenceInDays, format } from "date-fns";
-import { CheckIcon, SettingsIcon, Trash2Icon } from "lucide-react";
-import { useTransition } from "react";
-import { deleteMilestone } from "@/components/milestone/milestone-actions";
+import { CheckIcon, SettingsIcon } from "lucide-react";
 import {
 	calculateCelebrationDate,
 	formatCelebration,
 	sortCelebrations,
 } from "@/components/milestone/milestone-celebration-calculator";
-import MilestoneDrawer from "@/components/milestone/milestone-form";
-import { Button } from "@/components/ui/button";
+import MilestoneDrawer from "@/components/milestone/milestone-settings";
 import {
 	Tooltip,
 	TooltipContent,
