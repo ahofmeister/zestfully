@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import type { BaseFormState } from "@/components/form-utils";
 import { dbTransaction } from "@/drizzle/client";
@@ -30,7 +30,7 @@ export async function deleteMilestone(milestoneId: string) {
 	return { success: true };
 }
 
-export async function createMilestone(
+export async function saveMilestone(
 	_prev: BaseFormState,
 	formData: FormData,
 ): Promise<BaseFormState> {
@@ -43,6 +43,9 @@ export async function createMilestone(
 		return { error: "Not authenticated", success: false };
 	}
 
+	const milestoneId = formData.get("milestoneId") as string;
+	const isUpdate = !!milestoneId;
+
 	const name = formData.get("name") as string;
 	const description = formData.get("description") as string;
 	const color = formData.get("color") as string;
@@ -50,38 +53,86 @@ export async function createMilestone(
 	const startDate = formData.get("startDate") as string;
 	const celebrationsStr = formData.get("celebrations") as string;
 
-	if (!name || !color || !startDate || !visibility) {
+	console.log(name, description, color, visibility, startDate, celebrationsStr);
+
+	if (!name || !color || !visibility) {
 		return { error: "Required fields missing", success: false };
 	}
 
-	let celebrations: number[] = [];
-	try {
-		celebrations = JSON.parse(celebrationsStr);
-		if (!Array.isArray(celebrations) || celebrations.length === 0) {
-			return {
-				error: "At least one celebration milestone required",
-				success: false,
-			};
-		}
-	} catch {
-		return { error: "Invalid celebrations format", success: false };
+	if (!isUpdate && !startDate) {
+		return { error: "Start date required for new milestone", success: false };
 	}
 
+	type Celebration = {
+		value: number;
+		unit: "days" | "weeks" | "months" | "years";
+	};
+
+	let celebrations: Celebration[] | null = null;
+
+	if (celebrationsStr) {
+		try {
+			const parsed = JSON.parse(celebrationsStr);
+
+			if (Array.isArray(parsed)) {
+				const isValid = parsed.every(
+					(c) =>
+						typeof c === "object" &&
+						typeof c.value === "number" &&
+						c.value > 0 &&
+						["days", "weeks", "months", "years"].includes(c.unit),
+				);
+
+				if (!isValid) {
+					return {
+						error: "Invalid celebration format",
+						success: false,
+					};
+				}
+
+				celebrations = parsed.length > 0 ? parsed : null;
+			}
+		} catch {
+			return { error: "Invalid celebrations format", success: false };
+		}
+	}
+
+	const values = {
+		name: name.trim(),
+		description: description?.trim() || null,
+		color,
+		visibility,
+		celebrations,
+	};
+
 	try {
-		await dbTransaction((tx) =>
-			tx.insert(milestones).values({
-				userId: user.id,
-				name: name.trim(),
-				description: description?.trim() || null,
-				color,
-				visibility,
-				startDate: new Date(startDate),
-				celebrations,
-			}),
-		);
+		if (isUpdate) {
+			await dbTransaction((tx) =>
+				tx
+					.update(milestones)
+					.set({
+						...values,
+						updatedAt: new Date(),
+					})
+					.where(
+						and(eq(milestones.id, milestoneId), eq(milestones.userId, user.id)),
+					),
+			);
+		} else {
+			await dbTransaction((tx) =>
+				tx.insert(milestones).values({
+					...values,
+					startDate: new Date(startDate),
+					userId: user.id,
+				}),
+			);
+		}
 	} catch (error) {
 		console.error(error);
-		return { success: false, error: "Failed to create milestone" };
+		return {
+			success: false,
+			error: `Failed to ${isUpdate ? "update" : "create"} milestone`,
+		};
 	}
 
 	revalidatePath("/");

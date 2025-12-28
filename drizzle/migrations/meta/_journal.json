@@ -85,6 +85,13 @@
 			"when": 1766768272302,
 			"tag": "0011_clean_gunslinger",
 			"breakpoints": true
+		},
+		{
+			"idx": 12,
+			"version": "7",
+			"when": 1766945652972,
+			"tag": "0012_clammy_multiple_man",
+			"breakpoints": true
 		}
 	]
 }

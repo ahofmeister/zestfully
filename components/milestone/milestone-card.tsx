@@ -1,9 +1,12 @@
 "use client";
 import { differenceInDays, format } from "date-fns";
-import { CheckIcon, Trash2Icon } from "lucide-react";
-import { useTransition } from "react";
-import { deleteMilestone } from "@/components/milestone/milestone-actions";
-import { Button } from "@/components/ui/button";
+import { CheckIcon, SettingsIcon } from "lucide-react";
+import {
+	calculateCelebrationDate,
+	formatCelebration,
+	sortCelebrations,
+} from "@/components/milestone/milestone-celebration-calculator";
+import MilestoneDrawer from "@/components/milestone/milestone-settings";
 import {
 	Tooltip,
 	TooltipContent,
@@ -21,41 +24,23 @@ export default function MilestoneCard({
 	milestone: Milestone;
 	isOwner: boolean;
 }) {
-	const [isPending, startTransition] = useTransition();
-
 	const today = new Date();
 	const daysSince = differenceInDays(today, new Date(milestone.startDate));
-
-	const handleDelete = async () => {
-		if (!confirm(`Delete "${milestone.name}"? This cannot be undone.`)) {
-			return;
-		}
-
-		startTransition(async () => {
-			await deleteMilestone(milestone.id);
-		});
-	};
 
 	return (
 		<div
 			className="w-50 h-36 p-3 rounded-lg border hover:bg-secondary/50 transition-colors flex flex-col"
 			style={{ borderColor: milestone.color }}
 		>
-			<div className={"flex justify-between"}>
-				<h3 className="font-mono text-xs font-semibold line-clamp-2 mb-2 pr-6">
+			<div className={"flex justify-between items-center"}>
+				<h3 className="font-mono text-xs font-semibold line-clamp-2 pr-6">
 					{milestone.name}
 				</h3>
 
 				{isOwner && (
-					<Button
-						className={"w-4 h-4"}
-						variant="ghost"
-						size="iconSm"
-						onClick={handleDelete}
-						disabled={isPending}
-					>
-						<Trash2Icon className={"size-3.5"} />
-					</Button>
+					<MilestoneDrawer milestone={milestone}>
+						<SettingsIcon size={14} />
+					</MilestoneDrawer>
 				)}
 			</div>
 			<div className="flex-1 flex flex-col items-center justify-center">
@@ -75,31 +60,36 @@ export default function MilestoneCard({
 			</div>
 
 			<div className="flex gap-1 justify-center">
-				{milestone.celebrations.map((celebration) => {
-					const achieved = daysSince >= celebration;
-					return (
-						<Tooltip key={celebration}>
-							<TooltipTrigger asChild>
-								<div
-									key={celebration}
-									className={cn(
-										"h-4 w-4 rounded-sm flex items-center justify-center text-[8px] font-bold transition-all",
-										achieved
-											? "text-primary"
-											: "bg-muted text-muted-foreground opacity-50",
-									)}
-								>
-									{achieved ? <CheckIcon /> : celebration}
-								</div>
-							</TooltipTrigger>
-							<TooltipContent>
-								{achieved
-									? `Achieved ${celebration} days`
-									: `Celebrate at ${celebration} days`}
-							</TooltipContent>
-						</Tooltip>
-					);
-				})}
+				{sortCelebrations(milestone.celebrations || []).map(
+					(celebration, index) => {
+						const celebrationDate = calculateCelebrationDate(
+							new Date(milestone.startDate),
+							celebration,
+						);
+						const achieved = new Date() >= celebrationDate;
+						const label = formatCelebration(celebration);
+
+						return (
+							<Tooltip key={index}>
+								<TooltipTrigger asChild>
+									<div
+										className={cn(
+											"h-4 w-4 rounded-sm flex items-center justify-center text-[8px] font-bold transition-all",
+											achieved
+												? "text-primary"
+												: "bg-muted text-muted-foreground opacity-50",
+										)}
+									>
+										{achieved ? <CheckIcon /> : celebration.value}
+									</div>
+								</TooltipTrigger>
+								<TooltipContent>
+									{achieved ? `Achieved ${label}` : `Celebrate at ${label}`}
+								</TooltipContent>
+							</Tooltip>
+						);
+					},
+				)}
 			</div>
 		</div>
 	);
