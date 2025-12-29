@@ -53,14 +53,8 @@ export async function saveMilestone(
 	const startDate = formData.get("startDate") as string;
 	const celebrationsStr = formData.get("celebrations") as string;
 
-	console.log(name, description, color, visibility, startDate, celebrationsStr);
-
-	if (!name || !color || !visibility) {
+	if (!name || !color || !visibility || !startDate) {
 		return { error: "Required fields missing", success: false };
-	}
-
-	if (!isUpdate && !startDate) {
-		return { error: "Start date required for new milestone", success: false };
 	}
 
 	type Celebration = {
@@ -84,10 +78,7 @@ export async function saveMilestone(
 				);
 
 				if (!isValid) {
-					return {
-						error: "Invalid celebration format",
-						success: false,
-					};
+					return { error: "Invalid celebration format", success: false };
 				}
 
 				celebrations = parsed.length > 0 ? parsed : null;
@@ -102,6 +93,7 @@ export async function saveMilestone(
 		description: description?.trim() || null,
 		color,
 		visibility,
+		startDate: new Date(startDate),
 		celebrations,
 	};
 
@@ -122,7 +114,6 @@ export async function saveMilestone(
 			await dbTransaction((tx) =>
 				tx.insert(milestones).values({
 					...values,
-					startDate: new Date(startDate),
 					userId: user.id,
 				}),
 			);

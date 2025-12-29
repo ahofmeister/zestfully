@@ -216,7 +216,7 @@ export default function HabitGrid({
 					</div>
 				</div>
 			</div>
-			<div className="flex items-center justify-between mt-2 pt-2 border-t min-h-[24px]">
+			<div className="flex items-center justify-between min-h-4">
 				{hoveredDate && (
 					<div className="font-mono text-[10px] text-muted-foreground">
 						{new Date(hoveredDate).toLocaleDateString("en-US", {
