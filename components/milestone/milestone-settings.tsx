@@ -48,7 +48,6 @@ import {
 } from "@/components/ui/select";
 import {
 	Sheet,
-	SheetClose,
 	SheetContent,
 	SheetFooter,
 	SheetHeader,
@@ -426,11 +425,6 @@ export default function MilestoneSettings({
 										? "Save Changes"
 										: "Create Milestone"}
 							</Button>
-							<SheetClose asChild>
-								<Button variant="outline" disabled={isPending}>
-									Cancel
-								</Button>
-							</SheetClose>
 						</div>
 
 						{isEditMode && (
