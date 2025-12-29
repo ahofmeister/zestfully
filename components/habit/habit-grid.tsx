@@ -89,13 +89,7 @@ export default function HabitGrid({
 				const y = (rect.top + rect.height / 2) / window.innerHeight;
 
 				confetti({
-					particleCount: 8,
-					spread: 25,
 					origin: { x, y },
-					scalar: 0.5,
-					gravity: 1.5,
-					ticks: 50,
-					startVelocity: 10,
 				});
 			}
 
