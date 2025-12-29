@@ -48,7 +48,7 @@ export default function MilestoneCard({
 					className="text-2xl font-bold font-mono"
 					style={{ color: milestone.color }}
 				>
-					{daysSince}
+					{Math.max(daysSince, 0)}
 				</div>
 				<div className="text-[10px] text-muted-foreground">
 					{daysSince === 1 ? "day" : "days"}

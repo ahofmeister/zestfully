@@ -184,11 +184,11 @@ export default function MilestoneSettings({
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
-			<SheetContent className="max-h-[90vh]">
+			<SheetContent className="flex flex-col">
 				<form
 					ref={formRef}
 					action={formAction}
-					className="mx-auto w-full max-w-md"
+					className="flex flex-col h-full"
 				>
 					<SheetHeader>
 						<SheetTitle>
@@ -196,7 +196,7 @@ export default function MilestoneSettings({
 						</SheetTitle>
 					</SheetHeader>
 
-					<div className="overflow-y-auto px-4 pb-4">
+					<div className="flex-1 overflow-y-auto px-4 py-4">
 						<div className="grid gap-4">
 							<input type="hidden" name="color" value={selectedColor} />
 							<input
@@ -235,43 +235,41 @@ export default function MilestoneSettings({
 								/>
 							</div>
 
-							{!isEditMode && (
-								<div className="grid gap-2">
-									<Label>Start Date</Label>
-									<p className="text-xs text-muted-foreground">
-										When did you start or quit?
-									</p>
-									<input
-										type="hidden"
-										name="startDate"
-										value={startDate ? format(startDate, "yyyy-MM-dd") : ""}
-									/>
-									<Popover>
-										<PopoverTrigger asChild>
-											<Button
-												variant="outline"
-												className={cn(
-													"justify-start text-left font-normal",
-													!startDate && "text-muted-foreground",
-												)}
-												disabled={isPending}
-											>
-												<CalendarIcon className="mr-2 h-4 w-4" />
-												{startDate ? format(startDate, "PPP") : "Pick a date"}
-											</Button>
-										</PopoverTrigger>
-										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
-												mode="single"
-												selected={startDate}
-												onSelect={setStartDate}
-												disabled={(date) => date > new Date()}
-												initialFocus
-											/>
-										</PopoverContent>
-									</Popover>
-								</div>
-							)}
+							<div className="grid gap-2">
+								<Label>Start Date</Label>
+								<p className="text-xs text-muted-foreground">
+									When did you start or quit?
+								</p>
+								<input
+									type="hidden"
+									name="startDate"
+									value={startDate ? format(startDate, "yyyy-MM-dd") : ""}
+								/>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button
+											variant="outline"
+											className={cn(
+												"justify-start text-left font-normal",
+												!startDate && "text-muted-foreground",
+											)}
+											disabled={isPending}
+										>
+											<CalendarIcon className="mr-2 h-4 w-4" />
+											{startDate ? format(startDate, "PPP") : "Pick a date"}
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="w-auto p-0" align="start">
+										<Calendar
+											mode="single"
+											selected={startDate}
+											onSelect={setStartDate}
+											defaultMonth={startDate}
+											initialFocus
+										/>
+									</PopoverContent>
+								</Popover>
+							</div>
 
 							<div className="grid gap-2">
 								<Label>Color</Label>
@@ -417,7 +415,37 @@ export default function MilestoneSettings({
 						</div>
 					</div>
 
-					<SheetFooter>
+					<SheetFooter className="flex-col gap-2 px-4 py-4 border-t flex-shrink-0 sm:flex-col">
+						<div className="flex gap-2 w-full">
+							<Button type="submit" disabled={isPending} className="flex-1">
+								{isPending
+									? isEditMode
+										? "Saving..."
+										: "Creating..."
+									: isEditMode
+										? "Save Changes"
+										: "Create Milestone"}
+							</Button>
+							<SheetClose asChild>
+								<Button variant="outline" disabled={isPending}>
+									Cancel
+								</Button>
+							</SheetClose>
+						</div>
+
+						{isEditMode && (
+							<Button
+								type="button"
+								variant="destructive"
+								disabled={isPending}
+								onClick={() => setShowDeleteDialog(true)}
+								className="w-full"
+							>
+								<Trash2 className="h-4 w-4 mr-2" />
+								Delete Milestone
+							</Button>
+						)}
+
 						<AlertDialog
 							open={showDeleteDialog}
 							onOpenChange={setShowDeleteDialog}
@@ -444,35 +472,6 @@ export default function MilestoneSettings({
 								</AlertDialogFooter>
 							</AlertDialogContent>
 						</AlertDialog>
-
-						<div className={"flex gap-x-2"}>
-							<Button type="submit" disabled={isPending}>
-								{isPending
-									? isEditMode
-										? "Saving..."
-										: "Creating..."
-									: isEditMode
-										? "Save Changes"
-										: "Create Milestone"}
-							</Button>
-							<SheetClose asChild>
-								<Button variant="outline" disabled={isPending}>
-									Cancel
-								</Button>
-							</SheetClose>
-						</div>
-						{isEditMode && (
-							<Button
-								type="button"
-								variant="destructive"
-								disabled={isPending}
-								onClick={() => setShowDeleteDialog(true)}
-								className="mt-2"
-							>
-								<Trash2 className="h-4 w-4 mr-2" />
-								Delete Milestone
-							</Button>
-						)}
 					</SheetFooter>
 				</form>
 			</SheetContent>
