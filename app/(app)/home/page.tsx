@@ -1,9 +1,9 @@
-import { DateSelector } from "@/components/dashboard/date-selector";
 import HabitsList from "@/components/habit/habits-list";
+import { DateSelector } from "@/components/home/date-selector";
 import MilestoneSettings from "@/components/milestone/milestone-settings";
 import { Button } from "@/components/ui/button";
 
-export default async function DashboardPage(props: {
+export default async function HomePage(props: {
 	searchParams: Promise<{
 		date?: string;
 	}>;
