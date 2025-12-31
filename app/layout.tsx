@@ -1,17 +1,8 @@
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import HeaderAuth from "@/components/header-auth";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import "./globals.css";
 import type { Viewport } from "next";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type React from "react";
-import {
-	NavigationMenu,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-} from "@/components/ui/navigation-menu";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -48,36 +39,8 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					<main>
-						<nav className="sticky top-0 backdrop-blur-sm  w-full justify-between flex border-b border-b-foreground/10 h-14">
-							<NavigationMenu>
-								<NavigationMenuList>
-									<NavigationMenuItem>
-										<NavigationMenuLink href={"/"}>
-											<div className={"text-primary ml-4"}>Zestfully</div>
-										</NavigationMenuLink>
-									</NavigationMenuItem>
-									<NavigationMenuItem>
-										<NavigationMenuLink href={"/home"}>Home</NavigationMenuLink>
-									</NavigationMenuItem>
-
-									<NavigationMenuItem>
-										<NavigationMenuLink href={"/habits"}>
-											Habits
-										</NavigationMenuLink>
-									</NavigationMenuItem>
-								</NavigationMenuList>
-							</NavigationMenu>
-							<div className="flex items-center text-sm justify-self-end">
-								<HeaderAuth />
-								<ThemeSwitcher />
-							</div>
-						</nav>
-						<div className="p-4 flex-1 overflow-y-auto">
-							<NuqsAdapter>
-								<TooltipProvider delayDuration={300}>
-									{children}
-								</TooltipProvider>
-							</NuqsAdapter>
+						<div className="flex-1 overflow-y-auto">
+							<TooltipProvider delayDuration={300}>{children}</TooltipProvider>
 						</div>
 					</main>
 				</ThemeProvider>
