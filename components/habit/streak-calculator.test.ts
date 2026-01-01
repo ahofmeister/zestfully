@@ -84,6 +84,7 @@ describe("calculateCurrentStreak - daily", () => {
 			frequencyType: "daily",
 		});
 		expect(result).toBe(3);
+		vi.useRealTimers();
 	});
 });
 
@@ -351,6 +352,21 @@ describe("calculateCurrentStreak - scheduled_days", () => {
 			completions,
 			frequencyType: "scheduled_days",
 			frequencyDays: ["mon", "wed", "fri"],
+		});
+		expect(result).toBe(1);
+
+		vi.useRealTimers();
+	});
+
+	it("count streak for scheduled days even if not all days are completed", () => {
+		vi.setSystemTime(new Date("2026-01-01"));
+
+		const completions = ["2026-01-01"];
+
+		const result = calculateCurrentStreak({
+			completions,
+			frequencyType: "scheduled_days",
+			frequencyDays: ["thu", "sun"],
 		});
 		expect(result).toBe(1);
 

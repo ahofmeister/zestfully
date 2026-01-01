@@ -1,19 +1,19 @@
 "use client";
 import { differenceInDays, format } from "date-fns";
-import { CheckIcon, SettingsIcon } from "lucide-react";
+import { SettingsIcon, Sparkles } from "lucide-react";
 import {
 	calculateCelebrationDate,
 	formatCelebration,
 	sortCelebrations,
 } from "@/components/milestone/milestone-celebration-calculator";
 import MilestoneDrawer from "@/components/milestone/milestone-settings";
+import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { milestones } from "@/drizzle/schema";
-import { cn } from "@/lib/utils";
 
 type Milestone = typeof milestones.$inferSelect;
 
@@ -27,69 +27,103 @@ export default function MilestoneCard({
 	const today = new Date();
 	const daysSince = differenceInDays(today, new Date(milestone.startDate));
 
+	// Get celebration info
+	const sortedCelebrations = sortCelebrations(milestone.celebrations || []);
+
+	let achievedCount = 0;
+	const totalCount = sortedCelebrations.length;
+	let nextUpcoming = null;
+
+	for (const celebration of sortedCelebrations) {
+		const celebrationDate = calculateCelebrationDate(
+			new Date(milestone.startDate),
+			celebration,
+		);
+		const achieved = new Date() >= celebrationDate;
+
+		if (achieved) {
+			achievedCount++;
+		} else if (!nextUpcoming) {
+			nextUpcoming = { celebration, date: celebrationDate };
+		}
+	}
+
+	const daysToNext = nextUpcoming
+		? differenceInDays(nextUpcoming.date, today)
+		: null;
+
 	return (
-		<div
-			className="w-50 h-36 p-3 rounded-lg border hover:bg-secondary/50 transition-colors flex flex-col"
-			style={{ borderColor: milestone.color }}
-		>
-			<div className={"flex justify-between items-center"}>
-				<h3 className="font-mono text-xs font-semibold line-clamp-2 pr-6">
-					{milestone.name}
-				</h3>
+		<div className="relative overflow-hidden">
+			{/* Colored accent bar */}
+			<div
+				className="absolute top-0 left-0 right-0 h-1"
+				style={{ backgroundColor: milestone.color }}
+			/>
 
-				{isOwner && (
-					<MilestoneDrawer milestone={milestone}>
-						<SettingsIcon size={14} />
-					</MilestoneDrawer>
-				)}
-			</div>
-			<div className="flex-1 flex flex-col items-center justify-center">
-				<div
-					className="text-2xl font-bold font-mono"
-					style={{ color: milestone.color }}
-				>
-					{Math.max(daysSince, 0)}
+			<div className="bg-card border border-border rounded-lg p-3 pt-4 hover:border-muted-foreground/30 transition-all">
+				{/* Header */}
+				<div className="flex items-start justify-between gap-2 mb-3">
+					<div className="flex-1 min-w-0">
+						<h3 className="font-bold text-base leading-tight line-clamp-2 mb-1">
+							{milestone.name}
+						</h3>
+						<div className="text-[10px] text-muted-foreground">
+							{format(new Date(milestone.startDate), "MMM d, yyyy")}
+						</div>
+					</div>
+
+					{isOwner && (
+						<MilestoneDrawer milestone={milestone}>
+							<Button variant={"ghost"} size={"iconSm"}>
+								<SettingsIcon className="size-3 text-muted-foreground" />
+							</Button>
+						</MilestoneDrawer>
+					)}
 				</div>
-				<div className="text-[10px] text-muted-foreground">
-					{daysSince === 1 ? "day" : "days"}
+
+				<div className="mb-3">
+					<div
+						className="text-2xl font-black tabular-nums leading-none"
+						style={{ color: milestone.color }}
+					>
+						{Math.max(daysSince, 0).toLocaleString()}
+					</div>
+					<div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+						{daysSince === 1 ? "day" : "days"}
+					</div>
 				</div>
-			</div>
 
-			<div className="text-[10px] text-muted-foreground text-center mb-2">
-				{format(new Date(milestone.startDate), "MMM d, yyyy")}
-			</div>
+				{/* Footer Info */}
+				<div className="space-y-2">
+					{/* Next Milestone */}
+					{nextUpcoming && (
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<div className="flex items-center gap-1.5 text-xs">
+									<Sparkles className="h-3 w-3 text-muted-foreground shrink-0" />
+									<span className="font-semibold">
+										{formatCelebration(nextUpcoming.celebration)}
+									</span>
+									<span className="text-muted-foreground">
+										in {daysToNext}d
+									</span>
+								</div>
+							</TooltipTrigger>
+							<TooltipContent>
+								{daysToNext} {daysToNext === 1 ? "day" : "days"} until{" "}
+								{formatCelebration(nextUpcoming.celebration)}
+							</TooltipContent>
+						</Tooltip>
+					)}
 
-			<div className="flex gap-1 justify-center">
-				{sortCelebrations(milestone.celebrations || []).map(
-					(celebration, index) => {
-						const celebrationDate = calculateCelebrationDate(
-							new Date(milestone.startDate),
-							celebration,
-						);
-						const achieved = new Date() >= celebrationDate;
-						const label = formatCelebration(celebration);
-
-						return (
-							<Tooltip key={index}>
-								<TooltipTrigger asChild>
-									<div
-										className={cn(
-											"h-4 w-4 rounded-sm flex items-center justify-center text-[8px] font-bold transition-all",
-											achieved
-												? "text-primary"
-												: "bg-muted text-muted-foreground opacity-50",
-										)}
-									>
-										{achieved ? <CheckIcon /> : celebration.value}
-									</div>
-								</TooltipTrigger>
-								<TooltipContent>
-									{achieved ? `Achieved ${label}` : `Celebrate at ${label}`}
-								</TooltipContent>
-							</Tooltip>
-						);
-					},
-				)}
+					{/* All achieved state */}
+					{achievedCount === totalCount && totalCount > 0 && !nextUpcoming && (
+						<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+							<span>🎉</span>
+							<span>All milestones achieved</span>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);

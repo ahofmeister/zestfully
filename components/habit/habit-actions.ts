@@ -9,6 +9,7 @@ import {
 	habitCompletion,
 	habitSchema,
 	type Visibility,
+	type Weekday,
 } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 
@@ -138,6 +139,7 @@ export async function updateHabit(
 	const visibility = formData.get("visibility") as Visibility;
 	const frequencyType = formData.get("frequencyType") as FrequencyType;
 	const frequencyTarget = formData.get("frequencyTarget") as string;
+	const frequencyDays = formData.getAll("frequencyDays") as Weekday[];
 
 	if (!habitId || !name || !color) {
 		return { error: "Required fields missing", success: false };
@@ -152,6 +154,7 @@ export async function updateHabit(
 					color,
 					visibility,
 					frequencyType,
+					frequencyDays,
 					frequencyTarget: frequencyTarget
 						? parseInt(frequencyTarget, 10)
 						: null,
