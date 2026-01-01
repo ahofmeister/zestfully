@@ -76,6 +76,15 @@ describe("calculateCurrentStreak - daily", () => {
 		});
 		expect(result).toBe(3);
 	});
+
+	it("correct streak for last year and this year days", () => {
+		vi.setSystemTime(new Date("2026-01-01"));
+		const result = calculateCurrentStreak({
+			completions: ["2025-12-30", "2025-12-31", "2026-01-01"],
+			frequencyType: "daily",
+		});
+		expect(result).toBe(3);
+	});
 });
 
 describe("calculateCurrentStreak - per_week", () => {
