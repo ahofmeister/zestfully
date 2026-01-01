@@ -4,84 +4,107 @@ import {
 	addDays,
 	eachDayOfInterval,
 	endOfWeek,
-	formatDate,
+	format,
+	isToday,
+	parseISO,
 	startOfWeek,
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { parseAsIsoDate, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
+function toLocalDate(dateString: string) {
+	const d = parseISO(dateString);
+	return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function toDateString(date: Date) {
+	return format(date, "yyyy-MM-dd");
+}
+
 export function DateSelector() {
-	const [date, setDate] = useQueryState(
+	const [dateString, setDateString] = useQueryState(
 		"date",
-		parseAsIsoDate.withDefault(new Date()).withOptions({
+		parseAsString.withDefault(toDateString(new Date())).withOptions({
 			shallow: false,
 		}),
 	);
 
+	const date = toLocalDate(dateString);
+
 	const changeDate = (offset: number) => {
-		const newDate = offset === 0 ? new Date() : addDays(date, offset);
-		void setDate(newDate);
+		const next = addDays(date, offset);
+		void setDateString(toDateString(next));
 	};
 
-	const today = new Date();
-
-	const daysOfWeek: Date[] = eachDayOfInterval({
+	const daysOfWeek = eachDayOfInterval({
 		start: startOfWeek(date, { weekStartsOn: 1 }),
 		end: endOfWeek(date, { weekStartsOn: 1 }),
 	});
 
 	return (
-		<div className="flex items-center justify-center gap-4">
-			<div className={"flex flex-col gap-y-2 w-full"}>
-				<div className={"self-center"}>{formatDate(date, "EEEE dd MMMM")}</div>
-				<div className={"flex gap-x-4 items-center"}>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => changeDate(-7)}
-						className="h-10 w-10"
-						aria-label="Previous day"
-					>
-						<ChevronLeft className="h-5 w-5" />
-					</Button>
-					<ul className="flex gap-x-1 justify-between flex-1 items-center">
-						{daysOfWeek.map((day) => (
-							<li key={day.toISOString()}>
+		<Card className="md:p-4">
+			<div className="flex items-center gap-2">
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => changeDate(-7)}
+					className="h-10 w-10 shrink-0"
+					aria-label="Previous week"
+				>
+					<ChevronLeft className="h-4 w-4" />
+				</Button>
+
+				<ul className="flex-1 flex justify-between gap-1 sm:gap-2 md:gap-1">
+					{daysOfWeek.map((day) => {
+						const isSelected = format(day, "yyyy-MM-dd") === dateString;
+						const isTodayDate = isToday(day);
+
+						return (
+							<li key={format(day, "yyyy-MM-dd")}>
 								<Button
 									variant="ghost"
-									size="icon"
-									className="text-muted-foreground flex flex-col h-auto p-2 gap-y-2 cursor-pointer"
-									onClick={() => void setDate(day)}
+									onClick={() => void setDateString(toDateString(day))}
+									className="flex flex-col items-center gap-2 py-2 px-1 h-auto hover:bg-accent"
 								>
 									<div
 										className={cn(
-											"rounded-full w-6 h-6 flex items-center justify-center border",
-											formatDate(today, "yyyy-MM-dd") ===
-												formatDate(day, "yyyy-MM-dd")
-												? "border-primary"
-												: "border-transparent",
+											"text-xs font-medium",
+											isSelected ? "text-foreground" : "text-muted-foreground",
 										)}
 									>
-										{formatDate(day, "EEEEE")}
+										{format(day, "EEEEE")}
 									</div>
-									<div className="rounded-full border border-primary size-5"></div>
+
+									<div
+										className={cn(
+											"w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold",
+											isSelected && "bg-primary text-primary-foreground",
+											isTodayDate &&
+												!isSelected &&
+												"ring-2 ring-primary ring-offset-2 ring-offset-background",
+										)}
+									>
+										{format(day, "d")}
+									</div>
 								</Button>
 							</li>
-						))}
-					</ul>
-					<Button
-						variant="ghost"
-						size="iconSm"
-						onClick={() => changeDate(7)}
-						className="h-10 w-10"
-						aria-label="Next day"
-					>
-						<ChevronRight className="h-5 w-5" />
-					</Button>
-				</div>
+						);
+					})}
+				</ul>
+
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => changeDate(7)}
+					className="h-10 w-10 shrink-0"
+					aria-label="Next week"
+				>
+					<ChevronRight className="h-4 w-4" />
+				</Button>
 			</div>
-		</div>
+		</Card>
 	);
 }

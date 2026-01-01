@@ -1,7 +1,7 @@
 "use client";
 import confetti from "canvas-confetti";
 import { isToday } from "date-fns";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Flame } from "lucide-react";
 import type React from "react";
 import { useOptimistic, useState, useTransition } from "react";
 import {
@@ -125,7 +125,12 @@ export default function HabitGrid({
 
 				<span>{totalDays} days</span>
 
-				{currentStreak > 0 && <span>🔥 {currentStreak} streak</span>}
+				{currentStreak > 0 && (
+					<span className={"flex gap-x-1 text-orange-500"}>
+						<Flame size={12} className={""}></Flame>
+						{currentStreak}
+					</span>
+				)}
 
 				<SparkButton
 					habitId={habit.id}

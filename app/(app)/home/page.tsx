@@ -1,8 +1,6 @@
-import { PlusIcon } from "lucide-react";
+import { formatDate } from "date-fns";
 import HabitsList from "@/components/habit/habits-list";
 import { DateSelector } from "@/components/home/date-selector";
-import MilestoneSettings from "@/components/milestone/milestone-settings";
-import { Button } from "@/components/ui/button";
 
 export default async function HomePage(props: {
 	searchParams: Promise<{
@@ -15,22 +13,19 @@ export default async function HomePage(props: {
 
 	return (
 		<div className="min-h-screen bg-background">
-			<div className="mx-auto max-w-3xl px-4 py-8 space-y-8">
+			<div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
+				<section>
+					<h1 className="text-2xl font-bold">
+						{formatDate(selectedDate, "EEEE, MMMM d")}
+					</h1>
+				</section>
+
 				<section>
 					<DateSelector />
 				</section>
 
 				<section>
 					<HabitsList selectedDate={selectedDate} />
-				</section>
-
-				<section className="flex gap-3 justify-center pt-4">
-					<MilestoneSettings>
-						<Button variant="outline" size="lg" className="gap-2">
-							<PlusIcon className="h-4 w-4" />
-							Create Milestone
-						</Button>
-					</MilestoneSettings>
 				</section>
 			</div>
 		</div>

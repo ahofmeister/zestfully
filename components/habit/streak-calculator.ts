@@ -13,8 +13,8 @@ import { type FrequencyType, WEEKDAYS, type Weekday } from "@/drizzle/schema";
 export type StreakOptions = {
 	completions: string[];
 	frequencyType: FrequencyType;
-	frequencyTarget?: number;
-	frequencyDays?: Weekday[];
+	frequencyTarget?: number | null;
+	frequencyDays?: Weekday[] | null;
 };
 
 function parseDate(dateStr: string): number {
@@ -37,7 +37,7 @@ export function calculateCurrentStreak(options: StreakOptions): number {
 		case "daily":
 			return calculateDailyStreak(completions);
 		case "per_week":
-			return calculateWeeklyStreak(completions, frequencyTarget);
+			return calculateWeeklyStreak(completions, frequencyTarget ?? 0);
 		case "scheduled_days":
 			return calculateScheduledDaysStreak(completions, frequencyDays ?? null);
 	}

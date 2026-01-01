@@ -2,11 +2,6 @@ export function formatDate(date: Date): string {
 	return date.toISOString().split("T")[0];
 }
 
-export function isDateToday(date: Date): boolean {
-	const today = new Date();
-	return formatDate(date) === formatDate(today);
-}
-
 export function generateYearWeeks(): (Date | null)[][] {
 	const weeks: (Date | null)[][] = [];
 	const today = new Date();

@@ -15,7 +15,7 @@ export default async function DashboardLayout({
 			<Suspense>
 				<MainNavigation />
 			</Suspense>
-			<main className="px-4 w-full pt-20 lg:pt-8 overflow-y-auto pb-28 lg:pb-4">
+			<main className="w-full pt-20 lg:pt-8 overflow-y-auto pb-28 lg:pb-4">
 				<NuqsAdapter>{children}</NuqsAdapter>
 			</main>
 		</div>
