@@ -1,17 +1,9 @@
+"use client";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type React from "react";
 import { Badge } from "@/components/ui/badge";
-
-interface NavItemProps {
-	href?: string;
-	icon?: LucideIcon;
-	children: React.ReactNode;
-	noLink?: boolean;
-	onClick?: () => void;
-	onNavigate?: () => void;
-	soon?: boolean;
-}
 
 export function NavigationItem({
 	href,
@@ -21,7 +13,15 @@ export function NavigationItem({
 	onClick,
 	onNavigate,
 	soon = false,
-}: NavItemProps) {
+}: {
+	href?: string;
+	icon?: LucideIcon;
+	children: React.ReactNode;
+	noLink?: boolean;
+	onClick?: () => void;
+	onNavigate?: () => void;
+	soon?: boolean;
+}) {
 	const pathname = usePathname();
 	const isActive = href && pathname === href;
 

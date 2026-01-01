@@ -13,9 +13,10 @@ import { signOut } from "@/app/auth/auth-actions";
 import { MobileHeader } from "@/components/navigation/mobile-header";
 import { NavigationItem } from "@/components/navigation/navigation-item";
 import { NavigationSection } from "@/components/navigation/navigation-section";
+import { ProfileNavigationItem } from "@/components/navigation/profile-navigation-item";
 import { SidebarHeader } from "@/components/navigation/sidebar-header";
 
-export default function MainNavigation() {
+export default function MainNavigation({ username }: { username?: string }) {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	const handleNavigation = () => setIsMobileMenuOpen(false);
@@ -59,6 +60,8 @@ export default function MainNavigation() {
 								>
 									Home
 								</NavigationItem>
+
+								<ProfileNavigationItem username={username} />
 							</NavigationSection>
 
 							<NavigationSection title="Manage">
