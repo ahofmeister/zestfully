@@ -1,7 +1,7 @@
-import { formatDate } from "date-fns";
+import { formatDate, isToday } from "date-fns";
 import HabitsList from "@/components/habit/habits-list";
 import { DateSelector } from "@/components/home/date-selector";
-
+import { TodayLink } from "@/components/home/today-link";
 export default async function HomePage(props: {
 	searchParams: Promise<{
 		date?: string;
@@ -16,8 +16,11 @@ export default async function HomePage(props: {
 			<div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
 				<section>
 					<h1 className="text-2xl font-bold">
-						{formatDate(selectedDate, "EEEE, MMMM d")}
+						{isToday(selectedDate)
+							? "Today"
+							: formatDate(selectedDate, "EEEE, MMMM d")}
 					</h1>
+					<TodayLink selectedDate={selectedDate} />
 				</section>
 
 				<section>
