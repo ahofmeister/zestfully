@@ -10,94 +10,88 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { habitCompletion, habitSchema } from "@/drizzle/schema";
 
+type Habit = typeof habitSchema.$inferSelect & {
+	completions: (typeof habitCompletion.$inferSelect)[];
+};
+
 export default function DayHabits({
 	habits,
 	selectedDate,
 }: {
-	habits: (typeof habitSchema.$inferSelect & {
-		completions: (typeof habitCompletion.$inferSelect)[];
-	})[];
+	habits: Habit[];
 	selectedDate: string;
 }) {
 	const [_, startTransition] = useTransition();
 
-	const [optimisticState, setOptimisticState] = useState(() =>
-		habits.reduce(
-			(acc, habit) => {
-				const completed = habit.completions.some(
-					(c) => c.completedAt === selectedDate,
-				);
-				const streak = calculateCurrentStreak({
-					completions: habit.completions.map(
-						(completions) => completions.completedAt,
-					),
-					frequencyTarget: habit.frequencyTarget,
-					frequencyType: habit.frequencyType,
-					frequencyDays: habit.frequencyDays,
-				});
-				acc[habit.id] = { completed, streak };
-				return acc;
-			},
-			{} as Record<string, { completed: boolean; streak: number }>,
-		),
-	);
+	const [optimisticUpdates, setOptimisticUpdates] = useState<
+		Record<string, { completed: boolean; streak: number }>
+	>({});
 
-	const getUpdatedOptimisticState = (
-		prev: typeof optimisticState,
-		habitId: string,
-		toggle: boolean,
-	) => {
-		const habit = habits.find((habit) => habit.id === habitId);
-
-		if (!habit) {
-			return prev;
+	const getHabitState = (habit: Habit) => {
+		if (optimisticUpdates[habit.id]) {
+			return optimisticUpdates[habit.id];
 		}
 
-		const allCompletions = toggle
-			? [...habit.completions.map((x) => x.completedAt), selectedDate]
-			: habit.completions
-					.map((completion) => completion.completedAt)
-					.filter((date) => date !== selectedDate);
+		const completed = habit.completions.some(
+			(c) => c.completedAt === selectedDate,
+		);
 
-		const newStreak = calculateCurrentStreak({
-			completions: allCompletions,
+		const streak = calculateCurrentStreak({
+			completions: habit.completions.map((c) => c.completedAt),
 			frequencyTarget: habit.frequencyTarget,
 			frequencyType: habit.frequencyType,
 			frequencyDays: habit.frequencyDays,
 		});
 
-		return {
-			...prev,
-			[habitId]: { completed: toggle, streak: newStreak },
-		};
+		return { completed, streak };
 	};
 
 	const handleToggle = (
 		habitId: string,
 		event: React.MouseEvent<HTMLDivElement>,
 	) => {
-		const target = event.currentTarget;
-		const rect = target.getBoundingClientRect();
-		const x = (rect.left + rect.width / 2) / window.innerWidth;
-		const y = (rect.top + rect.height / 2) / window.innerHeight;
+		const habit = habits.find((h) => h.id === habitId);
+		if (!habit) {
+			return;
+		}
 
-		setOptimisticState((prev) => {
-			const newCompleted = !prev[habitId].completed;
+		const currentState = getHabitState(habit);
+		const newCompleted = !currentState.completed;
 
-			if (newCompleted) {
-				confetti({ origin: { x, y } });
-			}
+		if (newCompleted) {
+			const target = event.currentTarget;
+			const rect = target.getBoundingClientRect();
+			const x = (rect.left + rect.width / 2) / window.innerWidth;
+			const y = (rect.top + rect.height / 2) / window.innerHeight;
+			confetti({ origin: { x, y } });
+		}
 
-			return getUpdatedOptimisticState(prev, habitId, newCompleted);
+		const updatedCompletions = newCompleted
+			? [...habit.completions.map((c) => c.completedAt), selectedDate]
+			: habit.completions
+					.map((c) => c.completedAt)
+					.filter((date) => date !== selectedDate);
+
+		const newStreak = calculateCurrentStreak({
+			completions: updatedCompletions,
+			frequencyTarget: habit.frequencyTarget,
+			frequencyType: habit.frequencyType,
+			frequencyDays: habit.frequencyDays,
 		});
+
+		setOptimisticUpdates((prev) => ({
+			...prev,
+			[habitId]: { completed: newCompleted, streak: newStreak },
+		}));
 
 		startTransition(async () => {
 			try {
 				await toggleHabitCompletion(habitId, selectedDate);
 			} catch (_) {
-				setOptimisticState((prev) =>
-					getUpdatedOptimisticState(prev, habitId, !prev[habitId].completed),
-				);
+				setOptimisticUpdates((prev) => ({
+					...prev,
+					[habitId]: currentState,
+				}));
 			}
 		});
 	};
@@ -105,20 +99,20 @@ export default function DayHabits({
 	return (
 		<div className="space-y-2">
 			{habits.map((habit) => {
-				const { completed: isCompleted, streak } = optimisticState[habit.id];
+				const { completed, streak } = getHabitState(habit);
 
 				return (
 					<Card
 						key={habit.id}
 						onClick={(e) => handleToggle(habit.id, e)}
-						className="flex items-center p-4 rounded-lg transition-colors gap-x-4 cursor-pointer hover:bg-secondary relative"
+						className="flex items-center p-4 rounded-lg transition-colors gap-x-4 cursor-pointer hover:bg-secondary"
 					>
-						<Checkbox checked={isCompleted}></Checkbox>
+						<Checkbox checked={completed} />
 
 						<div className="flex flex-col">
 							<span
 								className={
-									isCompleted ? "line-through text-muted-foreground" : ""
+									completed ? "line-through text-muted-foreground" : ""
 								}
 							>
 								{habit.name}
