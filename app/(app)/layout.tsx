@@ -33,7 +33,7 @@ export default async function DashboardLayout({
 	return (
 		<div className="flex h-screen">
 			<MainNavigation username={profile?.username} />
-			<main className="w-full pt-20 lg:pt-8 overflow-y-auto pb-28 lg:pb-4">
+			<main className="w-full lg:pt-8 overflow-y-auto pb-28 lg:pb-4 px-4 md:px-8 mx-auto max-w-7xl">
 				<NuqsAdapter>{children}</NuqsAdapter>
 			</main>
 		</div>

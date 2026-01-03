@@ -64,7 +64,7 @@ export default async function ProfilePage(props: {
 	});
 
 	return (
-		<div className=" mx-auto max-w-[1105px]">
+		<div>
 			<div className="mb-8">
 				<h1 className="text-3xl font-bold">{profile.username}</h1>
 				{profile.bio && (
@@ -73,7 +73,7 @@ export default async function ProfilePage(props: {
 			</div>
 
 			<div className="space-y-6">
-				<section className="flex flex-col gap-4 items-center md:flex-row">
+				<section className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-4 justify-center w-full">
 					<MilestonesList username={profile.username} />
 				</section>
 				{habits.map((habit) => (
