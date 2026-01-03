@@ -1,8 +1,13 @@
 "use server";
 
+import { isSameDay, parseISO } from "date-fns";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import type { BaseFormState } from "@/components/form-utils";
+import {
+	calculateCelebrationDate,
+	formatCelebration,
+} from "@/components/milestone/milestone-celebration-calculator";
 import { dbTransaction } from "@/drizzle/client";
 import { milestones, type Visibility } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
@@ -128,4 +133,78 @@ export async function saveMilestone(
 
 	revalidatePath("/");
 	return { success: true };
+}
+
+type MilestoneWithCelebration = {
+	milestone: typeof milestones.$inferSelect;
+	celebratingToday: Array<{
+		value: number;
+		unit: "days" | "weeks" | "months" | "years";
+		label: string;
+	}>;
+};
+
+export async function getMilestonesWithCelebrations(
+	userId: string,
+	selectedDate: string,
+): Promise<MilestoneWithCelebration[]> {
+	const allMilestones = await dbTransaction(async (tx) => {
+		return tx.select().from(milestones).where(eq(milestones.userId, userId));
+	});
+
+	console.log(
+		"Debug - All milestones:",
+		JSON.stringify(
+			allMilestones.map((m) => ({
+				name: m.name,
+				startDate: m.startDate,
+				celebrations: m.celebrations,
+			})),
+			null,
+			2,
+		),
+	);
+
+	const targetDate = parseISO(selectedDate);
+	const results: MilestoneWithCelebration[] = [];
+
+	for (const milestone of allMilestones) {
+		if (!milestone.celebrations) {
+			continue;
+		}
+
+		if (milestone.celebrations.length === 0) {
+			continue;
+		}
+
+		const celebratingToday = milestone.celebrations.filter((celebration) => {
+			const celebrationDate = calculateCelebrationDate(
+				milestone.startDate,
+				celebration,
+			);
+
+			console.log({
+				milestone: milestone.name,
+				celebration: celebration,
+				startDate: milestone.startDate,
+				calculatedDate: celebrationDate,
+				targetDate: targetDate,
+				matches: isSameDay(celebrationDate, targetDate),
+			});
+
+			return isSameDay(celebrationDate, targetDate);
+		});
+
+		if (celebratingToday.length > 0) {
+			results.push({
+				milestone,
+				celebratingToday: celebratingToday.map((c) => ({
+					...c,
+					label: formatCelebration(c),
+				})),
+			});
+		}
+	}
+
+	return results;
 }

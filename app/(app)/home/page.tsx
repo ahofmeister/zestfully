@@ -1,7 +1,10 @@
 import { formatDate, isToday } from "date-fns";
+import { Suspense } from "react";
 import HabitsList from "@/components/habit/habits-list";
 import { DateSelector } from "@/components/home/date-selector";
+import { MilestoneCelebrations } from "@/components/home/milestone-celebrations";
 import { TodayLink } from "@/components/home/today-link";
+
 export default async function HomePage(props: {
 	searchParams: Promise<{
 		date?: string;
@@ -25,6 +28,12 @@ export default async function HomePage(props: {
 
 				<section>
 					<DateSelector />
+				</section>
+
+				<section>
+					<Suspense>
+						<MilestoneCelebrations selectedDate={selectedDate} />
+					</Suspense>
 				</section>
 
 				<section>

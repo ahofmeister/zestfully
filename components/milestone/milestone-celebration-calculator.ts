@@ -1,3 +1,5 @@
+import { addDays, addMonths, addWeeks, addYears } from "date-fns";
+
 export type Celebration = {
 	value: number;
 	unit: "days" | "weeks" | "months" | "years";
@@ -18,24 +20,16 @@ export const calculateCelebrationDate = (
 	startDate: Date,
 	celebration: { value: number; unit: "days" | "weeks" | "months" | "years" },
 ): Date => {
-	const date = new Date(startDate);
-
 	switch (celebration.unit) {
 		case "days":
-			date.setDate(date.getDate() + celebration.value);
-			break;
+			return addDays(startDate, celebration.value);
 		case "weeks":
-			date.setDate(date.getDate() + celebration.value * 7);
-			break;
+			return addWeeks(startDate, celebration.value);
 		case "months":
-			date.setMonth(date.getMonth() + celebration.value);
-			break;
+			return addMonths(startDate, celebration.value);
 		case "years":
-			date.setFullYear(date.getFullYear() + celebration.value);
-			break;
+			return addYears(startDate, celebration.value);
 	}
-
-	return date;
 };
 
 export const celebrationToDays = (celebration: Celebration): number => {
