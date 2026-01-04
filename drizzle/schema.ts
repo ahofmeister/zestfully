@@ -375,7 +375,7 @@ export const habitCompletionRelations = relations(
 	}),
 );
 
-export const milestones = pgTable(
+export const milestoneSchema = pgTable(
 	"milestone",
 	{
 		id: uuid("id").defaultRandom().primaryKey(),

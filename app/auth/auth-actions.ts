@@ -7,3 +7,11 @@ export const signOut = async () => {
 	await supabase.auth.signOut();
 	redirect("/");
 };
+
+export const getCurrentUser = async () => {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	return user;
+};

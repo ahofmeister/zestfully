@@ -1,7 +1,8 @@
 import { desc, eq } from "drizzle-orm";
+import { getCurrentUser } from "@/app/auth/auth-actions";
 import MilestoneCard from "@/components/milestone/milestone-card";
 import { dbTransaction } from "@/drizzle/client";
-import { milestones, profileSchema } from "@/drizzle/schema";
+import { milestoneSchema, profileSchema } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function MilestonesList({
@@ -9,10 +10,7 @@ export default async function MilestonesList({
 }: {
 	username?: string;
 }) {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	const user = await getCurrentUser();
 
 	let targetUserId: string | undefined;
 
@@ -45,9 +43,9 @@ export default async function MilestonesList({
 	const userMilestones = await dbTransaction((tx) => {
 		return tx
 			.select()
-			.from(milestones)
-			.where(eq(milestones.userId, targetUserId))
-			.orderBy(desc(milestones.createdAt));
+			.from(milestoneSchema)
+			.where(eq(milestoneSchema.userId, targetUserId))
+			.orderBy(desc(milestoneSchema.createdAt));
 	});
 
 	const isOwner = user?.id === targetUserId;
