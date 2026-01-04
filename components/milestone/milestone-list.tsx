@@ -3,7 +3,6 @@ import { getCurrentUser } from "@/app/auth/auth-actions";
 import MilestoneCard from "@/components/milestone/milestone-card";
 import { dbTransaction } from "@/drizzle/client";
 import { milestoneSchema, profileSchema } from "@/drizzle/schema";
-import { createClient } from "@/utils/supabase/server";
 
 export default async function MilestonesList({
 	username,

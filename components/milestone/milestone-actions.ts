@@ -11,7 +11,6 @@ import {
 } from "@/components/milestone/milestone-celebration-calculator";
 import { dbTransaction } from "@/drizzle/client";
 import { milestoneSchema, type Visibility } from "@/drizzle/schema";
-import { createClient } from "@/utils/supabase/server";
 
 export async function deleteMilestone(milestoneId: string) {
 	const user = await getCurrentUser();
