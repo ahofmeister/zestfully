@@ -13,9 +13,9 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { milestones } from "@/drizzle/schema";
+import type { milestoneSchema } from "@/drizzle/schema";
 
-type Milestone = typeof milestones.$inferSelect;
+type Milestone = typeof milestoneSchema.$inferSelect;
 
 export default function MilestoneCard({
 	milestone,
@@ -52,14 +52,14 @@ export default function MilestoneCard({
 		: null;
 
 	return (
-		<div className="relative overflow-hidden">
+		<div className="relative overflow-hidden w-full h-[180px]">
 			<div
 				className="absolute top-0 left-0 right-0 h-1"
 				style={{ backgroundColor: milestone.color }}
 			/>
 
-			<div className="bg-card border border-border rounded-lg p-3 pt-4 hover:border-muted-foreground/30 transition-all">
-				<div className="flex items-start justify-between gap-2 mb-3">
+			<div className="bg-card border border-border rounded-lg p-3 pt-4 hover:border-muted-foreground/30 transition-all h-full flex flex-col">
+				<div className="flex items-start justify-between gap-2 mb-3 min-h-[44px]">
 					<div className="flex-1 min-w-0">
 						<h3 className="font-bold text-base leading-tight line-clamp-2 mb-1">
 							{milestone.name}
@@ -71,14 +71,14 @@ export default function MilestoneCard({
 
 					{isOwner && (
 						<MilestoneDrawer milestone={milestone}>
-							<Button variant="ghost" size="iconSm">
+							<Button variant="ghost" size="iconSm" className="shrink-0">
 								<SettingsIcon className="size-3 text-muted-foreground" />
 							</Button>
 						</MilestoneDrawer>
 					)}
 				</div>
 
-				<div className="mb-3">
+				<div className="mb-3 flex-1 flex flex-col justify-center">
 					<div
 						className="text-2xl font-black tabular-nums leading-none"
 						style={{ color: milestone.color }}

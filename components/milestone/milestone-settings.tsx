@@ -55,7 +55,7 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import type { milestones } from "@/drizzle/schema";
+import type { milestoneSchema } from "@/drizzle/schema";
 import { cn } from "@/lib/utils";
 
 type CelebrationUnit = "days" | "weeks" | "months" | "years";
@@ -68,7 +68,7 @@ const DEFAULT_CELEBRATIONS: Celebration[] = [
 	{ value: 1, unit: "years" },
 ];
 
-type Milestone = typeof milestones.$inferSelect;
+type Milestone = typeof milestoneSchema.$inferSelect;
 
 const VISIBILITY_CONFIG = [
 	{

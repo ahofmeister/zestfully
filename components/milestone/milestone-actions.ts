@@ -3,28 +3,24 @@
 import { isSameDay, parseISO } from "date-fns";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { getCurrentUser } from "@/app/auth/auth-actions";
 import type { BaseFormState } from "@/components/form-utils";
 import {
 	calculateCelebrationDate,
 	formatCelebration,
 } from "@/components/milestone/milestone-celebration-calculator";
 import { dbTransaction } from "@/drizzle/client";
-import { milestones, type Visibility } from "@/drizzle/schema";
-import { createClient } from "@/utils/supabase/server";
+import { milestoneSchema, type Visibility } from "@/drizzle/schema";
 
 export async function deleteMilestone(milestoneId: string) {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-
+	const user = await getCurrentUser();
 	if (!user) {
 		return { error: "Not authenticated" };
 	}
 
 	try {
 		await dbTransaction((tx) =>
-			tx.delete(milestones).where(eq(milestones.id, milestoneId)),
+			tx.delete(milestoneSchema).where(eq(milestoneSchema.id, milestoneId)),
 		);
 	} catch (error) {
 		console.error(error);
@@ -39,10 +35,7 @@ export async function saveMilestone(
 	_prev: BaseFormState,
 	formData: FormData,
 ): Promise<BaseFormState> {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	const user = await getCurrentUser();
 
 	if (!user) {
 		return { error: "Not authenticated", success: false };
@@ -106,18 +99,21 @@ export async function saveMilestone(
 		if (isUpdate) {
 			await dbTransaction((tx) =>
 				tx
-					.update(milestones)
+					.update(milestoneSchema)
 					.set({
 						...values,
 						updatedAt: new Date(),
 					})
 					.where(
-						and(eq(milestones.id, milestoneId), eq(milestones.userId, user.id)),
+						and(
+							eq(milestoneSchema.id, milestoneId),
+							eq(milestoneSchema.userId, user.id),
+						),
 					),
 			);
 		} else {
 			await dbTransaction((tx) =>
-				tx.insert(milestones).values({
+				tx.insert(milestoneSchema).values({
 					...values,
 					userId: user.id,
 				}),
@@ -136,7 +132,7 @@ export async function saveMilestone(
 }
 
 type MilestoneWithCelebration = {
-	milestone: typeof milestones.$inferSelect;
+	milestone: typeof milestoneSchema.$inferSelect;
 	celebratingToday: Array<{
 		value: number;
 		unit: "days" | "weeks" | "months" | "years";
@@ -149,7 +145,10 @@ export async function getMilestonesWithCelebrations(
 	selectedDate: string,
 ): Promise<MilestoneWithCelebration[]> {
 	const allMilestones = await dbTransaction(async (tx) => {
-		return tx.select().from(milestones).where(eq(milestones.userId, userId));
+		return tx
+			.select()
+			.from(milestoneSchema)
+			.where(eq(milestoneSchema.userId, userId));
 	});
 
 	console.log(

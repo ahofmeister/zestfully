@@ -76,7 +76,6 @@ export default function MainNavigation({ username }: { username?: string }) {
 									href="/milestones"
 									icon={TrophyIcon}
 									onNavigate={handleNavigation}
-									soon
 								>
 									Milestones
 								</NavigationItem>
