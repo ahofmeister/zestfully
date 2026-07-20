@@ -8,9 +8,7 @@ import type {
 	ShoppingListWithEntriesAndProduct,
 } from "@/utils/supabase/types";
 
-function ShoppingListItems(props: {
-	shoppingList: ShoppingListWithEntriesAndProduct;
-}) {
+function ShoppingListItems(props: { shoppingList: ShoppingListWithEntriesAndProduct }) {
 	const supabase = createClient();
 	const [items, setItems] = useState(props.shoppingList.entries);
 
@@ -39,9 +37,7 @@ function ShoppingListItems(props: {
 				{ event: "DELETE", schema: "public", table: "shopping_list_item" },
 				(payload) => {
 					setItems((prevItems) =>
-						prevItems.filter(
-							(item) => item.id !== (payload.old as ShoppingListItem).id,
-						),
+						prevItems.filter((item) => item.id !== (payload.old as ShoppingListItem).id),
 					);
 				},
 			)

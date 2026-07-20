@@ -27,10 +27,7 @@ export const deleteShoppingList = async (id: string) => {
 
 export const deleteShoppingListItem = async (id: string) => {
 	const supabase = await createClient();
-	const { error } = await supabase
-		.from("shopping_list_item")
-		.delete()
-		.eq("id", id);
+	const { error } = await supabase.from("shopping_list_item").delete().eq("id", id);
 
 	if (error) {
 		console.log(error);
@@ -39,10 +36,7 @@ export const deleteShoppingListItem = async (id: string) => {
 	}
 };
 
-export const addShoppingListItem = async (
-	product_id: string,
-	shopping_list_id: string,
-) => {
+export const addShoppingListItem = async (product_id: string, shopping_list_id: string) => {
 	const supabase = await createClient();
 	const { error } = await supabase
 		.from("shopping_list_item")
@@ -58,10 +52,7 @@ export const addShoppingListItem = async (
 	return;
 };
 
-export const addEntryWithNewProduct = async (
-	name: string,
-	shoppingListId: string,
-) => {
+export const addEntryWithNewProduct = async (name: string, shoppingListId: string) => {
 	const supabase = await createClient();
 	const { data: productData, error } = await supabase
 		.from("product")

@@ -22,26 +22,18 @@ const ThemeSwitcher = () => {
 		setTheme(themes[nextIndex]);
 	};
 
-	if (!mounted) return null;
+	if (!mounted) {
+		return null;
+	}
 
 	const themeIcon = (() => {
 		switch (theme) {
 			case "light":
-				return (
-					<Sun key="light" size={ICON_SIZE} className="text-muted-foreground" />
-				);
+				return <Sun key="light" size={ICON_SIZE} className="text-muted-foreground" />;
 			case "dark":
-				return (
-					<Moon key="dark" size={ICON_SIZE} className="text-muted-foreground" />
-				);
+				return <Moon key="dark" size={ICON_SIZE} className="text-muted-foreground" />;
 			default:
-				return (
-					<Laptop
-						key="system"
-						size={ICON_SIZE}
-						className="text-muted-foreground"
-					/>
-				);
+				return <Laptop key="system" size={ICON_SIZE} className="text-muted-foreground" />;
 		}
 	})();
 

@@ -11,18 +11,11 @@ export function ShoppingListCard(props: { list: ShoppingList }) {
 	return (
 		<Card
 			className="w-full max-w-md cursor-pointer"
-			onClick={() =>
-				router.push(`/shopping-list/${encodeURIComponent(props.list.name)}`)
-			}
+			onClick={() => router.push(`/shopping-list/${encodeURIComponent(props.list.name)}`)}
 		>
 			<CardContent className="pt-6">{props.list.name}</CardContent>
 			<CardFooter className="flex justify-between">
-				<Button
-					variant="secondary"
-					size="iconSm"
-					disabled={true}
-					aria-label="Share item"
-				>
+				<Button variant="secondary" size="iconSm" disabled={true} aria-label="Share item">
 					<Share2 className="h-4 w-4" />
 				</Button>
 				<DeleteShoppingList id={props.list.id} />

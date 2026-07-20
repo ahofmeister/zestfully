@@ -30,11 +30,7 @@ export function CreateShoppingList() {
 					<DialogTitle>Create list</DialogTitle>
 				</DialogHeader>
 				<form onSubmit={onSubmit}>
-					<Input
-						name={"name"}
-						required
-						placeholder={"Insert fancy name here"}
-					/>
+					<Input name={"name"} required placeholder={"Insert fancy name here"} />
 
 					<DialogFooter className={"mt-2"}>
 						<Button type={"submit"}>Create</Button>

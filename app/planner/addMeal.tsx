@@ -48,11 +48,7 @@ export function AddMeal(props: { date: Date }) {
 						<DialogTitle>Add meal to {format(props.date, "EEEE")}</DialogTitle>
 					</DialogHeader>
 
-					<Input
-						className={"mt-4"}
-						name={"meal"}
-						placeholder={"Enter your meal"}
-					/>
+					<Input className={"mt-4"} name={"meal"} placeholder={"Enter your meal"} />
 
 					<ToggleGroup
 						className={"flex justify-start my-2"}

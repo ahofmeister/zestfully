@@ -1,8 +1,5 @@
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import CreateHabit from "@/components/habit/create-habit";
-import HabitGrid from "@/components/habit/habit-grid";
-import { dbTransaction } from "@/drizzle/client";
 // import { habitSchema } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 

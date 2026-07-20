@@ -5,11 +5,7 @@ import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 interface DatePickerProps {
@@ -18,11 +14,7 @@ interface DatePickerProps {
 	label: string;
 }
 
-export function DatePicker({
-	selected,
-	onSelectAction,
-	label,
-}: DatePickerProps) {
+export function DatePicker({ selected, onSelectAction, label }: DatePickerProps) {
 	return (
 		<div className="flex flex-col space-y-2">
 			<Label htmlFor={label}>{label}</Label>
@@ -41,12 +33,7 @@ export function DatePicker({
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent className="w-auto p-0">
-					<Calendar
-						mode="single"
-						selected={selected}
-						onSelect={onSelectAction}
-						initialFocus
-					/>
+					<Calendar mode="single" selected={selected} onSelect={onSelectAction} initialFocus />
 				</PopoverContent>
 			</Popover>
 		</div>

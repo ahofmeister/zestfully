@@ -4,11 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const DeleteRecipe = (props: { id: string }) => {
 	return (
-		<Button
-			variant="destructive"
-			size={"sm"}
-			onClick={() => deleteRecipe(props.id)}
-		>
+		<Button variant="destructive" size={"sm"} onClick={() => deleteRecipe(props.id)}>
 			Delete
 		</Button>
 	);

@@ -7,10 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-	Product,
-	ShoppingListWithEntriesAndProduct,
-} from "@/utils/supabase/types";
+import type { Product, ShoppingListWithEntriesAndProduct } from "@/utils/supabase/types";
 
 export function AddShoppingListItem(props: {
 	shoppingList: ShoppingListWithEntriesAndProduct;
@@ -18,9 +15,9 @@ export function AddShoppingListItem(props: {
 }) {
 	const [openModal, setOpenModal] = useState(false);
 	const [inputValue, setInputValue] = useState("");
-	const [products, setProducts] = useState<
-		(Product | Pick<Product, "name" | "id">)[]
-	>(props.products);
+	const [products, setProducts] = useState<(Product | Pick<Product, "name" | "id">)[]>(
+		props.products,
+	);
 
 	return (
 		<div className={"flex gap-x-4"}>
@@ -29,23 +26,13 @@ export function AddShoppingListItem(props: {
 			</Button>
 
 			<Dialog open={openModal} onOpenChange={setOpenModal}>
-				<DialogContent
-					className={"flex flex-col min-w-full and h-screen justify-between"}
-				>
-					<DialogTitle className={""}>
-						Add to {props.shoppingList.name}
-					</DialogTitle>
-					<ScrollArea
-						className={"mt-5 flex flex-wrap gap-1 content-start flex-1"}
-					>
+				<DialogContent className={"flex flex-col min-w-full and h-screen justify-between"}>
+					<DialogTitle className={""}>Add to {props.shoppingList.name}</DialogTitle>
+					<ScrollArea className={"mt-5 flex flex-wrap gap-1 content-start flex-1"}>
 						<div className={"flex flex-wrap gap-1 content-start flex-1"}>
 							{products
-								?.filter((product) =>
-									product.name.toLowerCase().includes(inputValue.toLowerCase()),
-								)
-								.sort((a, b) =>
-									a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-								)
+								?.filter((product) => product.name.toLowerCase().includes(inputValue.toLowerCase()))
+								.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
 								.map((product) => (
 									<ShoppingListProductCard
 										key={product.id}
@@ -58,19 +45,17 @@ export function AddShoppingListItem(props: {
 								))}
 							{inputValue &&
 								!products.find(
-									(product) =>
-										product.name.toLowerCase() === inputValue.toLowerCase(),
+									(product) => product.name.toLowerCase() === inputValue.toLowerCase(),
 								) && (
 									<Button
 										onClick={() =>
-											addEntryWithNewProduct(
-												inputValue.trim(),
-												props.shoppingList.id,
-											).then((newProduct) => {
-												if (newProduct) {
-													setProducts([...products, newProduct.product]);
-												}
-											})
+											addEntryWithNewProduct(inputValue.trim(), props.shoppingList.id).then(
+												(newProduct) => {
+													if (newProduct) {
+														setProducts([...products, newProduct.product]);
+													}
+												},
+											)
 										}
 									>
 										<ShoppingListProductCard

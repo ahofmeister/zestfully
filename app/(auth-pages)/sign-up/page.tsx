@@ -5,9 +5,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default async function Signup(props: {
-	searchParams: Promise<Message>;
-}) {
+export default async function Signup(props: { searchParams: Promise<Message> }) {
 	const searchParams = await props.searchParams;
 	if ("message" in searchParams) {
 		return (
@@ -30,13 +28,7 @@ export default async function Signup(props: {
 				<Label htmlFor="email">Email</Label>
 				<Input name="email" placeholder="you@example.com" required />
 				<Label htmlFor="password">Password</Label>
-				<Input
-					type="password"
-					name="password"
-					placeholder="Your password"
-					minLength={6}
-					required
-				/>
+				<Input type="password" name="password" placeholder="Your password" minLength={6} required />
 				<SubmitButton formAction={signUpAction} pendingText="Signing up...">
 					Sign up
 				</SubmitButton>

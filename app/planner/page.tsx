@@ -3,27 +3,18 @@ import { AddMeal } from "@/app/planner/addMeal";
 import DeleteMealEntry from "@/app/planner/delete-meal-entry";
 import { WeekNavigation } from "@/app/planner/week-navigation";
 import { Badge } from "@/components/ui/badge";
-import {
-	Card,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
 import type { MealPlan } from "@/utils/supabase/types";
 
 function MealEntries(props: { data: MealPlan[]; date: Date }) {
-	const mealPlans = props.data?.filter(
-		(entry) => entry.date === format(props.date, "yyyy-MM-dd"),
-	);
+	const mealPlans = props.data?.filter((entry) => entry.date === format(props.date, "yyyy-MM-dd"));
 
 	if (mealPlans.length === 0) {
 		return (
 			<Card>
 				<CardHeader>
-					<CardTitle className={"text-muted-foreground"}>
-						No meals yet
-					</CardTitle>
+					<CardTitle className={"text-muted-foreground"}>No meals yet</CardTitle>
 				</CardHeader>
 			</Card>
 		);
@@ -54,12 +45,9 @@ export default async function MealPrepPage(props: {
 	}>;
 }) {
 	const searchParams = await props.searchParams;
-	const weekStart = startOfWeek(
-		searchParams.date ? parseISO(searchParams.date) : new Date(),
-		{
-			weekStartsOn: 1,
-		},
-	);
+	const weekStart = startOfWeek(searchParams.date ? parseISO(searchParams.date) : new Date(), {
+		weekStartsOn: 1,
+	});
 
 	const weekDays = [...Array(7)].map((_, i) => addDays(weekStart, i));
 
@@ -82,9 +70,7 @@ export default async function MealPrepPage(props: {
 						<div key={date.toString()} className={"my-4"}>
 							<div className="flex flex-col p-2 gap-y-6">
 								<div className="flex gap-x-4 w-full items-center justify-between">
-									<div className="text-lg font-medium">
-										{format(date, "EEEE")}
-									</div>
+									<div className="text-lg font-medium">{format(date, "EEEE")}</div>
 									<AddMeal date={date} />
 								</div>
 

@@ -7,7 +7,6 @@ import { useOptimistic, useState, useTransition } from "react";
 import { formatDate, generateYearWeeks, getMonthLabels } from "@/components/dates";
 import { toggleHabitCompletion } from "@/components/habit/habit-actions";
 import { HabitFrequency } from "@/components/habit/habit-frequency";
-import HabitSettings from "@/components/habit/habit-settings";
 import SparkButton from "@/components/habit/spark/spark-button";
 import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
 import { Button } from "@/components/ui/button";

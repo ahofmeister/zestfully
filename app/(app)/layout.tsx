@@ -2,13 +2,12 @@ import "../globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type React from "react";
 import MainNavigation from "@/components/navigation/main-navigation";
-import { createClient } from "@/utils/supabase/server";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	// const supabase = await createClient();
+	// const {
+	// 	data: { user },
+	// } = await supabase.auth.getUser();
 
 	// const profile = user
 	// 	? await dbTransaction(async (tx) => {

@@ -4,11 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { giveSpark, removeSpark } from "@/components/habit/spark/spark-actions";
 import { Button } from "@/components/ui/button";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export default function SparkButton({

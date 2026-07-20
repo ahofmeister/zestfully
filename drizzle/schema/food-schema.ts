@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { pgPolicy, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
 import { profileSchema } from "@/drizzle/schema/profile-schema";
-import { id, timestamps } from "@/drizzle/schema/schema-commons";
+import { id } from "@/drizzle/schema/schema-commons";
 
 export const foodSchema = pgTable(
 	"food",

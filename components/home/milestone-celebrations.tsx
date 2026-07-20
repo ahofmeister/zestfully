@@ -2,11 +2,7 @@ import { getMilestonesWithCelebrations } from "@/components/milestone/milestone-
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
 
-export async function MilestoneCelebrations({
-	selectedDate,
-}: {
-	selectedDate: string;
-}) {
+export async function MilestoneCelebrations({ selectedDate }: { selectedDate: string }) {
 	const supabase = await createClient();
 	const {
 		data: { user },
@@ -32,8 +28,7 @@ export async function MilestoneCelebrations({
 				<div className="space-y-2">
 					{milestones.map((milestone) => (
 						<div key={milestone.milestone.id} className="text-sm">
-							<span>{milestone.milestone.name}</span> -{" "}
-							{milestone.celebratingToday[0].label}
+							<span>{milestone.milestone.name}</span> - {milestone.celebratingToday[0].label}
 						</div>
 					))}
 				</div>

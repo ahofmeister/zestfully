@@ -5,10 +5,7 @@ export type Celebration = {
 	unit: "days" | "weeks" | "months" | "years";
 };
 
-export const formatCelebration = (celebration: {
-	value: number;
-	unit: string;
-}): string => {
+export const formatCelebration = (celebration: { value: number; unit: string }): string => {
 	const { value, unit } = celebration;
 	if (value === 1) {
 		return `1 ${unit.slice(0, -1)}`;
@@ -37,10 +34,6 @@ export const celebrationToDays = (celebration: Celebration): number => {
 	return celebration.value * (multipliers[celebration.unit] || 1);
 };
 
-export const sortCelebrations = (
-	celebrations: Celebration[],
-): Celebration[] => {
-	return [...celebrations].sort(
-		(a, b) => celebrationToDays(a) - celebrationToDays(b),
-	);
+export const sortCelebrations = (celebrations: Celebration[]): Celebration[] => {
+	return [...celebrations].sort((a, b) => celebrationToDays(a) - celebrationToDays(b));
 };

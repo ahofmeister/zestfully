@@ -46,19 +46,12 @@ export default function CreateHabit() {
 					<div className="py-4">
 						<HabitForm isPending={isPending} />
 
-						{state?.error && (
-							<p className="text-sm text-destructive mt-4">{state.error}</p>
-						)}
+						{state?.error && <p className="text-sm text-destructive mt-4">{state.error}</p>}
 					</div>
 
 					<DialogFooter className="gap-2">
 						<DialogClose asChild>
-							<Button
-								type="button"
-								variant="secondary"
-								size="sm"
-								disabled={isPending}
-							>
+							<Button type="button" variant="secondary" size="sm" disabled={isPending}>
 								Cancel
 							</Button>
 						</DialogClose>

@@ -5,10 +5,7 @@ import {
 } from "@/app/shopping-list/shopping-list-actions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type {
-	Product,
-	ShoppingListItemWithProduct,
-} from "@/utils/supabase/types";
+import type { Product, ShoppingListItemWithProduct } from "@/utils/supabase/types";
 
 export function ShoppingListProductCard(props: {
 	item?: ShoppingListItemWithProduct;

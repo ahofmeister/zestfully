@@ -63,9 +63,7 @@ export function getMonthLabels(weeks: (Date | null)[][]): string[] {
 		const month = firstDayInYear.getMonth();
 
 		if (month !== lastMonth) {
-			labels.push(
-				firstDayInYear.toLocaleDateString("en-US", { month: "short" }),
-			);
+			labels.push(firstDayInYear.toLocaleDateString("en-US", { month: "short" }));
 			lastMonth = month;
 		} else {
 			labels.push("");

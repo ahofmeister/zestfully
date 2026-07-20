@@ -3,7 +3,7 @@ import { foodSchema } from "@/drizzle/schema/food-schema";
 import { mealItemSchema } from "@/drizzle/schema/meal-item-schema";
 import { profileSchema } from "@/drizzle/schema/profile-schema";
 
-export const foodRelations = relations(foodSchema, ({ many, one }) => ({
+export const foodRelations = relations(foodSchema, ({ many }) => ({
 	user: many(profileSchema),
 	mealItem: many(mealItemSchema),
 }));

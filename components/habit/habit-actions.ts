@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { BaseFormState } from "@/components/form-utils";
 import { createClient } from "@/utils/supabase/server";
 
-export async function toggleHabitCompletion(habitId: string, date: string) {
+export async function toggleHabitCompletion(_habitId: string, _date: string) {
 	try {
 		// await dbTransaction(async (tx) => {
 		// 	const existing = await tx
@@ -43,7 +43,7 @@ export async function toggleHabitCompletion(habitId: string, date: string) {
 	}
 }
 
-export async function deleteHabit(habitId: string) {
+export async function deleteHabit(_habitId: string) {
 	// try {
 	// 	await dbTransaction(async (tx) => {
 	// 		await tx.delete(habitSchema).where(eq(habitSchema.id, habitId));
@@ -59,7 +59,7 @@ export async function deleteHabit(habitId: string) {
 
 export async function renameHabit(
 	_prevState: { success?: boolean; error?: string } | null,
-	formData: FormData,
+	_formData: FormData,
 ) {
 	// const habitId = formData.get("habitId") as string;
 	// const name = formData.get("name") as string;

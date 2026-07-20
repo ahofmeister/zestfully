@@ -6,11 +6,7 @@ import { Button } from "@/components/ui/button";
 const DeleteMealEntry = (props: { id: string }) => {
 	return (
 		<div>
-			<Button
-				size={"sm"}
-				variant={"outline"}
-				onClick={() => deleteMeal(props.id)}
-			>
+			<Button size={"sm"} variant={"outline"} onClick={() => deleteMeal(props.id)}>
 				<X size={"12"} />
 			</Button>
 		</div>

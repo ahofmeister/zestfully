@@ -35,8 +35,7 @@ export function NavigationItem({
 		</>
 	);
 
-	const baseClasses =
-		"flex items-center px-3 py-2 text-sm rounded-md transition-colors";
+	const baseClasses = "flex items-center px-3 py-2 text-sm rounded-md transition-colors";
 	const activeClasses = isActive
 		? "bg-accent text-foreground font-medium"
 		: "text-muted-foreground hover:text-foreground hover:bg-accent";
@@ -54,11 +53,7 @@ export function NavigationItem({
 	}
 
 	return (
-		<Link
-			href={href || "#"}
-			onClick={onNavigate}
-			className={`${baseClasses} ${activeClasses}`}
-		>
+		<Link href={href || "#"} onClick={onNavigate} className={`${baseClasses} ${activeClasses}`}>
 			{content}
 		</Link>
 	);

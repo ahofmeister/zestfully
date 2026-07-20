@@ -4,9 +4,7 @@ import useUpdateQueryParams from "@/app/use-update-query-params";
 import { Input } from "@/components/ui/input";
 
 export function RecipeSearchBar(props: { value: string }) {
-	const [searchTerm, setSearchTerm] = useState<string | undefined>(
-		props.value ?? "",
-	);
+	const [searchTerm, setSearchTerm] = useState<string | undefined>(props.value ?? "");
 
 	const stuff = useUpdateQueryParams();
 

@@ -42,7 +42,6 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import type { milestoneSchema } from "@/drizzle/schemas";
 import { cn } from "@/lib/utils";
 
 type CelebrationUnit = "days" | "weeks" | "months" | "years";
@@ -55,7 +54,7 @@ const DEFAULT_CELEBRATIONS: Celebration[] = [
 	{ value: 1, unit: "years" },
 ];
 
-type Milestone = typeof milestoneSchema.$inferSelect;
+// type Milestone = typeof milestoneSchema.$inferSelect;
 
 const VISIBILITY_CONFIG = [
 	{
@@ -82,7 +81,7 @@ export default function MilestoneSettings({
 	milestone,
 	children,
 }: {
-	milestone?: Milestone;
+	milestone?: any;
 	children: React.ReactNode;
 }) {
 	const [open, setOpen] = useState(false);
@@ -151,7 +150,9 @@ export default function MilestoneSettings({
 	};
 
 	const handleDelete = async () => {
-		if (!milestone?.id) return;
+		if (!milestone?.id) {
+			return;
+		}
 
 		setIsDeleting(true);
 		const result = await deleteMilestone(milestone.id);
