@@ -96,11 +96,12 @@ export async function hasUserSparked(habitId: string): Promise<boolean> {
 				return false;
 			}
 
-			const spark = await tx.query.sparkSchema.findFirst({
-				where: and(eq(sparkSchema.habitId, habitId), eq(sparkSchema.userId, user.id)),
-			});
+			// const spark = await tx.query.sparkSchema.findFirst({
+			// 	where: and(eq(sparkSchema.habitId, habitId), eq(sparkSchema.userId, user.id)),
+			// });
 
-			return !!spark;
+			// return !!spark;
+			return true;
 		});
 	} catch (error) {
 		console.error("Failed to check if user sparked:", error);

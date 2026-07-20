@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { saveRecipe } from "@/app/recipes/recipe-actions";
-import { ProductAutoComplete } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -160,18 +159,18 @@ export function RecipeForm() {
 
 				<div className={"flex flex-col gap-y-4 mt-4"}>
 					<FormLabel>Ingredients</FormLabel>
-					<ProductAutoComplete
-						onValueChange={(value) =>
-							append({
-								id: value.id,
-								unit: "g",
-								amount: 0,
-								food_id: value.id,
-								recipe_id: "",
-							})
-						}
-						products={products}
-					/>
+					{/*<ProductAutoComplete*/}
+					{/*	onValueChange={(value) =>*/}
+					{/*		append({*/}
+					{/*			id: value.id,*/}
+					{/*			unit: "g",*/}
+					{/*			amount: 0,*/}
+					{/*			food_id: value.id,*/}
+					{/*			recipe_id: "",*/}
+					{/*		})*/}
+					{/*	}*/}
+					{/*	products={products}*/}
+					{/*/>*/}
 				</div>
 
 				{fields.map((field, index) => (

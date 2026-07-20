@@ -1,5 +1,5 @@
 import type React from "react";
-import { capitalize } from "@/components/strings";
+import { capitalizeFirstLetter } from "@/components/strings";
 import type { habitSchema } from "@/drizzle/schemas";
 
 export const HabitFrequency: React.FC<{
@@ -15,7 +15,7 @@ export const HabitFrequency: React.FC<{
 			text = habit.frequencyTarget ? `${habit.frequencyTarget}× per week` : "Weekly";
 			break;
 		case "scheduled_days":
-			text = habit.frequencyDays?.map((d) => capitalize(d)).join(", ") || "";
+			text = habit.frequencyDays?.map((d) => capitalizeFirstLetter(d)).join(", ") || "";
 			break;
 	}
 

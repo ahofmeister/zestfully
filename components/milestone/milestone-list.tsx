@@ -2,7 +2,8 @@ import { desc, eq } from "drizzle-orm";
 import { getCurrentUser } from "@/app/auth/auth-actions";
 import MilestoneCard from "@/components/milestone/milestone-card";
 import { dbTransaction } from "@/drizzle/client";
-import { milestoneSchema, profileSchema } from "@/drizzle/schemas";
+import { profileSchema } from "@/drizzle/schema";
+import { milestoneSchema } from "@/drizzle/schemas";
 
 export default async function MilestonesList({ username }: { username?: string }) {
 	const user = await getCurrentUser();
