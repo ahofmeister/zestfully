@@ -1,18 +1,9 @@
 "use client";
 import { format } from "date-fns";
 import { CalendarIcon, Globe, Lock, Trash2, Users, XIcon } from "lucide-react";
-import {
-	type ChangeEvent,
-	useActionState,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { type ChangeEvent, useActionState, useEffect, useRef, useState } from "react";
 import { PREDEFINED_COLORS } from "@/components/colors";
-import {
-	deleteMilestone,
-	saveMilestone,
-} from "@/components/milestone/milestone-actions";
+import { deleteMilestone, saveMilestone } from "@/components/milestone/milestone-actions";
 import {
 	type Celebration,
 	formatCelebration,
@@ -33,11 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
 	Select,
@@ -55,7 +42,7 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import type { milestoneSchema } from "@/drizzle/schema";
+import type { milestoneSchema } from "@/drizzle/schemas";
 import { cn } from "@/lib/utils";
 
 type CelebrationUnit = "days" | "weeks" | "months" | "years";
@@ -110,9 +97,7 @@ export default function MilestoneSettings({
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	const [selectedColor, setSelectedColor] = useState(
-		milestone?.color || "#10b981",
-	);
+	const [selectedColor, setSelectedColor] = useState(milestone?.color || "#10b981");
 	const [customColor, setCustomColor] = useState("");
 	const [celebrations, setCelebrations] = useState<Celebration[]>(
 		(milestone?.celebrations as Celebration[]) || DEFAULT_CELEBRATIONS,
@@ -153,9 +138,7 @@ export default function MilestoneSettings({
 		if (value && value > 0) {
 			const newCelebration = { value, unit: customUnit };
 			// Check if this exact celebration already exists
-			const exists = celebrations.some(
-				(c) => c.value === value && c.unit === customUnit,
-			);
+			const exists = celebrations.some((c) => c.value === value && c.unit === customUnit);
 			if (!exists) {
 				setCelebrations(sortCelebrations([...celebrations, newCelebration]));
 				setCustomValue("");
@@ -184,28 +167,16 @@ export default function MilestoneSettings({
 		<Sheet open={open} onOpenChange={setOpen}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
 			<SheetContent className="flex flex-col">
-				<form
-					ref={formRef}
-					action={formAction}
-					className="flex flex-col h-full"
-				>
+				<form ref={formRef} action={formAction} className="flex flex-col h-full">
 					<SheetHeader>
-						<SheetTitle>
-							{isEditMode ? "Edit Milestone" : "Create New Milestone"}
-						</SheetTitle>
+						<SheetTitle>{isEditMode ? "Edit Milestone" : "Create New Milestone"}</SheetTitle>
 					</SheetHeader>
 
 					<div className="flex-1 overflow-y-auto px-4 py-4">
 						<div className="grid gap-4">
 							<input type="hidden" name="color" value={selectedColor} />
-							<input
-								type="hidden"
-								name="celebrations"
-								value={JSON.stringify(celebrations)}
-							/>
-							{isEditMode && (
-								<input type="hidden" name="milestoneId" value={milestone.id} />
-							)}
+							<input type="hidden" name="celebrations" value={JSON.stringify(celebrations)} />
+							{isEditMode && <input type="hidden" name="milestoneId" value={milestone.id} />}
 
 							<div className="grid gap-2">
 								<Label htmlFor="name">Name</Label>
@@ -236,9 +207,7 @@ export default function MilestoneSettings({
 
 							<div className="grid gap-2">
 								<Label>Start Date</Label>
-								<p className="text-xs text-muted-foreground">
-									When did you start or quit?
-								</p>
+								<p className="text-xs text-muted-foreground">When did you start or quit?</p>
 								<input
 									type="hidden"
 									name="startDate"
@@ -317,27 +286,19 @@ export default function MilestoneSettings({
 
 							<div className="grid gap-2">
 								<Label htmlFor="visibility">Visibility</Label>
-								<Select
-									name="visibility"
-									defaultValue={milestone?.visibility || "private"}
-								>
+								<Select name="visibility" defaultValue={milestone?.visibility || "private"}>
 									<SelectTrigger disabled={isPending}>
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
 										{VISIBILITY_CONFIG.map((visibility) => (
-											<SelectItem
-												key={visibility.value}
-												value={visibility.value}
-											>
+											<SelectItem key={visibility.value} value={visibility.value}>
 												{visibility.description}
 											</SelectItem>
 										))}
 									</SelectContent>
 								</Select>
-								<p className="text-xs text-muted-foreground">
-									Who can see this milestone?
-								</p>
+								<p className="text-xs text-muted-foreground">Who can see this milestone?</p>
 							</div>
 
 							<div className="grid gap-2">
@@ -347,26 +308,22 @@ export default function MilestoneSettings({
 								</p>
 								{celebrations.length > 0 && (
 									<div className="flex flex-wrap gap-2">
-										{sortCelebrations(celebrations).map(
-											(celebration, index) => {
-												const originalIndex = celebrations.findIndex(
-													(c) =>
-														c.value === celebration.value &&
-														c.unit === celebration.unit,
-												);
-												return (
-													<Badge
-														key={index}
-														variant="secondary"
-														className="flex items-center gap-1 px-3 py-1 cursor-pointer hover:bg-destructive/10"
-														onClick={() => removeCelebration(originalIndex)}
-													>
-														<span>{formatCelebration(celebration)}</span>
-														<XIcon className="h-3 w-3" />
-													</Badge>
-												);
-											},
-										)}
+										{sortCelebrations(celebrations).map((celebration, index) => {
+											const originalIndex = celebrations.findIndex(
+												(c) => c.value === celebration.value && c.unit === celebration.unit,
+											);
+											return (
+												<Badge
+													key={index}
+													variant="secondary"
+													className="flex items-center gap-1 px-3 py-1 cursor-pointer hover:bg-destructive/10"
+													onClick={() => removeCelebration(originalIndex)}
+												>
+													<span>{formatCelebration(celebration)}</span>
+													<XIcon className="h-3 w-3" />
+												</Badge>
+											);
+										})}
 									</div>
 								)}
 								<div className="flex gap-2">
@@ -381,9 +338,7 @@ export default function MilestoneSettings({
 									/>
 									<Select
 										value={customUnit}
-										onValueChange={(value) =>
-											setCustomUnit(value as CelebrationUnit)
-										}
+										onValueChange={(value) => setCustomUnit(value as CelebrationUnit)}
 										disabled={isPending}
 									>
 										<SelectTrigger className="w-[110px]">
@@ -408,9 +363,7 @@ export default function MilestoneSettings({
 								</div>
 							</div>
 
-							{state?.error && (
-								<p className="text-sm text-destructive">{state.error}</p>
-							)}
+							{state?.error && <p className="text-sm text-destructive">{state.error}</p>}
 						</div>
 					</div>
 
@@ -440,22 +393,17 @@ export default function MilestoneSettings({
 							</Button>
 						)}
 
-						<AlertDialog
-							open={showDeleteDialog}
-							onOpenChange={setShowDeleteDialog}
-						>
+						<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 							<AlertDialogContent>
 								<AlertDialogHeader>
 									<AlertDialogTitle>Delete Milestone?</AlertDialogTitle>
 									<AlertDialogDescription>
-										Are you sure you want to delete "{milestone?.name}"? This
-										action cannot be undone.
+										Are you sure you want to delete "{milestone?.name}"? This action cannot be
+										undone.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>
-									<AlertDialogCancel disabled={isDeleting}>
-										Cancel
-									</AlertDialogCancel>
+									<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
 									<AlertDialogAction
 										onClick={handleDelete}
 										disabled={isDeleting}

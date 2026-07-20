@@ -3,7 +3,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { dbTransaction } from "@/drizzle/client";
-import { profileSchema, sparkSchema } from "@/drizzle/schema";
+import { profileSchema, sparkSchema } from "@/drizzle/schemas";
 import { createClient } from "@/utils/supabase/server";
 
 export async function giveSpark(habitId: string) {
@@ -49,12 +49,7 @@ export async function removeSpark(habitId: string) {
 		await dbTransaction(async (tx) => {
 			await tx
 				.delete(sparkSchema)
-				.where(
-					and(
-						eq(sparkSchema.habitId, habitId),
-						eq(sparkSchema.userId, user.id),
-					),
-				);
+				.where(and(eq(sparkSchema.habitId, habitId), eq(sparkSchema.userId, user.id)));
 		});
 
 		revalidatePath("/[username]");
@@ -102,10 +97,7 @@ export async function hasUserSparked(habitId: string): Promise<boolean> {
 			}
 
 			const spark = await tx.query.sparkSchema.findFirst({
-				where: and(
-					eq(sparkSchema.habitId, habitId),
-					eq(sparkSchema.userId, user.id),
-				),
+				where: and(eq(sparkSchema.habitId, habitId), eq(sparkSchema.userId, user.id)),
 			});
 
 			return !!spark;

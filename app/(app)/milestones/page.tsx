@@ -5,7 +5,7 @@ import MilestoneCard from "@/components/milestone/milestone-card";
 import MilestoneSettings from "@/components/milestone/milestone-settings";
 import { Button } from "@/components/ui/button";
 import { dbTransaction } from "@/drizzle/client";
-import { milestoneSchema } from "@/drizzle/schema";
+import { milestoneSchema } from "@/drizzle/schemas";
 
 const MilestonesPage = async () => {
 	const user = await getCurrentUser();
@@ -15,10 +15,7 @@ const MilestonesPage = async () => {
 	}
 
 	const milestones = await dbTransaction((tx) => {
-		return tx
-			.select()
-			.from(milestoneSchema)
-			.where(eq(milestoneSchema.userId, user?.id));
+		return tx.select().from(milestoneSchema).where(eq(milestoneSchema.userId, user?.id));
 	});
 
 	return (
@@ -33,13 +30,7 @@ const MilestonesPage = async () => {
 			</div>
 			<div className={"flex gap-x-2"}>
 				{milestones.map((milestone) => {
-					return (
-						<MilestoneCard
-							key={milestone.id}
-							milestone={milestone}
-							isOwner={true}
-						/>
-					);
+					return <MilestoneCard key={milestone.id} milestone={milestone} isOwner={true} />;
 				})}
 			</div>
 		</div>

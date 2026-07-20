@@ -4,18 +4,14 @@ import { isToday } from "date-fns";
 import { CalendarDays, Flame } from "lucide-react";
 import type React from "react";
 import { useOptimistic, useState, useTransition } from "react";
-import {
-	formatDate,
-	generateYearWeeks,
-	getMonthLabels,
-} from "@/components/dates";
+import { formatDate, generateYearWeeks, getMonthLabels } from "@/components/dates";
 import { toggleHabitCompletion } from "@/components/habit/habit-actions";
 import { HabitFrequency } from "@/components/habit/habit-frequency";
 import HabitSettings from "@/components/habit/habit-settings";
 import SparkButton from "@/components/habit/spark/spark-button";
 import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
 import { Button } from "@/components/ui/button";
-import type { habitCompletion, habitSchema } from "@/drizzle/schema";
+import type { habitCompletion, habitSchema } from "@/drizzle/schemas";
 import { cn } from "@/lib/utils";
 
 export default function HabitGrid({
@@ -57,9 +53,7 @@ export default function HabitGrid({
 
 	const totalDays = optimisticCompletions.length;
 
-	const completionDates = new Set(
-		optimisticCompletions.map((c) => c.completedAt),
-	);
+	const completionDates = new Set(optimisticCompletions.map((c) => c.completedAt));
 
 	const handleToggleDay = async (
 		habitId: string,
@@ -111,7 +105,7 @@ export default function HabitGrid({
 					<h3 className="font-mono text-lg font-semibold">{habit.name}</h3>
 					{isOwner && (
 						<div className="flex items-center gap-0.5 transition-opacity text-muted-foreground">
-							<HabitSettings habit={habit} />
+							{/*<HabitSettings habit={habit} />*/}
 						</div>
 					)}
 				</div>
@@ -158,9 +152,7 @@ export default function HabitGrid({
 						<div className="flex gap-1">
 							{weeks.map((week, weekIndex) => {
 								const firstDate = week.find((d) => d);
-								const weekKey = firstDate
-									? formatDate(firstDate)
-									: `week-${weekIndex}`;
+								const weekKey = firstDate ? formatDate(firstDate) : `week-${weekIndex}`;
 
 								return (
 									<div key={weekKey} className="flex flex-col gap-1">
@@ -171,10 +163,7 @@ export default function HabitGrid({
 										{week.map((date, dayIndex) => {
 											if (!date) {
 												return (
-													<div
-														key={`${weekKey}-empty-${dayIndex}`}
-														className="h-[16px] w-[16px]"
-													/>
+													<div key={`${weekKey}-empty-${dayIndex}`} className="h-[16px] w-[16px]" />
 												);
 											}
 

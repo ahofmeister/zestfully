@@ -8,7 +8,7 @@ import {
 	subDays,
 	subWeeks,
 } from "date-fns";
-import { type FrequencyType, WEEKDAYS, type Weekday } from "@/drizzle/schema";
+import { type FrequencyType, WEEKDAYS, type Weekday } from "@/drizzle/schemas";
 
 export type StreakOptions = {
 	completions: string[];
@@ -22,12 +22,7 @@ function parseDate(dateStr: string): number {
 }
 
 export function calculateCurrentStreak(options: StreakOptions): number {
-	const {
-		completions,
-		frequencyType,
-		frequencyTarget = 0,
-		frequencyDays,
-	} = options;
+	const { completions, frequencyType, frequencyTarget = 0, frequencyDays } = options;
 
 	if (completions.length === 0) {
 		return 0;
@@ -67,10 +62,7 @@ function calculateDailyStreak(completions: string[]): number {
 	return streak;
 }
 
-export function calculateWeeklyStreak(
-	completions: string[],
-	frequencyTarget: number,
-): number {
+export function calculateWeeklyStreak(completions: string[], frequencyTarget: number): number {
 	const weekCounts = new Map<string, number>();
 
 	completions.forEach((dateStr) => {
@@ -89,9 +81,8 @@ export function calculateWeeklyStreak(
 	}
 
 	while (
-		(weekCounts.get(
-			`${getYear(currentWeekStart)}-${getISOWeek(currentWeekStart)}`,
-		) || 0) >= frequencyTarget
+		(weekCounts.get(`${getYear(currentWeekStart)}-${getISOWeek(currentWeekStart)}`) || 0) >=
+		frequencyTarget
 	) {
 		streak++;
 		currentWeekStart = subWeeks(currentWeekStart, 1);
@@ -100,10 +91,7 @@ export function calculateWeeklyStreak(
 	return streak;
 }
 
-function calculateScheduledDaysStreak(
-	completions: string[],
-	days: Weekday[] | null,
-) {
+function calculateScheduledDaysStreak(completions: string[], days: Weekday[] | null) {
 	if (!days || days.length === 0) {
 		return 0;
 	}

@@ -1,12 +1,11 @@
 import { addDays, format, startOfWeek, subDays } from "date-fns";
 import { describe, expect, it, vi } from "vitest";
 import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
-import type { Weekday } from "@/drizzle/schema";
+import type { Weekday } from "@/drizzle/schemas";
 
 describe("calculateCurrentStreak - daily", () => {
 	const getTodayString = () => format(new Date(), "yyyy-MM-dd");
-	const daysAgoString = (days: number) =>
-		format(subDays(new Date(), days), "yyyy-MM-dd");
+	const daysAgoString = (days: number) => format(subDays(new Date(), days), "yyyy-MM-dd");
 
 	it("returns 0 for no completions", () => {
 		const result = calculateCurrentStreak({
@@ -58,12 +57,7 @@ describe("calculateCurrentStreak - daily", () => {
 
 	it("returns 2 for today and yesterday, ignoring older gap", () => {
 		const result = calculateCurrentStreak({
-			completions: [
-				getTodayString(),
-				daysAgoString(1),
-				daysAgoString(5),
-				daysAgoString(6),
-			],
+			completions: [getTodayString(), daysAgoString(1), daysAgoString(5), daysAgoString(6)],
 			frequencyType: "daily",
 		});
 		expect(result).toBe(2);
@@ -90,8 +84,7 @@ describe("calculateCurrentStreak - daily", () => {
 
 describe("calculateCurrentStreak - per_week", () => {
 	const getTodayString = () => format(new Date(), "yyyy-MM-dd");
-	const daysAgoString = (days: number) =>
-		format(subDays(new Date(), days), "yyyy-MM-dd");
+	const daysAgoString = (days: number) => format(subDays(new Date(), days), "yyyy-MM-dd");
 
 	const getWeekDate = (weeksAgo: number, dayOffset: number) => {
 		const weekStart = startOfWeek(subDays(new Date(), weeksAgo * 7), {
@@ -119,11 +112,7 @@ describe("calculateCurrentStreak - per_week", () => {
 	});
 
 	it("returns 1 week when target met in current week only", () => {
-		const completions = [
-			getWeekDate(0, 0),
-			getWeekDate(0, 2),
-			getWeekDate(0, 4),
-		];
+		const completions = [getWeekDate(0, 0), getWeekDate(0, 2), getWeekDate(0, 4)];
 		const result = calculateCurrentStreak({
 			completions,
 			frequencyType: "per_week",
@@ -150,12 +139,7 @@ describe("calculateCurrentStreak - per_week", () => {
 	});
 
 	it("returns 1 when target met last week but not current week", () => {
-		const completions = [
-			getTodayString(),
-			getWeekDate(1, 0),
-			getWeekDate(1, 2),
-			getWeekDate(1, 4),
-		];
+		const completions = [getTodayString(), getWeekDate(1, 0), getWeekDate(1, 2), getWeekDate(1, 4)];
 		const result = calculateCurrentStreak({
 			completions,
 			frequencyType: "per_week",
@@ -165,11 +149,7 @@ describe("calculateCurrentStreak - per_week", () => {
 	});
 
 	it("returns 3 weeks with target of 1 per week", () => {
-		const completions = [
-			getWeekDate(0, 0),
-			getWeekDate(1, 0),
-			getWeekDate(2, 0),
-		];
+		const completions = [getWeekDate(0, 0), getWeekDate(1, 0), getWeekDate(2, 0)];
 		const result = calculateCurrentStreak({
 			completions,
 			frequencyType: "per_week",
@@ -244,9 +224,7 @@ describe("calculateCurrentStreak - scheduled_days", () => {
 		const today = new Date();
 		const dayOfWeek = format(today, "EEE").toLowerCase();
 
-		const otherDays = ["mon", "wed", "fri"].filter(
-			(d) => d !== dayOfWeek,
-		) as Weekday[];
+		const otherDays = ["mon", "wed", "fri"].filter((d) => d !== dayOfWeek) as Weekday[];
 
 		const result = calculateCurrentStreak({
 			completions: [getTodayString()],
@@ -259,12 +237,7 @@ describe("calculateCurrentStreak - scheduled_days", () => {
 	it("counts streak only on scheduled days (Mon/Wed/Fri)", () => {
 		vi.setSystemTime(new Date("2025-12-19"));
 
-		const completions = [
-			"2025-12-19",
-			"2025-12-18",
-			"2025-12-17",
-			"2025-12-15",
-		];
+		const completions = ["2025-12-19", "2025-12-18", "2025-12-17", "2025-12-15"];
 
 		const result = calculateCurrentStreak({
 			completions,

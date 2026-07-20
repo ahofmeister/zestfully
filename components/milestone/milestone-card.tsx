@@ -8,12 +8,8 @@ import {
 } from "@/components/milestone/milestone-celebration-calculator";
 import MilestoneDrawer from "@/components/milestone/milestone-settings";
 import { Button } from "@/components/ui/button";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { milestoneSchema } from "@/drizzle/schema";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import type { milestoneSchema } from "@/drizzle/schemas";
 
 type Milestone = typeof milestoneSchema.$inferSelect;
 
@@ -34,10 +30,7 @@ export default function MilestoneCard({
 	let nextUpcoming = null;
 
 	for (const celebration of sortedCelebrations) {
-		const celebrationDate = calculateCelebrationDate(
-			new Date(milestone.startDate),
-			celebration,
-		);
+		const celebrationDate = calculateCelebrationDate(new Date(milestone.startDate), celebration);
 		const achieved = new Date() >= celebrationDate;
 
 		if (achieved) {
@@ -47,9 +40,7 @@ export default function MilestoneCard({
 		}
 	}
 
-	const daysToNext = nextUpcoming
-		? differenceInDays(nextUpcoming.date, today)
-		: null;
+	const daysToNext = nextUpcoming ? differenceInDays(nextUpcoming.date, today) : null;
 
 	return (
 		<div className="relative overflow-hidden w-full h-[180px]">
@@ -102,9 +93,7 @@ export default function MilestoneCard({
 									<span className="font-semibold">
 										{formatCelebration(nextUpcoming.celebration)}
 									</span>
-									<span className="text-muted-foreground">
-										in {daysToNext}d
-									</span>
+									<span className="text-muted-foreground">in {daysToNext}d</span>
 								</button>
 							</TooltipTrigger>
 							<TooltipContent>

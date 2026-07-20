@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { saveRecipe } from "@/app/recipes/recipe-actions";
-import { ProductAutoComplete } from "@/components/ui/auto-suggest-input";
+import { ProductAutoComplete } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -73,9 +73,7 @@ export function RecipeForm() {
 
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit((recipe) => handleSubmit({ ...recipe }))}
-			>
+			<form onSubmit={form.handleSubmit((recipe) => handleSubmit({ ...recipe }))}>
 				<div className="flex flex-col space-y-4">
 					<div className="grid grid-cols-2 gap-4">
 						<div className="grid gap-2">
@@ -121,11 +119,7 @@ export function RecipeForm() {
 								<FormItem>
 									<FormLabel>Time</FormLabel>
 									<FormControl>
-										<Input
-											type={"number"}
-											placeholder="Time in minutes"
-											{...field}
-										/>
+										<Input type={"number"} placeholder="Time in minutes" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

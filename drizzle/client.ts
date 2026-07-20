@@ -1,17 +1,10 @@
-import {
-	drizzle,
-	type PostgresJsQueryResultHKT,
-} from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import "server-only";
 
-import {
-	type DrizzleConfig,
-	type ExtractTablesWithRelations,
-	sql,
-} from "drizzle-orm";
+import { type DrizzleConfig, type ExtractTablesWithRelations, sql } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
+import { drizzle, type PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import { type JwtPayload, jwtDecode } from "jwt-decode";
+import postgres from "postgres";
 import * as schema from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 

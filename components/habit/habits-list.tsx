@@ -1,14 +1,10 @@
 import { and, eq, or, sql } from "drizzle-orm";
 import { dbTransaction } from "@/drizzle/client";
-import { habitSchema } from "@/drizzle/schema";
+import { habitSchema } from "@/drizzle/schemas";
 import { createClient } from "@/utils/supabase/server";
 import DayHabits from "./day-habits";
 
-export default async function HabitsList({
-	selectedDate,
-}: {
-	selectedDate: string;
-}) {
+export default async function HabitsList({ selectedDate }: { selectedDate: string }) {
 	const supabase = await createClient();
 	const {
 		data: { user },

@@ -8,7 +8,7 @@ import { HabitFrequency } from "@/components/habit/habit-frequency";
 import { calculateCurrentStreak } from "@/components/habit/streak-calculator";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { habitCompletion, habitSchema } from "@/drizzle/schema";
+import type { habitCompletion, habitSchema } from "@/drizzle/schemas";
 
 type Habit = typeof habitSchema.$inferSelect & {
 	completions: (typeof habitCompletion.$inferSelect)[];
@@ -32,9 +32,7 @@ export default function DayHabits({
 			return optimisticUpdates[habit.id];
 		}
 
-		const completed = habit.completions.some(
-			(c) => c.completedAt === selectedDate,
-		);
+		const completed = habit.completions.some((c) => c.completedAt === selectedDate);
 
 		const streak = calculateCurrentStreak({
 			completions: habit.completions.map((c) => c.completedAt),
@@ -46,10 +44,7 @@ export default function DayHabits({
 		return { completed, streak };
 	};
 
-	const handleToggle = (
-		habitId: string,
-		event: React.MouseEvent<HTMLDivElement>,
-	) => {
+	const handleToggle = (habitId: string, event: React.MouseEvent<HTMLDivElement>) => {
 		const habit = habits.find((h) => h.id === habitId);
 		if (!habit) {
 			return;
@@ -68,9 +63,7 @@ export default function DayHabits({
 
 		const updatedCompletions = newCompleted
 			? [...habit.completions.map((c) => c.completedAt), selectedDate]
-			: habit.completions
-					.map((c) => c.completedAt)
-					.filter((date) => date !== selectedDate);
+			: habit.completions.map((c) => c.completedAt).filter((date) => date !== selectedDate);
 
 		const newStreak = calculateCurrentStreak({
 			completions: updatedCompletions,
@@ -110,11 +103,7 @@ export default function DayHabits({
 						<Checkbox checked={completed} />
 
 						<div className="flex flex-col">
-							<span
-								className={
-									completed ? "line-through text-muted-foreground" : ""
-								}
-							>
+							<span className={completed ? "line-through text-muted-foreground" : ""}>
 								{habit.name}
 							</span>
 							<div className="flex items-center gap-2 text-xs text-muted-foreground">

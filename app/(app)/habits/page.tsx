@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import CreateHabit from "@/components/habit/create-habit";
 import HabitGrid from "@/components/habit/habit-grid";
 import { dbTransaction } from "@/drizzle/client";
-import { habitSchema } from "@/drizzle/schema";
+// import { habitSchema } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase/server";
 
 const HabitsPage = async () => {
@@ -16,28 +16,28 @@ const HabitsPage = async () => {
 		redirect("/sign-in");
 	}
 
-	const habits = await dbTransaction(async (tx) => {
-		return tx.query.habitSchema.findMany({
-			where: eq(habitSchema.userId, user.id),
-			with: {
-				completions: true,
-				sparks: true,
-			},
-		});
-	});
+	// const habits = await dbTransaction(async (tx) => {
+	// 	return tx.query.habitSchema.findMany({
+	// 		where: eq(habitSchema.userId, user.id),
+	// 		with: {
+	// 			completions: true,
+	// 			sparks: true,
+	// 		},
+	// 	});
+	// });
 
 	return (
 		<div className="space-y-8">
 			<CreateHabit />
-			{habits.map((habit) => (
-				<HabitGrid
-					key={habit.id}
-					habit={habit}
-					isOwner={true}
-					sparkCount={habit.sparks.length}
-					hasSparked={false}
-				/>
-			))}
+			{/*{habits.map((habit) => (*/}
+			{/*	<HabitGrid*/}
+			{/*		key={habit.id}*/}
+			{/*		habit={habit}*/}
+			{/*		isOwner={true}*/}
+			{/*		sparkCount={habit.sparks.length}*/}
+			{/*		hasSparked={false}*/}
+			{/*	/>*/}
+			{/*))}*/}
 		</div>
 	);
 };

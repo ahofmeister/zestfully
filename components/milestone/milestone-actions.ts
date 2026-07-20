@@ -10,7 +10,7 @@ import {
 	formatCelebration,
 } from "@/components/milestone/milestone-celebration-calculator";
 import { dbTransaction } from "@/drizzle/client";
-import { milestoneSchema, type Visibility } from "@/drizzle/schema";
+import { milestoneSchema, type Visibility } from "@/drizzle/schemas";
 
 export async function deleteMilestone(milestoneId: string) {
 	const user = await getCurrentUser();
@@ -104,12 +104,7 @@ export async function saveMilestone(
 						...values,
 						updatedAt: new Date(),
 					})
-					.where(
-						and(
-							eq(milestoneSchema.id, milestoneId),
-							eq(milestoneSchema.userId, user.id),
-						),
-					),
+					.where(and(eq(milestoneSchema.id, milestoneId), eq(milestoneSchema.userId, user.id))),
 			);
 		} else {
 			await dbTransaction((tx) =>
@@ -145,10 +140,7 @@ export async function getMilestonesWithCelebrations(
 	selectedDate: string,
 ): Promise<MilestoneWithCelebration[]> {
 	const allMilestones = await dbTransaction(async (tx) => {
-		return tx
-			.select()
-			.from(milestoneSchema)
-			.where(eq(milestoneSchema.userId, userId));
+		return tx.select().from(milestoneSchema).where(eq(milestoneSchema.userId, userId));
 	});
 
 	console.log(
@@ -177,10 +169,7 @@ export async function getMilestonesWithCelebrations(
 		}
 
 		const celebratingToday = milestone.celebrations.filter((celebration) => {
-			const celebrationDate = calculateCelebrationDate(
-				milestone.startDate,
-				celebration,
-			);
+			const celebrationDate = calculateCelebrationDate(milestone.startDate, celebration);
 
 			console.log({
 				milestone: milestone.name,

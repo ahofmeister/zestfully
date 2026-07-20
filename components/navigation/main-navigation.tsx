@@ -1,13 +1,6 @@
 "use client";
 
-import {
-	HomeIcon,
-	LogOutIcon,
-	Repeat2Icon,
-	SettingsIcon,
-	TrophyIcon,
-	UserCogIcon,
-} from "lucide-react";
+import { AppleIcon, HomeIcon, LogOutIcon, SettingsIcon, UserCogIcon } from "lucide-react";
 import { useState } from "react";
 import { signOut } from "@/app/auth/auth-actions";
 import { MobileHeader } from "@/components/navigation/mobile-header";
@@ -44,20 +37,12 @@ export default function MainNavigation({ username }: { username?: string }) {
         `}
 			>
 				<div className="h-full flex flex-col">
-					<SidebarHeader
-						logoSrc="/icon-192x192.png"
-						title="Zestfully"
-						href={"/home"}
-					/>
+					<SidebarHeader logoSrc="/icon-192x192.png" title="Zestfully" href={"/home"} />
 
 					<div className="flex-1 overflow-y-auto py-4 px-4">
 						<div className="space-y-6">
 							<NavigationSection title="Overview">
-								<NavigationItem
-									href="/home"
-									icon={HomeIcon}
-									onNavigate={handleNavigation}
-								>
+								<NavigationItem href="/home" icon={HomeIcon} onNavigate={handleNavigation}>
 									Home
 								</NavigationItem>
 
@@ -65,19 +50,8 @@ export default function MainNavigation({ username }: { username?: string }) {
 							</NavigationSection>
 
 							<NavigationSection title="Manage">
-								<NavigationItem
-									href="/habits"
-									icon={Repeat2Icon}
-									onNavigate={handleNavigation}
-								>
-									Habits
-								</NavigationItem>
-								<NavigationItem
-									href="/milestones"
-									icon={TrophyIcon}
-									onNavigate={handleNavigation}
-								>
-									Milestones
+								<NavigationItem href="/foods" icon={AppleIcon} onNavigate={handleNavigation}>
+									Foods
 								</NavigationItem>
 							</NavigationSection>
 
