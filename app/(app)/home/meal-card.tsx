@@ -1,5 +1,6 @@
 import { MacroValue } from "@/app/(app)/home/macro-value";
 import { calculateNutrients, macroColors, round } from "@/app/(app)/home/nutrition-calculation";
+import MealItemRowActions from "@/components/meal-item/meal-item-row-actions";
 import type { MealItemWithFood } from "@/drizzle/schema";
 
 const MealCard = ({ mealItem }: { mealItem: MealItemWithFood }) => {
@@ -21,6 +22,7 @@ const MealCard = ({ mealItem }: { mealItem: MealItemWithFood }) => {
 					<MacroValue colorVar={macroColors.protein} value={nutrients.protein} />
 					<MacroValue colorVar={macroColors.carbohydrates} value={nutrients.carbohydrates} />
 					<MacroValue colorVar={macroColors.fat} value={nutrients.fat} />
+					<MealItemRowActions id={mealItem.id} />
 				</div>
 			</div>
 		</li>
