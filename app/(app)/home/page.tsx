@@ -1,8 +1,6 @@
 import { eq } from "drizzle-orm";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { SearchParams } from "nuqs/server";
-import AddMealItemButton from "@/app/(app)/home/add-meal-item-button";
-import { Dot } from "@/app/(app)/home/dot";
 import { MacroLegend } from "@/app/(app)/home/macro-legend";
 import { MacroValue } from "@/app/(app)/home/macro-value";
 import MealCard from "@/app/(app)/home/meal-card";
@@ -10,8 +8,7 @@ import { calculateNutrients, macroColors, round } from "@/app/(app)/home/nutriti
 import { DateLabel } from "@/components/date-label";
 import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
-import { capitalizeFirstLetter } from "@/components/strings";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { dbTransaction } from "@/drizzle/client";
 import { type foodSchema, mealItemSchema, mealTypes } from "@/drizzle/schema";
 
@@ -72,44 +69,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 			<div className="flex flex-col gap-y-4 mt-2">
 				{mealTypes.map((type) => {
 					const items = categories[type];
-
-					const nutrients = calculateNutrients(items ?? []);
-
-					return (
-						<Card key={type}>
-							<CardHeader>
-								<div className="flex justify-between">
-									<div className="flex gap-x-2 items-center">
-										<h2>{capitalizeFirstLetter(type)}</h2>
-										<p className="text-gray-500">{round(nutrients.energy, 0, 0)} kcal</p>
-									</div>
-									<AddMealItemButton type={type} date={date} />
-								</div>
-							</CardHeader>
-
-							<CardContent className="p-0">
-								<div className="flex items-center gap-5 border-t border-border bg-muted/30 px-4 py-2 font-mono text-xs tabular-nums text-foreground">
-									<span className="flex items-center gap-1.5">
-										<Dot colorVar={macroColors.protein} />
-										{round(nutrients.protein, 1)}g
-									</span>
-									<span className="flex items-center gap-1.5">
-										<Dot colorVar={macroColors.carbohydrates} />
-										{round(nutrients.carbohydrates, 1)}g
-									</span>
-									<span className="flex items-center gap-1.5">
-										<Dot colorVar={macroColors.fat} />
-										{round(nutrients.fat, 1)}g
-									</span>
-								</div>
-								<ul className="flex flex-col gap-y-4">
-									{items?.map((mealItem) => {
-										return <MealCard key={mealItem.id} mealItem={mealItem} />;
-									})}
-								</ul>
-							</CardContent>
-						</Card>
-					);
+					return <MealCard key={type} mealItems={items} type={type} date={date} />;
 				})}
 			</div>
 		</div>
