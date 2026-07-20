@@ -1,5 +1,4 @@
 export default async function ProfilePage(props: { params: Promise<{ username: string }> }) {
-	const _params = await props.params;
 	// const supabase = await createClient();
 	// const {
 	// 	data: { user },

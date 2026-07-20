@@ -342,7 +342,7 @@ export default function MilestoneSettings({
 										onValueChange={(value) => setCustomUnit(value as CelebrationUnit)}
 										disabled={isPending}
 									>
-										<SelectTrigger className="w-[110px]">
+										<SelectTrigger className="w-27.5">
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
@@ -368,7 +368,7 @@ export default function MilestoneSettings({
 						</div>
 					</div>
 
-					<SheetFooter className="flex-col gap-2 px-4 py-4 border-t flex-shrink-0 sm:flex-col">
+					<SheetFooter className="flex-col gap-2 px-4 py-4 border-t shrink-0 sm:flex-col">
 						<div className="flex gap-2 w-full">
 							<Button type="submit" disabled={isPending} className="flex-1">
 								{isPending
