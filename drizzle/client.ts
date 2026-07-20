@@ -21,6 +21,7 @@ let postgresSqlClient: ReturnType<typeof postgres>;
 
 const databaseUrl = process.env.DATABASE_URL;
 
+console.log(databaseUrl);
 if (!databaseUrl) {
 	throw new Error("DATABASE_URL environment variable is not set");
 }
