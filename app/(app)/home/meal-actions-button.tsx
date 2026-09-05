@@ -60,6 +60,8 @@ export function MealActionsButton({ items }: { items: MealItemWithFood[] }) {
 }
 
 const CopyMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
+	const [date, setDate] = useState<Date | undefined>();
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -75,7 +77,8 @@ const CopyMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
 				<form
 					action={async (formData: FormData) => {
 						const mealType = formData.get("mealType") as MealType;
-						await copyMealItems(mealType, items);
+						const date = formData.get("date") as string;
+						await copyMealItems(mealType, date, items);
 					}}
 				>
 					<Select name="mealType" required>
@@ -90,6 +93,8 @@ const CopyMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
 							))}
 						</SelectContent>
 					</Select>
+
+					<DatePicker name="date" label="Date" selected={date} onSelectAction={setDate} required />
 					<DialogFooter>
 						<Button type="submit">Copy</Button>
 					</DialogFooter>

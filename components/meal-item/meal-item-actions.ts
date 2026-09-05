@@ -27,7 +27,11 @@ export const deleteMealItem = async (mealItemId: string) => {
 	revalidatePath("/home", "page");
 };
 
-export const copyMealItems = async (newMealType: MealType, mealItems: MealItemWithFood[]) => {
+export const copyMealItems = async (
+	newMealType: MealType,
+	date: string,
+	mealItems: MealItemWithFood[],
+) => {
 	if (mealItems.length === 0) {
 		return;
 	}
@@ -35,6 +39,7 @@ export const copyMealItems = async (newMealType: MealType, mealItems: MealItemWi
 	const newItems = mealItems.map(({ id, updatedAt, createdAt, ...rest }) => ({
 		...rest,
 		mealType: newMealType,
+		date,
 	}));
 
 	await dbTransaction((tx) => {
