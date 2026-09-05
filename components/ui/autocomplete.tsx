@@ -276,7 +276,7 @@ export function Autocomplete({
 					<ul
 						id={listboxId}
 						ref={listRef}
-						className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-md border border-neutral-200 p-1 text-sm shadow-md"
+						className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-md border border-neutral-200 p-1 text-sm shadow-m bg-black/80"
 					>
 						{loading && results.length === 0 ? (
 							<li
@@ -316,7 +316,7 @@ export function Autocomplete({
 										}}
 										className={[
 											"relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 outline-none",
-											active ? "bg-neutral-100" : "",
+											active ? "bg-neutral-400" : "",
 										].join(" ")}
 									>
 										<span className={selected ? "font-medium" : ""}>{option.label}</span>

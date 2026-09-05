@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusIcon } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { searchFood } from "@/app/(app)/foods/food-actions";
 import { addMealItem } from "@/components/meal-item/meal-item-actions";
 import {
@@ -14,12 +14,15 @@ import {
 import { Autocomplete } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import type { MealType } from "@/drizzle/schema";
 
 type ActionState = { error: string | null; success: boolean };
-// TODO pending state
 
 const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
+	const formRef = useRef<HTMLFormElement>(null);
+	const [autocompleteKey, setAutocompleteKey] = useState(0);
+
 	const [_, formAction, isPending] = useActionState(
 		async (_: ActionState, formData: FormData): Promise<ActionState> => {
 			const foodId = formData.get("foodId") as string;
@@ -31,7 +34,10 @@ const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
 
 			await addMealItem(date, type, foodId, quantity);
 
-			return { error: null, success: false };
+			formRef.current?.reset();
+			setAutocompleteKey((k) => k + 1);
+
+			return { error: null, success: true };
 		},
 		{ success: true, error: null },
 	);
@@ -50,8 +56,9 @@ const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
 					</AlertDialogTitle>
 				</AlertDialogHeader>
 
-				<form action={formAction}>
+				<form ref={formRef} action={formAction} className="flex flex-col gap-y-4">
 					<Autocomplete
+						key={autocompleteKey}
 						name="foodId"
 						fetchOptions={async (query: string) => {
 							return searchFood(query).then((food) =>
@@ -63,12 +70,11 @@ const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
 						}}
 					/>
 
-					<Input placeholder="quantity" name="quantity" required />
+					<Input placeholder="Quantity in gram" name="quantity" required />
 
 					<div className="flex justify-end gap-3 mt-4">
 						<Button type="submit" disabled={isPending}>
-							{/*{isPending ? <Spinner /> : "Send"}*/}
-							Send
+							{isPending ? <Spinner /> : "Add"}
 						</Button>
 					</div>
 				</form>
