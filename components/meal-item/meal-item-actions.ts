@@ -1,5 +1,5 @@
 "use server";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { dbTransaction } from "@/drizzle/client";
 import { type MealItemWithFood, type MealType, mealItemSchema } from "@/drizzle/schema";
@@ -40,6 +40,14 @@ export const copyMealItems = async (newMealType: MealType, mealItems: MealItemWi
 	await dbTransaction((tx) => {
 		return tx.insert(mealItemSchema).values(newItems);
 	});
+
+	revalidatePath("/home", "page");
+};
+
+export const deleteMealItems = async (mealItemIds: string[]) => {
+	await dbTransaction((tx) =>
+		tx.delete(mealItemSchema).where(inArray(mealItemSchema.id, mealItemIds)),
+	);
 
 	revalidatePath("/home", "page");
 };
