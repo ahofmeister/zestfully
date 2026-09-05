@@ -1,3 +1,5 @@
+import { MacroValue } from "@/app/(app)/home/macro-value";
+import { macroColors } from "@/app/(app)/home/nutrition-calculation";
 import {
 	Table,
 	TableBody,
@@ -34,9 +36,15 @@ const FoodPage = async () => {
 							<TableCell>{food.name}</TableCell>
 							<TableCell>Category</TableCell>
 							<TableCell>{food.energy}</TableCell>
-							<TableCell>{food.protein}</TableCell>
-							<TableCell>{food.fat}</TableCell>
-							<TableCell>{food.carbohydrates}</TableCell>
+							<TableCell>
+								<MacroValue colorVar={macroColors.protein} value={food.protein} />
+							</TableCell>
+							<TableCell>
+								<MacroValue colorVar={macroColors.fat} value={food.fat} />
+							</TableCell>
+							<TableCell>
+								<MacroValue colorVar={macroColors.carbohydrates} value={food.carbohydrates} />
+							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
