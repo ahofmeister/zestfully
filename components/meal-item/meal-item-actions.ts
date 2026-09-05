@@ -51,3 +51,40 @@ export const deleteMealItems = async (mealItemIds: string[]) => {
 
 	revalidatePath("/home", "page");
 };
+
+export const splitMealItems = async (
+	mealItems: MealItemWithFood[],
+	date: string,
+	mealType: MealType,
+) => {
+	const splitMealItems: MealItemWithFood[] = mealItems.map((item) => ({
+		...item,
+		quantity: Math.round(item.quantity / 2),
+	}));
+
+	try {
+		await dbTransaction(async (tx) => {
+			await Promise.all(
+				splitMealItems.map((item) =>
+					tx
+						.update(mealItemSchema)
+						.set({ quantity: item.quantity })
+						.where(eq(mealItemSchema.id, item.id)),
+				),
+			);
+
+			await tx.insert(mealItemSchema).values(
+				splitMealItems.map((item) => ({
+					mealType: mealType,
+					foodId: item.food.id,
+					quantity: item.quantity,
+					date: date,
+				})),
+			);
+		});
+	} catch (error) {
+		console.error(error);
+	}
+
+	revalidatePath("/home", "page");
+};

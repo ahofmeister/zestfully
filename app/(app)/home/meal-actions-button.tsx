@@ -1,6 +1,12 @@
 "use client";
-import { CopyIcon, EllipsisVerticalIcon, TrashIcon } from "lucide-react";
-import { copyMealItems, deleteMealItems } from "@/components/meal-item/meal-item-actions";
+import { CopyIcon, EllipsisVerticalIcon, SplitIcon, TrashIcon } from "lucide-react";
+import { useState } from "react";
+import { DatePicker } from "@/app/date-picker";
+import {
+	copyMealItems,
+	deleteMealItems,
+	splitMealItems,
+} from "@/components/meal-item/meal-item-actions";
 import { capitalizeFirstLetter } from "@/components/strings";
 import {
 	AlertDialog,
@@ -46,6 +52,7 @@ export function MealActionsButton({ items }: { items: MealItemWithFood[] }) {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<CopyMealItemsDialog items={items} />
+				<SplitMealItemsDialog items={items} />
 				<DeleteMealItemsDialog items={items} />
 			</DropdownMenuContent>
 		</DropdownMenu>
@@ -56,7 +63,7 @@ const CopyMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+				<DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={!items}>
 					<CopyIcon className="size-4" />
 					Copy Meal Items
 				</DropdownMenuItem>
@@ -96,7 +103,7 @@ const DeleteMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
-				<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+				<DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={!items}>
 					<TrashIcon className="size-4" />
 					Delete Meal Items
 				</DropdownMenuItem>
@@ -113,5 +120,49 @@ const DeleteMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
+	);
+};
+
+const SplitMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
+	const [date, setDate] = useState<Date | undefined>();
+
+	return (
+		<Dialog>
+			<DialogTrigger asChild>
+				<DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={!items}>
+					<SplitIcon className="size-4" />
+					Split Meal Items
+				</DropdownMenuItem>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Split Meal Items</DialogTitle>
+				</DialogHeader>
+				<form
+					action={async (formData: FormData) => {
+						const mealType = formData.get("mealType") as MealType;
+						const date = formData.get("date") as string;
+						await splitMealItems(items, date, mealType);
+					}}
+				>
+					<Select name="mealType" required>
+						<SelectTrigger>
+							<SelectValue placeholder="Select meal type" />
+						</SelectTrigger>
+						<SelectContent>
+							{mealTypes.map((mealType) => (
+								<SelectItem key={mealType} value={mealType}>
+									{capitalizeFirstLetter(mealType)}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+					<DatePicker name="date" label="Date" selected={date} onSelectAction={setDate} required />
+					<DialogFooter>
+						<Button type="submit">Copy</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
+		</Dialog>
 	);
 };

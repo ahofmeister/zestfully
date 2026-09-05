@@ -9,22 +9,25 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 
 interface DatePickerProps {
+	name: string;
 	selected?: Date;
 	onSelectAction: (date: Date | undefined) => void;
 	label: string;
+	required?: boolean;
 }
 
-export function DatePicker({ selected, onSelectAction, label }: DatePickerProps) {
+export function DatePicker({ name, selected, onSelectAction, label, required }: DatePickerProps) {
 	return (
 		<div className="flex flex-col space-y-2">
-			<Label htmlFor={label}>{label}</Label>
+			<Label htmlFor={name}>{label}</Label>
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button
-						id={label}
+						id={name}
+						type="button"
 						variant={"outline"}
 						className={cn(
-							"w-[280px] justify-start text-left font-normal",
+							"w-70 justify-start text-left font-normal",
 							!selected && "text-muted-foreground",
 						)}
 					>
@@ -36,6 +39,13 @@ export function DatePicker({ selected, onSelectAction, label }: DatePickerProps)
 					<Calendar mode="single" selected={selected} onSelect={onSelectAction} initialFocus />
 				</PopoverContent>
 			</Popover>
+
+			<input
+				type="hidden"
+				name={name}
+				value={selected ? format(selected, "yyyy-MM-dd") : ""}
+				required={required}
+			/>
 		</div>
 	);
 }
