@@ -50,13 +50,22 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 				<DateStepper amount={1} icon={<ChevronRight />} />
 			</div>
 
-			<Card className="mt-4">
-				<CardContent className="p-4">
-					<p className="text-xs uppercase tracking-wider text-muted-foreground">Calories</p>
-					<p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
-						{round(totalNutrients.energy)}
-					</p>
-					<div className="flex gap-x-10 mt-4">
+			<Card className="mt-4 overflow-hidden">
+				<CardContent className="p-4 sm:p-5">
+					<div className="flex items-end justify-between gap-4">
+						<div>
+							<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Daily fuel</p>
+							<p className="mt-1 text-3xl font-semibold tabular-nums text-foreground">
+								{round(totalNutrients.energy)} <span className="text-base font-normal text-muted-foreground">kcal</span>
+							</p>
+						</div>
+						<p className="font-mono text-xs tabular-nums text-muted-foreground">of 2,000 kcal</p>
+					</div>
+					<div className="mt-4 h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-label="Daily calorie budget" aria-valuemin={0} aria-valuemax={2000} aria-valuenow={Math.min(round(totalNutrients.energy), 2000)}>
+						<div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min((totalNutrients.energy / 2000) * 100, 100)}%` }} />
+					</div>
+					<p className="mt-2 text-xs text-muted-foreground">{Math.max(0, round(2000 - totalNutrients.energy))} kcal remaining</p>
+					<div className="mt-5 flex gap-x-10">
 						<MacroValue colorVar={macroColors.protein} value={totalNutrients.protein} />
 						<MacroValue colorVar={macroColors.carbohydrates} value={totalNutrients.carbohydrates} />
 						<MacroValue colorVar={macroColors.fat} value={totalNutrients.fat} />

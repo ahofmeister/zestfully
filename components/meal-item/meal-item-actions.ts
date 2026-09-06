@@ -27,6 +27,17 @@ export const deleteMealItem = async (mealItemId: string) => {
 	revalidatePath("/home", "page");
 };
 
+export const updateMealItemQuantity = async (mealItemId: string, quantity: number) => {
+	if (!Number.isFinite(quantity) || quantity < 0 || quantity > 100000) {
+		throw new Error("Invalid quantity");
+	}
+
+	await dbTransaction((tx) =>
+		tx.update(mealItemSchema).set({ quantity }).where(eq(mealItemSchema.id, mealItemId)),
+	);
+	revalidatePath("/home", "page");
+};
+
 export const copyMealItems = async (
 	newMealType: MealType,
 	date: string,
@@ -81,7 +92,7 @@ export const splitMealItems = async (
 			await tx.insert(mealItemSchema).values(
 				splitMealItems.map((item) => ({
 					mealType: mealType,
-					foodId: item.food.id,
+					foodId: item.foodId,
 					quantity: item.quantity,
 					date: date,
 				})),
