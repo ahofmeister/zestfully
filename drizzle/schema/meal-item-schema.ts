@@ -7,7 +7,7 @@ export const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
 export type MealType = (typeof mealTypes)[number];
 
 export type MealItemWithFood = typeof mealItemSchema.$inferSelect & {
-	food: typeof foodSchema.$inferInsert;
+	food: typeof foodSchema.$inferSelect;
 };
 
 export const mealItemSchema = pgTable(

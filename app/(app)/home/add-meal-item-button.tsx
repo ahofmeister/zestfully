@@ -44,7 +44,7 @@ const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
 
 	return (
 		<AlertDialog>
-			<AlertDialogTrigger>
+			<AlertDialogTrigger asChild>
 				<Button size="iconSm">
 					<PlusIcon className="size-4" />
 				</Button>

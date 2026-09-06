@@ -10,11 +10,7 @@ import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
 import { Card, CardContent } from "@/components/ui/card";
 import { dbTransaction } from "@/drizzle/client";
-import { type foodSchema, mealItemSchema, mealTypes } from "@/drizzle/schema";
-
-type MealItemWithFood = typeof mealItemSchema.$inferSelect & {
-	food: typeof foodSchema.$inferInsert;
-};
+import { type MealItemWithFood, mealItemSchema, mealTypes } from "@/drizzle/schema";
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const { date } = await loadSearchParams(searchParams);

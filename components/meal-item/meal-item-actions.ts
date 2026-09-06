@@ -49,6 +49,27 @@ export const copyMealItems = async (
 	revalidatePath("/home", "page");
 };
 
+export const moveMealItems = async (
+	newMealType: MealType,
+	date: string,
+	mealItems: MealItemWithFood[],
+) => {
+	if (mealItems.length === 0) {
+		return;
+	}
+
+	const mealItemIds = mealItems.map(({ id }) => id);
+
+	await dbTransaction((tx) =>
+		tx
+			.update(mealItemSchema)
+			.set({ mealType: newMealType, date })
+			.where(inArray(mealItemSchema.id, mealItemIds)),
+	);
+
+	revalidatePath("/home", "page");
+};
+
 export const deleteMealItems = async (mealItemIds: string[]) => {
 	await dbTransaction((tx) =>
 		tx.delete(mealItemSchema).where(inArray(mealItemSchema.id, mealItemIds)),
@@ -93,3 +114,9 @@ export const splitMealItems = async (
 
 	revalidatePath("/home", "page");
 };
+
+export async function updateMealItemQuantity(id: string, quantity: number) {
+	await dbTransaction((tx) =>
+		tx.update(mealItemSchema).set({ quantity }).where(eq(mealItemSchema.id, id)),
+	);
+}

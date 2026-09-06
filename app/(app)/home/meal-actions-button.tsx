@@ -1,10 +1,11 @@
 "use client";
-import { CopyIcon, EllipsisVerticalIcon, SplitIcon, TrashIcon } from "lucide-react";
+import { CopyIcon, EllipsisVerticalIcon, MoveRightIcon, SplitIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { DatePicker } from "@/app/date-picker";
 import {
 	copyMealItems,
 	deleteMealItems,
+	moveMealItems,
 	splitMealItems,
 } from "@/components/meal-item/meal-item-actions";
 import { capitalizeFirstLetter } from "@/components/strings";
@@ -51,6 +52,7 @@ export function MealActionsButton({ items }: { items: MealItemWithFood[] }) {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
+				<MoveMealItemsDialog items={items} />
 				<CopyMealItemsDialog items={items} />
 				<SplitMealItemsDialog items={items} />
 				<DeleteMealItemsDialog items={items} />
@@ -97,6 +99,51 @@ const CopyMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
 					<DatePicker name="date" label="Date" selected={date} onSelectAction={setDate} required />
 					<DialogFooter>
 						<Button type="submit">Copy</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
+};
+
+const MoveMealItemsDialog = ({ items }: { items: MealItemWithFood[] }) => {
+	const [date, setDate] = useState<Date | undefined>();
+
+	return (
+		<Dialog>
+			<DialogTrigger asChild>
+				<DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={!items}>
+					<MoveRightIcon className="size-4" />
+					Move Meal Items
+				</DropdownMenuItem>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Move Meal Items</DialogTitle>
+				</DialogHeader>
+				<form
+					action={async (formData: FormData) => {
+						const mealType = formData.get("mealType") as MealType;
+						const date = formData.get("date") as string;
+						await moveMealItems(mealType, date, items);
+					}}
+				>
+					<Select name="mealType" required>
+						<SelectTrigger>
+							<SelectValue placeholder="Select meal type" />
+						</SelectTrigger>
+						<SelectContent>
+							{mealTypes.map((mealType) => (
+								<SelectItem key={mealType} value={mealType}>
+									{capitalizeFirstLetter(mealType)}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+
+					<DatePicker name="date" label="Date" selected={date} onSelectAction={setDate} required />
+					<DialogFooter>
+						<Button type="submit">Move</Button>
 					</DialogFooter>
 				</form>
 			</DialogContent>
