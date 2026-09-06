@@ -1,1 +1,0 @@
-ALTER TABLE "milestone" ADD COLUMN "celebrations" integer[] DEFAULT '{7,30,100,365}' NOT NULL;

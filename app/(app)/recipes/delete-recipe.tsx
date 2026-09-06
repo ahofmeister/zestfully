@@ -1,5 +1,5 @@
 "use client";
-import { deleteRecipe } from "@/app/recipes/recipe-actions";
+import { deleteRecipe } from "@/app/(app)/recipes/recipe-actions";
 import { Button } from "@/components/ui/button";
 
 const DeleteRecipe = (props: { id: string }) => {

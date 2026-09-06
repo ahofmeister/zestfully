@@ -1,4 +1,6 @@
+import { sql } from "drizzle-orm";
 import { timestamp, uuid } from "drizzle-orm/pg-core";
+import { profileSchema } from "@/drizzle/schema/profile-schema";
 
 export const id = () => ({
 	id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -17,4 +19,11 @@ export const timestamps = () => ({
 		.notNull()
 		.defaultNow()
 		.$onUpdate(() => new Date()),
+});
+
+export const userId = () => ({
+	userId: uuid("user_id")
+		.notNull()
+		.references(() => profileSchema.id, { onDelete: "cascade" })
+		.default(sql`auth.uid()`),
 });

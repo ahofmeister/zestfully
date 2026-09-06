@@ -1,8 +1,7 @@
 import { sql } from "drizzle-orm";
 import { date, pgPolicy, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
 import { foodSchema } from "@/drizzle/schema/food-schema";
-import { profileSchema } from "@/drizzle/schema/profile-schema";
-import { id, timestamps } from "@/drizzle/schema/schema-commons";
+import { id, timestamps, userId } from "@/drizzle/schema/schema-commons";
 
 export const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
 export type MealType = (typeof mealTypes)[number];
@@ -16,16 +15,10 @@ export const mealItemSchema = pgTable(
 	{
 		...id(),
 		...timestamps(),
-		userId: uuid("user_id")
-			.notNull()
-			.references(() => profileSchema.id, { onDelete: "cascade" })
-			.default(sql`auth.uid()`),
-
+		...userId(),
 		foodId: uuid("food_id")
 			.notNull()
-			.references(() => foodSchema.id, { onDelete: "cascade" })
-			.default(sql`auth.uid()`),
-
+			.references(() => foodSchema.id, { onDelete: "cascade" }),
 		date: date().notNull(),
 		mealType: text("meal_type").$type<MealType>().notNull(),
 		quantity: real().notNull(),

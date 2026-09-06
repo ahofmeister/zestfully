@@ -1,6 +1,13 @@
 "use client";
 
-import { AppleIcon, HomeIcon, LogOutIcon, SettingsIcon, UserCogIcon } from "lucide-react";
+import {
+	AppleIcon,
+	CookingPotIcon,
+	HomeIcon,
+	LogOutIcon,
+	SettingsIcon,
+	UserCogIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { signOut } from "@/app/auth/auth-actions";
 import { MobileHeader } from "@/components/navigation/mobile-header";
@@ -52,6 +59,10 @@ export default function MainNavigation({ username }: { username?: string }) {
 							<NavigationSection title="Manage">
 								<NavigationItem href="/foods" icon={AppleIcon} onNavigate={handleNavigation}>
 									Foods
+								</NavigationItem>
+
+								<NavigationItem href="/recipes" icon={CookingPotIcon} onNavigate={handleNavigation}>
+									Recipes
 								</NavigationItem>
 							</NavigationSection>
 

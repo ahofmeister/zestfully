@@ -1,13 +1,13 @@
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { RecipeSearchBar } from "@/app/recipes/recipe-search-bar";
-import { Recipes } from "@/app/recipes/recipes";
+import { Recipes } from "@/app/(app)/recipes/recipes";
+import SearchInput from "@/components/search/search-input";
 import { Button } from "@/components/ui/button";
 
 export default async function RecipesPage(props: {
 	searchParams: Promise<{
-		q: string;
+		query: string;
 	}>;
 }) {
 	const searchParams = await props.searchParams;
@@ -19,9 +19,9 @@ export default async function RecipesPage(props: {
 					<PlusIcon />
 				</Button>
 			</Link>
-			<RecipeSearchBar value={searchParams.q} />
+			<SearchInput />
 			<Suspense fallback={<div>Loading recipes</div>}>
-				<Recipes searchTerm={searchParams.q} />
+				<Recipes query={searchParams.query} />
 			</Suspense>
 		</div>
 	);

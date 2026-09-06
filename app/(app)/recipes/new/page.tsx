@@ -1,4 +1,4 @@
-import { RecipeForm } from "@/app/recipes/new/recipe-form";
+import { RecipeForm } from "@/app/(app)/recipes/new/recipe-form";
 
 const RecipePage = async () => {
 	return (

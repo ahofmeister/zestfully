@@ -1,1 +1,0 @@
-ALTER TABLE "habit" ALTER COLUMN "color" SET NOT NULL;

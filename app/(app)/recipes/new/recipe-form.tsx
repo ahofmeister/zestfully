@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { saveRecipe } from "@/app/recipes/recipe-actions";
+import { saveRecipe } from "@/app/(app)/recipes/recipe-actions";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
