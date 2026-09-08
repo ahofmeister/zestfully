@@ -1,9 +1,10 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { searchFood } from "@/app/(app)/foods/food-actions";
 import { saveRecipe } from "@/app/(app)/recipes/recipe-actions";
+import { Autocomplete } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -15,64 +16,73 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/utils/supabase/client";
-import type { NewRecipe, Product } from "@/utils/supabase/types";
+import type { RecipeWithIngredients } from "@/drizzle/schema";
 
-const recipeSchema = z.object({
+const recipeFormSchema = z.object({
 	name: z.string().min(3),
-	description: z.string().optional(),
+	instructions: z.string().optional(),
 	portions: z.coerce.number().optional(),
-	time: z.coerce.number().optional(),
-	source: z.string().optional(),
 	ingredients: z.array(
 		z.object({
-			id: z.string(),
-			food_id: z.string(),
-			amount: z.coerce.number(),
-			unit: z.string(),
-			recipe_id: z.string(),
+			foodId: z.string().min(1, "Pick a food"),
+			foodName: z.string().optional(),
+			quantity: z.coerce.number().min(0),
+			unit: z.string().min(1),
 		}),
 	),
 });
 
-export function RecipeForm() {
-	const [products, setProducts] = useState<Product[]>([]);
+type RecipeFormValues = z.infer<typeof recipeFormSchema>;
 
-	useEffect(() => {
-		async function fetchFoods() {
-			const supabase = createClient();
-			const { data: products } = await supabase.from("product").select("*");
-			setProducts(products ?? []);
-		}
-
-		void fetchFoods();
-	}, []);
-
-	const form = useForm<z.infer<typeof recipeSchema>>({
-		resolver: zodResolver(recipeSchema),
+export function RecipeForm({ recipe }: { recipe: RecipeWithIngredients }) {
+	const form = useForm<RecipeFormValues>({
+		resolver: zodResolver(recipeFormSchema),
 		defaultValues: {
-			name: "",
-			description: "",
-			portions: 2,
-			time: 30,
-			source: "",
-			ingredients: [],
+			name: recipe?.name ?? "",
+			instructions: recipe?.instructions ?? "",
+			portions: recipe?.servings ?? 1,
+			ingredients: recipe?.ingredients?.map((ingredient) => ({
+				foodId: ingredient.foodId,
+				foodName: ingredient.food.name,
+				quantity: ingredient.quantity,
+				unit: ingredient.unit,
+			})),
 		},
 		mode: "onBlur",
 	});
 
-	const { fields, append } = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control: form.control,
 		name: "ingredients",
 	});
 
-	async function handleSubmit(recipe: NewRecipe) {
-		await saveRecipe(recipe);
+	function handleAddIngredient() {
+		append({
+			foodId: "",
+			foodName: "",
+			unit: "g",
+			quantity: 0,
+		});
+	}
+
+	async function handleSubmit(values: RecipeFormValues) {
+		await saveRecipe({
+			id: recipe?.id ?? undefined,
+			name: values.name,
+			instructions: values.instructions ?? null,
+			servings: values.portions ?? recipe.servings,
+			ingredients: values.ingredients.map(({ foodId, quantity, unit }) => ({
+				foodId,
+				quantity,
+				unit,
+				recipeId: recipe?.id,
+			})),
+		});
 	}
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit((recipe) => handleSubmit({ ...recipe }))}>
+			<form onSubmit={form.handleSubmit(handleSubmit)}>
 				<div className="flex flex-col space-y-4">
 					<div className="grid grid-cols-2 gap-4">
 						<div className="grid gap-2">
@@ -110,40 +120,12 @@ export function RecipeForm() {
 								)}
 							/>
 						</div>
-
-						<FormField
-							control={form.control}
-							name="time"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Time</FormLabel>
-									<FormControl>
-										<Input type={"number"} placeholder="Time in minutes" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="source"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Source</FormLabel>
-									<FormControl>
-										<Input placeholder="Source of the recipe" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
 					</div>
 
 					<div className="gap-2">
 						<FormField
 							control={form.control}
-							name="description"
+							name="instructions"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Description</FormLabel>
@@ -158,52 +140,81 @@ export function RecipeForm() {
 				</div>
 
 				<div className={"flex flex-col gap-y-4 mt-4"}>
-					<FormLabel>Ingredients</FormLabel>
-					{/*<ProductAutoComplete*/}
-					{/*	onValueChange={(value) =>*/}
-					{/*		append({*/}
-					{/*			id: value.id,*/}
-					{/*			unit: "g",*/}
-					{/*			amount: 0,*/}
-					{/*			food_id: value.id,*/}
-					{/*			recipe_id: "",*/}
-					{/*		})*/}
-					{/*	}*/}
-					{/*	products={products}*/}
-					{/*/>*/}
-				</div>
-
-				{fields.map((field, index) => (
-					<div className={"flex gap-x-4 items-center"} key={field.id}>
-						{products.find((food) => food.id === field.food_id)?.name}
-						<FormField
-							control={form.control}
-							name={`ingredients.${index}.amount`}
-							render={({ field }) => (
-								<FormItem>
-									<FormDescription />
-									<FormControl>
-										<Input type={"number"} {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name={`ingredients.${index}.unit`}
-							render={({ field }) => (
-								<FormItem>
-									<FormDescription />
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+					<div className="flex items-center justify-between">
+						<FormLabel>Ingredients</FormLabel>
+						<Button type="button" variant="secondary" onClick={handleAddIngredient}>
+							Add ingredient
+						</Button>
 					</div>
-				))}
+
+					{fields.map((field, index) => (
+						<div className={"flex gap-x-4 items-center"} key={field.id}>
+							<FormField
+								control={form.control}
+								name={`ingredients.${index}.foodId`}
+								render={({ field: foodField }) => (
+									<FormItem className="flex-1">
+										<FormControl>
+											<Autocomplete
+												defaultValue={
+													foodField.value
+														? {
+																value: foodField.value,
+																label: form.getValues(`ingredients.${index}.foodName`) ?? "",
+															}
+														: null
+												}
+												onChange={(option) => {
+													foodField.onChange(option?.value ?? "");
+													form.setValue(`ingredients.${index}.foodName`, option?.label ?? "");
+												}}
+												fetchOptions={async (query: string) => {
+													return searchFood(query).then((food) =>
+														food.map((food) => ({
+															value: food.id,
+															label: food.name,
+														})),
+													);
+												}}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={`ingredients.${index}.quantity`}
+								render={({ field }) => (
+									<FormItem>
+										<FormDescription />
+										<FormControl>
+											<Input type={"number"} className="w-24" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name={`ingredients.${index}.unit`}
+								render={({ field }) => (
+									<FormItem>
+										<FormDescription />
+										<FormControl>
+											<Input className="w-20" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<Button type="button" variant="ghost" onClick={() => remove(index)}>
+								Remove
+							</Button>
+						</div>
+					))}
+				</div>
 
 				<Button
 					type="submit"

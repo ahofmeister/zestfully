@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
 	return {
 		name: "Zestful",
 		short_name: "Zestful",
-		description: "Start here, every day",
+		instructions: "Start here, every day",
 		start_url: "/home",
 		display: "standalone",
 		background_color: "#030303",

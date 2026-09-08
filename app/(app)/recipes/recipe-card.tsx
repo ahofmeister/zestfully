@@ -1,15 +1,7 @@
 "use client";
 import { UtensilsCrossed } from "lucide-react";
 import { useRouter } from "next/navigation";
-import DeleteRecipe from "@/app/(app)/recipes/delete-recipe";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { recipeSchema } from "@/drizzle/schema";
 
 export function RecipeCard(props: { recipe: typeof recipeSchema.$inferSelect }) {
@@ -36,10 +28,6 @@ export function RecipeCard(props: { recipe: typeof recipeSchema.$inferSelect }) 
 				</CardDescription>
 			</CardHeader>
 			<CardContent>{recipe.instructions}</CardContent>
-
-			<CardFooter>
-				<DeleteRecipe id={recipe.id} />
-			</CardFooter>
 		</Card>
 	);
 }

@@ -1,36 +1,46 @@
 "use server";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/utils/supabase/server";
-import type { NewRecipe } from "@/utils/supabase/types";
+import { dbTransaction } from "@/drizzle/client";
+import {
+	ingredientSchema,
+	type NewRecipeWithIngredients,
+	type RecipeWithIngredients,
+	recipeSchema,
+} from "@/drizzle/schema";
 
-export async function saveRecipe(recipe: NewRecipe) {
-	const supabase = await createClient();
-
+export async function saveRecipe(recipe: RecipeWithIngredients | NewRecipeWithIngredients) {
 	const { ingredients, ...recipeWithoutIngredients } = recipe;
 
-	const { data: newRecipe, error } = await supabase
-		.from("recipe")
-		.insert(recipeWithoutIngredients)
-		.select("*")
-		.single();
-	console.log(error);
+	return await dbTransaction(async (tx) => {
+		const [savedRecipe] =
+			recipeWithoutIngredients.id !== undefined
+				? await tx
+						.update(recipeSchema)
+						.set(recipeWithoutIngredients)
+						.where(eq(recipeSchema.id, recipeWithoutIngredients.id))
+						.returning()
+				: await tx.insert(recipeSchema).values(recipeWithoutIngredients).returning();
 
-	if (newRecipe) {
-		ingredients.map(async (ingredient) => {
-			const { error } = await supabase
-				.from("ingredient")
-				.insert({ ...ingredient, recipe_id: newRecipe.id });
-			console.log(error);
-		});
-	}
+		if (recipeWithoutIngredients.id !== undefined) {
+			await tx.delete(ingredientSchema).where(eq(ingredientSchema.recipeId, savedRecipe.id));
+		}
+
+		if (ingredients.length > 0) {
+			await tx.insert(ingredientSchema).values(
+				ingredients.map((ingredient) => ({
+					...ingredient,
+					recipeId: savedRecipe.id,
+				})),
+			);
+		}
+
+		return savedRecipe;
+	});
 }
 
 export async function deleteRecipe(id: string) {
-	const supabase = await createClient();
-	const { error } = await supabase.from("recipe").delete().eq("id", id);
+	await dbTransaction((tx) => tx.delete(recipeSchema).where(eq(recipeSchema.id, id)));
 
-	if (error) {
-		console.error(error);
-	}
 	revalidatePath("recipes");
 }
