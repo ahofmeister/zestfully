@@ -9,7 +9,7 @@ import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
 import { Card, CardContent } from "@/components/ui/card";
 import { dbTransaction } from "@/drizzle/client";
-import { type MealItemWithFood, mealTypes } from "@/drizzle/schema";
+import { type MealItemWithFood, mealItemSchema, mealTypes } from "@/drizzle/schema";
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const { date } = await loadSearchParams(searchParams);
@@ -47,7 +47,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 	);
 
 	const foods = await dbTransaction((tx) => {
-		return tx.query.foodSchema.findMany();
+		return tx.query.foodSchema.findMany({
+			orderBy: (food, { asc, desc, sql }) => [
+				desc(
+					sql`(select count(*) from ${mealItemSchema} where ${mealItemSchema.foodId} = ${food.id})`,
+				),
+				asc(food.name),
+			],
+		});
 	});
 
 	return (

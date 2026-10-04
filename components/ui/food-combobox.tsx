@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type KeyboardEvent, useState } from "react";
 import {
 	Command,
 	CommandEmpty,
@@ -38,12 +38,22 @@ export const FoodCombobox = ({
 		onSelectAction(food);
 	};
 
+	const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (event.key !== "Enter" || isOpen) {
+			return;
+		}
+
+		event.stopPropagation();
+	};
+
 	return (
 		<Command className="relative overflow-visible rounded-md border">
 			<CommandInput
+				autoFocus
 				placeholder="Type a food..."
 				value={search}
 				onValueChange={handleChange}
+				onKeyDown={handleKeyDown}
 				onBlur={() => setIsOpen(false)}
 			/>
 
