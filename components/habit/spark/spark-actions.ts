@@ -3,7 +3,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { dbTransaction } from "@/drizzle/client";
-import { profileSchema, sparkSchema } from "@/drizzle/schemas";
+import { sparkSchema } from "@/drizzle/schemas";
 import { createClient } from "@/utils/supabase/server";
 
 export async function giveSpark(habitId: string) {

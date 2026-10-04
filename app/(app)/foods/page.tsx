@@ -1,4 +1,3 @@
-import { ilike } from "drizzle-orm";
 import type { SearchParams } from "nuqs/server";
 import { loadFoodSearchParams } from "@/app/(app)/foods/food-search-params";
 import { MacroValue } from "@/app/(app)/home/macro-value";

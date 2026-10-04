@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { boolean, check, index, pgPolicy, snakeCase, text, uuid } from "drizzle-orm/pg-core";
-import { createdAt, id, updatedAt } from "./schema-commons";
+import { createdAt, updatedAt } from "./schema-commons";
 
 export const profileSchema = snakeCase.table.withRLS(
 	"profile",

@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import { date, pgPolicy, real, snakeCase, text, uuid } from "drizzle-orm/pg-core";
 import { foodSchema } from "@/drizzle/schema/food-schema";
 import { profileSchema } from "@/drizzle/schema/profile-schema";
-import { createdAt, id, updatedAt, userId } from "@/drizzle/schema/schema-commons";
+import { createdAt, updatedAt } from "@/drizzle/schema/schema-commons";
 
 export const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
 export type MealType = (typeof mealTypes)[number];

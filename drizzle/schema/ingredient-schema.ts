@@ -3,7 +3,7 @@ import { index, pgPolicy, real, snakeCase, text, uuid } from "drizzle-orm/pg-cor
 import { foodSchema } from "@/drizzle/schema/food-schema";
 import { profileSchema } from "@/drizzle/schema/profile-schema";
 import { recipeSchema } from "@/drizzle/schema/recipe-schema";
-import { createdAt, id, updatedAt, userId } from "@/drizzle/schema/schema-commons";
+import { createdAt, updatedAt } from "@/drizzle/schema/schema-commons";
 
 export const ingredientSchema = snakeCase.table.withRLS(
 	"ingredient",

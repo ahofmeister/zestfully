@@ -1,14 +1,5 @@
 import { sql } from "drizzle-orm";
-import {
-	integer,
-	pgPolicy,
-	pgTable,
-	primaryKey,
-	real,
-	snakeCase,
-	text,
-	uuid,
-} from "drizzle-orm/pg-core";
+import { pgPolicy, pgTable, primaryKey, real, snakeCase, text, uuid } from "drizzle-orm/pg-core";
 import type { foodSchema } from "@/drizzle/schema/food-schema";
 import type { ingredientSchema } from "@/drizzle/schema/ingredient-schema";
 import { profileSchema } from "@/drizzle/schema/profile-schema";
