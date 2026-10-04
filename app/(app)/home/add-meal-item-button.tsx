@@ -1,8 +1,7 @@
 "use client";
 
 import { PlusIcon } from "lucide-react";
-import { useActionState, useRef, useState } from "react";
-import { searchFood } from "@/app/(app)/foods/food-actions";
+import { useActionState, useState } from "react";
 import { addMealItem } from "@/components/meal-item/meal-item-actions";
 import {
 	AlertDialog,
@@ -11,35 +10,66 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Autocomplete } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
+import { FoodCombobox } from "@/components/ui/food-combobox";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import type { MealType } from "@/drizzle/schema";
+import type { foodSchema, MealType } from "@/drizzle/schema";
 
-type ActionState = { error: string | null; success: boolean };
+type Food = typeof foodSchema.$inferSelect;
 
-const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
-	const formRef = useRef<HTMLFormElement>(null);
-	const [autocompleteKey, setAutocompleteKey] = useState(0);
+type ActionState = { error: string | null };
 
-	const [_, formAction, isPending] = useActionState(
-		async (_: ActionState, formData: FormData): Promise<ActionState> => {
-			const foodId = formData.get("foodId") as string;
-			const quantity = Number(formData.get("quantity") as string);
+type AddMealItemButtonProps = {
+	type: MealType;
+	date: Date;
+	foods: Food[];
+};
 
-			if (!foodId) {
-				return { error: "Please select a foodId", success: false };
+const AddMealItemButton = ({ type, date, foods }: AddMealItemButtonProps) => {
+	const [search, setSearch] = useState("");
+	const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+	const [quantity, setQuantity] = useState("");
+
+	const handleSearchChange = (nextSearch: string) => {
+		setSearch(nextSearch);
+
+		if (selectedFood) {
+			setSelectedFood(null);
+		}
+	};
+
+	const handleFoodSelect = (food: Food) => {
+		setSelectedFood(food);
+		setSearch(food.name);
+		setQuantity(String(food.defaultQuantity));
+	};
+
+	const resetForm = () => {
+		setSearch("");
+		setSelectedFood(null);
+		setQuantity("");
+	};
+
+	const [state, formAction, isPending] = useActionState(
+		async (_: ActionState): Promise<ActionState> => {
+			const parsedQuantity = Number(quantity);
+
+			if (!selectedFood) {
+				return { error: "Please select a food" };
 			}
 
-			await addMealItem(date, type, foodId, quantity);
+			if (!Number.isFinite(parsedQuantity) || parsedQuantity <= 0) {
+				return { error: "Please enter a valid quantity" };
+			}
 
-			formRef.current?.reset();
-			setAutocompleteKey((k) => k + 1);
+			await addMealItem(date, type, selectedFood.id, parsedQuantity);
 
-			return { error: null, success: true };
+			resetForm();
+
+			return { error: null };
 		},
-		{ success: true, error: null },
+		{ error: null },
 	);
 
 	return (
@@ -49,6 +79,7 @@ const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
 					<PlusIcon className="size-4" />
 				</Button>
 			</AlertDialogTrigger>
+
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>
@@ -56,23 +87,26 @@ const AddMealItemButton = ({ type, date }: { type: MealType; date: Date }) => {
 					</AlertDialogTitle>
 				</AlertDialogHeader>
 
-				<form ref={formRef} action={formAction} className="flex flex-col gap-y-4">
-					<Autocomplete
-						key={autocompleteKey}
-						name="foodId"
-						fetchOptions={async (query: string) => {
-							return searchFood(query).then((food) =>
-								food.map((food) => ({
-									value: food.id,
-									label: food.name,
-								})),
-							);
-						}}
+				<form action={formAction} className="flex flex-col gap-y-4">
+					<FoodCombobox
+						foods={foods}
+						search={search}
+						onChangeAction={handleSearchChange}
+						onSelectAction={handleFoodSelect}
 					/>
 
-					<Input placeholder="Quantity in gram" name="quantity" required />
+					<Input
+						type="number"
+						min={1}
+						placeholder="Quantity in gram"
+						value={quantity}
+						onChange={(event) => setQuantity(event.target.value)}
+						required
+					/>
 
-					<div className="flex justify-end gap-3 mt-4">
+					{state.error && <p className="text-sm text-destructive">{state.error}</p>}
+
+					<div className="mt-4 flex justify-end gap-3">
 						<Button type="submit" disabled={isPending}>
 							{isPending ? <Spinner /> : "Add"}
 						</Button>

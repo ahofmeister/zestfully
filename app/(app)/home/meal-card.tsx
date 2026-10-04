@@ -12,16 +12,18 @@ import { capitalizeFirstLetter } from "@/components/strings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { MealItemWithFood, MealType } from "@/drizzle/schema";
+import type { foodSchema, MealItemWithFood, MealType } from "@/drizzle/schema";
 
 const MealCard = ({
 	mealItems: initialItems,
 	type,
 	date,
+	foods,
 }: {
 	mealItems: MealItemWithFood[];
 	type: MealType;
 	date: Date;
+	foods: (typeof foodSchema.$inferSelect)[];
 }) => {
 	const [pendingQuantities, setPendingQuantities] = useState<Record<string, number>>({});
 
@@ -49,7 +51,7 @@ const MealCard = ({
 						<p className="text-gray-500">{round(nutrients.energy, 0, 0)} kcal</p>
 					</div>
 					<div className={"flex items-center gap-x-2"}>
-						<AddMealItemButton type={type} date={date} />
+						<AddMealItemButton type={type} date={date} foods={foods} />
 						<MealActionsButton items={mealItems} />
 					</div>
 				</div>

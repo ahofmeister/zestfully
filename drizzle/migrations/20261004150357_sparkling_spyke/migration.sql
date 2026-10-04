@@ -1,0 +1,1 @@
+ALTER TABLE "food" ADD COLUMN "default_quantity" real;

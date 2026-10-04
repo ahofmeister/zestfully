@@ -29,6 +29,7 @@ export const foodSchema = snakeCase.table.withRLS(
 		sugar: real(),
 		fibre: real(),
 		salt: real(),
+		defaultQuantity: real(),
 	},
 	(_table) => [
 		pgPolicy("Authenticated users can insert their own food", {

@@ -46,6 +46,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 		{} as Record<string, MealItemWithFood[]>,
 	);
 
+	const foods = await dbTransaction((tx) => {
+		return tx.query.foodSchema.findMany();
+	});
+
 	return (
 		<div className="mx-auto w-full max-w-3xl px-4 py-6 sm:py-10">
 			<div className="flex font-semibold text-2xl items-center gap-x-4 justify-between">
@@ -73,7 +77,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 			<div className="flex flex-col gap-y-4 mt-2">
 				{mealTypes.map((type) => {
 					const items = categories[type];
-					return <MealCard key={type} mealItems={items} type={type} date={date} />;
+					return <MealCard key={type} mealItems={items} type={type} date={date} foods={foods} />;
 				})}
 			</div>
 		</div>
