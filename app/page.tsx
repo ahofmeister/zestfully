@@ -23,8 +23,8 @@ export default function Home() {
 							<p className="text-muted-foreground mb-4">
 								Build better habits and track your daily progress.
 							</p>
-							<Link href="/habits">
-								<Button>Track Habits</Button>
+							<Link href="/home">
+								<Button>Home</Button>
 							</Link>
 						</CardContent>
 					</Card>

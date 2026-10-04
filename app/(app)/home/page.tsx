@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { SearchParams } from "nuqs/server";
 import { MacroLegend } from "@/app/(app)/home/macro-legend";
@@ -10,7 +9,7 @@ import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
 import { Card, CardContent } from "@/components/ui/card";
 import { dbTransaction } from "@/drizzle/client";
-import { type MealItemWithFood, mealItemSchema, mealTypes } from "@/drizzle/schema";
+import { type MealItemWithFood, mealTypes } from "@/drizzle/schema";
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const { date } = await loadSearchParams(searchParams);
@@ -18,11 +17,20 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 	const items = await dbTransaction((tx) => {
 		return tx.query.mealItemSchema.findMany({
 			with: { food: true },
-			where: eq(mealItemSchema.date, date.toDateString()),
+			where: {
+				date: {
+					eq: date.toDateString(),
+				},
+			},
 		});
 	});
 
-	const totalNutrients = calculateNutrients(items);
+	const totalNutrients = calculateNutrients(
+		items.map((item) => ({
+			quantity: item.quantity,
+			nutrients: item.food,
+		})),
+	);
 
 	const categories = items.reduce(
 		(groups, mealItem) => {

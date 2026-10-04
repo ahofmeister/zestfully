@@ -38,7 +38,7 @@ export default function DayHabits({
 			completions: habit.completions.map((c) => c.completedAt),
 			frequencyTarget: habit.frequencyTarget,
 			frequencyType: habit.frequencyType,
-			frequencyDays: habit.frequencyDays,
+			// frequencyDays: habit.frequencyDays,
 		});
 
 		return { completed, streak };
@@ -69,7 +69,7 @@ export default function DayHabits({
 			completions: updatedCompletions,
 			frequencyTarget: habit.frequencyTarget,
 			frequencyType: habit.frequencyType,
-			frequencyDays: habit.frequencyDays,
+			// frequencyDays: habit.frequencyDays,
 		});
 
 		setOptimisticUpdates((prev) => ({

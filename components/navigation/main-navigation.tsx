@@ -3,6 +3,7 @@
 import {
 	AppleIcon,
 	CookingPotIcon,
+	DatabaseIcon,
 	HomeIcon,
 	LogOutIcon,
 	SettingsIcon,
@@ -63,6 +64,13 @@ export default function MainNavigation({ username }: { username?: string }) {
 
 								<NavigationItem href="/recipes" icon={CookingPotIcon} onNavigate={handleNavigation}>
 									Recipes
+								</NavigationItem>
+								<NavigationItem
+									href="/recipe-categories"
+									icon={DatabaseIcon}
+									onNavigate={handleNavigation}
+								>
+									Recipe Categories
 								</NavigationItem>
 							</NavigationSection>
 

@@ -17,12 +17,20 @@ import { dbTransaction } from "@/drizzle/client";
 const FoodPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
 	const { query } = await loadFoodSearchParams(searchParams);
 
-	const foods = await dbTransaction((tx) => {
-		return tx.query.foodSchema.findMany({
-			where: query ? (t) => ilike(t.name, `%${query}%`) : undefined,
+	const foods = await dbTransaction((tx) =>
+		tx.query.foodSchema.findMany({
+			...(query
+				? {
+						where: {
+							name: {
+								ilike: `%${query}%`,
+							},
+						},
+					}
+				: {}),
 			orderBy: (t, { asc }) => [asc(t.name)],
-		});
-	});
+		}),
+	);
 
 	return (
 		<div className="flex flex-col gap-y-4">

@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
 	boolean,
 	check,
@@ -84,7 +84,7 @@ export const habitSchema = pgTable(
 			using: sql`user_id = auth.uid()`,
 		}),
 	],
-).enableRLS();
+);
 
 export const habitCompletion = pgTable(
 	"habit_completions",
@@ -151,7 +151,7 @@ export const habitCompletion = pgTable(
   )`,
 		}),
 	],
-).enableRLS();
+);
 
 export const profileSchema = pgTable(
 	"profile",
@@ -193,7 +193,7 @@ export const profileSchema = pgTable(
 			withCheck: sql`user_id = auth.uid()`,
 		}),
 	],
-).enableRLS();
+);
 
 export const sparkSchema = pgTable(
 	"spark",
@@ -230,30 +230,30 @@ export const sparkSchema = pgTable(
 			withCheck: sql`user_id = auth.uid()`,
 		}),
 	],
-).enableRLS();
+);
 
-export const habitRelations = relations(habitSchema, ({ many }) => ({
-	completions: many(habitCompletion),
-	sparks: many(sparkSchema),
-}));
+// export const habitRelations = relations(habitSchema, ({ many }) => ({
+// 	completions: many(habitCompletion),
+// 	sparks: many(sparkSchema),
+// }));
+//
+// export const sparkRelations = relations(sparkSchema, ({ one }) => ({
+// 	habit: one(habitSchema, {
+// 		fields: [sparkSchema.habitId],
+// 		references: [habitSchema.id],
+// 	}),
+// 	profile: one(profileSchema, {
+// 		fields: [sparkSchema.userId],
+// 		references: [profileSchema.id],
+// 	}),
+// }));
 
-export const sparkRelations = relations(sparkSchema, ({ one }) => ({
-	habit: one(habitSchema, {
-		fields: [sparkSchema.habitId],
-		references: [habitSchema.id],
-	}),
-	profile: one(profileSchema, {
-		fields: [sparkSchema.userId],
-		references: [profileSchema.id],
-	}),
-}));
-
-export const habitCompletionRelations = relations(habitCompletion, ({ one }) => ({
-	habit: one(habitSchema, {
-		fields: [habitCompletion.habitId],
-		references: [habitSchema.id],
-	}),
-}));
+// export const habitCompletionRelations = relations(habitCompletion, ({ one }) => ({
+// 	habit: one(habitSchema, {
+// 		fields: [habitCompletion.habitId],
+// 		references: [habitSchema.id],
+// 	}),
+// }));
 
 export const milestoneSchema = pgTable(
 	"milestone",
@@ -316,4 +316,4 @@ export const milestoneSchema = pgTable(
 			using: sql`user_id = auth.uid()`,
 		}),
 	],
-).enableRLS();
+);

@@ -28,7 +28,13 @@ const MealCard = ({
 	const mealItems = initialItems?.map((item) =>
 		item.id in pendingQuantities ? { ...item, quantity: pendingQuantities[item.id] } : item,
 	);
-	const nutrients = calculateNutrients(mealItems ?? []);
+
+	const nutrients = calculateNutrients(
+		mealItems?.map((item) => ({
+			quantity: item?.quantity,
+			nutrients: item.food,
+		})) ?? [],
+	);
 
 	const updateItemQuantity = (id: string, quantity: number) => {
 		setPendingQuantities((prev) => ({ ...prev, [id]: quantity }));
@@ -114,7 +120,7 @@ const MealItemRow = ({
 		setEditingIngredientId(null);
 	};
 
-	const nutrients = calculateNutrients({ ...mealItem, quantity });
+	const nutrients = calculateNutrients({ quantity, nutrients: mealItem.food });
 
 	return (
 		<li key={mealItem.id} className="px-4 py-2">

@@ -34,7 +34,7 @@ const recipeFormSchema = z.object({
 
 type RecipeFormValues = z.infer<typeof recipeFormSchema>;
 
-export function RecipeForm({ recipe }: { recipe: RecipeWithIngredients }) {
+export function RecipeForm({ recipe }: { recipe?: RecipeWithIngredients }) {
 	const form = useForm<RecipeFormValues>({
 		resolver: zodResolver(recipeFormSchema),
 		defaultValues: {
@@ -66,11 +66,15 @@ export function RecipeForm({ recipe }: { recipe: RecipeWithIngredients }) {
 	}
 
 	async function handleSubmit(values: RecipeFormValues) {
+		if (!recipe) {
+			return;
+		}
+
 		await saveRecipe({
 			id: recipe?.id ?? undefined,
 			name: values.name,
 			instructions: values.instructions ?? null,
-			servings: values.portions ?? recipe.servings,
+			servings: values.portions ?? recipe?.servings,
 			ingredients: values.ingredients.map(({ foodId, quantity, unit }) => ({
 				foodId,
 				quantity,

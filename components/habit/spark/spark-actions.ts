@@ -89,7 +89,9 @@ export async function hasUserSparked(habitId: string): Promise<boolean> {
 	try {
 		return await dbTransaction(async (tx) => {
 			const profile = await tx.query.profileSchema.findFirst({
-				where: eq(profileSchema.userId, user.id),
+				where: {
+					userId: user.id,
+				},
 			});
 
 			if (!profile) {

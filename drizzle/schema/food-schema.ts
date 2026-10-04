@@ -1,13 +1,22 @@
 import { sql } from "drizzle-orm";
-import { pgPolicy, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
+import { pgPolicy, real, snakeCase, text, uuid } from "drizzle-orm/pg-core";
 import { profileSchema } from "@/drizzle/schema/profile-schema";
-import { id } from "@/drizzle/schema/schema-commons";
 
-export const foodSchema = pgTable(
+export type Nutrients = Pick<
+	typeof foodSchema.$inferSelect,
+	"energy" | "protein" | "fat" | "carbohydrates"
+> &
+	Partial<Pick<typeof foodSchema.$inferSelect, "sugar" | "fibre" | "salt">>;
+
+export type QuantifiedNutrients = {
+	quantity: number;
+	nutrients: Nutrients;
+};
+
+export const foodSchema = snakeCase.table.withRLS(
 	"food",
 	{
-		...id(),
-		// ...timestamps(),
+		id: uuid("id").primaryKey().defaultRandom().notNull(),
 		userId: uuid("user_id")
 			.notNull()
 			.references(() => profileSchema.id, { onDelete: "cascade" })

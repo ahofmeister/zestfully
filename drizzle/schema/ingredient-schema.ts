@@ -1,15 +1,20 @@
 import { sql } from "drizzle-orm";
-import { index, pgPolicy, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
+import { index, pgPolicy, real, snakeCase, text, uuid } from "drizzle-orm/pg-core";
 import { foodSchema } from "@/drizzle/schema/food-schema";
+import { profileSchema } from "@/drizzle/schema/profile-schema";
 import { recipeSchema } from "@/drizzle/schema/recipe-schema";
-import { id, timestamps, userId } from "@/drizzle/schema/schema-commons";
+import { createdAt, id, updatedAt, userId } from "@/drizzle/schema/schema-commons";
 
-export const ingredientSchema = pgTable(
+export const ingredientSchema = snakeCase.table.withRLS(
 	"ingredient",
 	{
-		...id(),
-		...timestamps(),
-		...userId(),
+		id: uuid("id").primaryKey().defaultRandom().notNull(),
+		createdAt,
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => profileSchema.id, { onDelete: "cascade" })
+			.default(sql`auth.uid()`),
+		updatedAt,
 		foodId: uuid("food_id")
 			.notNull()
 			.references(() => foodSchema.id),
@@ -29,4 +34,4 @@ export const ingredientSchema = pgTable(
 			withCheck: sql`(auth.uid() = user_id)`,
 		}),
 	],
-).enableRLS();
+);

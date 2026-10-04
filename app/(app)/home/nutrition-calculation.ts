@@ -1,4 +1,4 @@
-import type { MealItemWithFood } from "@/drizzle/schema";
+import type { QuantifiedNutrients } from "@/drizzle/schema";
 
 export const calculateNutrient = (
 	quantity: number,
@@ -10,22 +10,22 @@ export const calculateNutrient = (
 	return round((nutrientPer100g * quantity) / 100, 0, 2);
 };
 
-export const calculateNutrients = (mealItems: MealItemWithFood | MealItemWithFood[]) => {
-	const items = Array.isArray(mealItems) ? mealItems : [mealItems];
+export const calculateNutrients = (
+	quantifiedNutrients: QuantifiedNutrients[] | QuantifiedNutrients,
+) => {
+	const items = Array.isArray(quantifiedNutrients) ? quantifiedNutrients : [quantifiedNutrients];
 
 	return items?.reduce(
-		(totals, mealItem) => {
-			const quantity = mealItem.quantity;
-
+		(totals, quantifiedNutrients) => {
+			const nutrients = quantifiedNutrients.nutrients;
+			const quantity = quantifiedNutrients.quantity;
 			return {
-				energy: round(totals.energy + calculateNutrient(quantity, mealItem.food.energy)),
-				protein: round(
-					totals.protein + calculateNutrient(mealItem.quantity, mealItem.food.protein),
-				),
+				energy: round(totals.energy + calculateNutrient(quantity, nutrients.energy)),
+				protein: round(totals.protein + calculateNutrient(quantity, nutrients.protein)),
 				carbohydrates: round(
-					totals.carbohydrates + calculateNutrient(mealItem.quantity, mealItem.food.carbohydrates),
+					totals.carbohydrates + calculateNutrient(quantity, nutrients.carbohydrates),
 				),
-				fat: round(totals.fat + calculateNutrient(mealItem.quantity, mealItem.food.fat)),
+				fat: round(totals.fat + calculateNutrient(quantity, nutrients.fat)),
 			};
 		},
 		{ energy: 0, protein: 0, carbohydrates: 0, fat: 0 },

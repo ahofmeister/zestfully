@@ -1,17 +1,15 @@
 import "server-only";
 
-import { type DrizzleConfig, type ExtractTablesWithRelations, sql } from "drizzle-orm";
-import type { PgTransaction } from "drizzle-orm/pg-core";
-import { drizzle, type PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
+import { type DrizzleConfig, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/postgres-js";
 import { type JwtPayload, jwtDecode } from "jwt-decode";
 import postgres from "postgres";
-import * as schema from "@/drizzle/schema";
+import { relations } from "@/drizzle/schema/relations";
 import { createClient } from "@/utils/supabase/server";
 
 const config = {
-	casing: "snake_case",
-	schema,
-} satisfies DrizzleConfig<typeof schema>;
+	relations: relations,
+} satisfies DrizzleConfig<typeof relations>;
 
 declare namespace global {
 	let postgresSqlClient: ReturnType<typeof postgres> | undefined;
@@ -34,10 +32,11 @@ if (process.env.NODE_ENV !== "production") {
 	postgresSqlClient = postgres(databaseUrl, { prepare: false });
 }
 
+const logger = process.env.DRIZZLE_LOGGER === "true";
 export const db = drizzle({
 	client: postgresSqlClient,
 	...config,
-	logger: false,
+	logger: logger,
 });
 
 export async function rlsDb() {
@@ -89,16 +88,9 @@ function decode(accessToken: string) {
 		return { role: "anon" } as JwtPayload & { role: string };
 	}
 }
+type TransactionClient = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
-export async function dbTransaction<T>(
-	fn: (
-		tx: PgTransaction<
-			PostgresJsQueryResultHKT,
-			typeof schema,
-			ExtractTablesWithRelations<typeof schema>
-		>,
-	) => Promise<T>,
-): Promise<T> {
+export async function dbTransaction<T>(fn: (tx: TransactionClient) => Promise<T>): Promise<T> {
 	const client = await rlsDb();
 	return client.runTransaction(fn);
 }

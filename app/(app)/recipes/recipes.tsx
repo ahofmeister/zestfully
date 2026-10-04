@@ -1,12 +1,16 @@
-import { ilike } from "drizzle-orm";
 import { RecipeCard } from "@/app/(app)/recipes/recipe-card";
 import { dbTransaction } from "@/drizzle/client";
-import { recipeSchema } from "@/drizzle/schema";
 
 export async function Recipes(props: { query: string }) {
 	const recipes = await dbTransaction((tx) =>
 		tx.query.recipeSchema.findMany({
-			where: props.query ? ilike(recipeSchema.name, `%${props.query}%`) : undefined,
+			where: props.query
+				? {
+						name: {
+							ilike: `%${props.query}%`,
+						},
+					}
+				: {},
 		}),
 	);
 

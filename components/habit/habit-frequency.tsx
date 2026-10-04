@@ -15,7 +15,7 @@ export const HabitFrequency: React.FC<{
 			text = habit.frequencyTarget ? `${habit.frequencyTarget}× per week` : "Weekly";
 			break;
 		case "scheduled_days":
-			text = habit.frequencyDays?.map((d) => capitalizeFirstLetter(d)).join(", ") || "";
+			text = habit.frequencyDays?.map((d) => capitalizeFirstLetter("todo")).join(", ") || "";
 			break;
 	}
 

@@ -94,7 +94,7 @@ export default function HabitGrid({
 		completions: optimisticCompletions.map((c) => c.completedAt),
 		frequencyType: habit.frequencyType,
 		frequencyTarget: habit.frequencyTarget ?? 0,
-		frequencyDays: habit.frequencyDays ?? [],
+		// frequencyDays: habit.frequencyDays ?? [],
 	});
 
 	return (

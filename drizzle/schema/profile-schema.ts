@@ -1,12 +1,13 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, pgPolicy, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { id, timestamps } from "./schema-commons";
+import { boolean, check, index, pgPolicy, snakeCase, text, uuid } from "drizzle-orm/pg-core";
+import { createdAt, id, updatedAt } from "./schema-commons";
 
-export const profileSchema = pgTable(
+export const profileSchema = snakeCase.table.withRLS(
 	"profile",
 	{
-		...id(),
-		...timestamps(),
+		id: uuid("id").primaryKey().defaultRandom().notNull(),
+		createdAt,
+		updatedAt,
 		userId: uuid("user_id").notNull().unique(),
 		username: text("username").notNull().unique(),
 		bio: text("bio"),
@@ -41,4 +42,4 @@ export const profileSchema = pgTable(
 			withCheck: sql`user_id = auth.uid()`,
 		}),
 	],
-).enableRLS();
+);

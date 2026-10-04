@@ -1,8 +1,6 @@
-import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { signOutAction } from "@/app/actions";
 import { dbTransaction } from "@/drizzle/client";
-import { profileSchema } from "@/drizzle/schemas";
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "./ui/button";
 
@@ -17,7 +15,9 @@ export default async function AuthButton() {
 	if (user) {
 		profile = await dbTransaction(async (tx) => {
 			return tx.query.profileSchema.findFirst({
-				where: eq(profileSchema.userId, user.id),
+				where: {
+					userId: user.id,
+				},
 			});
 		});
 	}
