@@ -38,12 +38,13 @@ const FoodPage = async ({ searchParams }: { searchParams: Promise<SearchParams> 
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead className="w-25">Name</TableHead>
+						<TableHead className="w-27">Name</TableHead>
 						<TableHead>Category</TableHead>
 						<TableHead>Energy</TableHead>
 						<TableHead>Protein</TableHead>
 						<TableHead>Fat</TableHead>
 						<TableHead>Carbs</TableHead>
+						<TableHead>Default Quantity</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -61,6 +62,7 @@ const FoodPage = async ({ searchParams }: { searchParams: Promise<SearchParams> 
 							<TableCell>
 								<MacroValue colorVar={macroColors.carbohydrates} value={food.carbohydrates} />
 							</TableCell>
+							<TableCell>{food.defaultQuantity}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
