@@ -15,7 +15,7 @@ jobs:
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
         with:
-          version: 2.6.4
+          version: latest
 
       - name: Run Biome
         run: biome check
@@ -29,8 +29,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 12
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
