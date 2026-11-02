@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
@@ -10,7 +9,6 @@ import { DateLabel } from "@/components/date-label";
 import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
 import { NewNoteForm } from "@/components/notes/new-note-form";
-import { NoteCard } from "@/components/notes/note-card";
 import { NotesList } from "@/components/notes/notes-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
