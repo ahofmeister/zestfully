@@ -9,12 +9,14 @@ Zestfully is a modern web application designed to be your central place for mana
 ## Features
 
 ### Current
+
 - **Habit Tracking** - Visual year-long calendar grid to track daily habits
 - **Progress Visualization** - See your streaks and completion patterns at a glance
 - **Quick Actions** - Easy "Today" and "Yesterday" tracking buttons
 - **Optimistic Updates** - Instant UI feedback for a smooth user experience
 
 ### Coming Soon
+
 - Recipe Collection
 - Meal Planner
 - Shopping List Generation
@@ -32,6 +34,7 @@ Zestfully is a modern web application designed to be your central place for mana
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - Supabase account (for authentication)
 
@@ -73,6 +76,7 @@ pnpm dev
 Open [http://localhost:3000](http://localhost:3000) to see the app.
 
 ## Project Structure
+
 ```
 zestfully/
 ├── app/                    # Next.js app router pages
