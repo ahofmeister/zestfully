@@ -14,7 +14,7 @@ export default async function AuthButton() {
 	let profile = null;
 	if (user) {
 		profile = await dbTransaction(async (tx) => {
-			return tx.query.noteSchema.findFirst({
+			return tx.query.profileSchema.findFirst({
 				where: {
 					userId: user.id,
 				},

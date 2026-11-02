@@ -7,10 +7,11 @@ import { deleteNote } from "@/components/notes/note-actions";
 import { NoteEditor } from "@/components/notes/note-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import type { noteSchema } from "@/drizzle/schema";
 import { cn } from "@/lib/utils";
 
 type NoteCardProps = {
-	note: { id: string; text: string | null; date: Date };
+	note: typeof noteSchema.$inferSelect;
 };
 
 export function NoteCard({ note }: NoteCardProps) {
@@ -26,12 +27,12 @@ export function NoteCard({ note }: NoteCardProps) {
 	};
 
 	if (isEditing) {
-		return <NoteEditor date={note.date} note={note} onCloseAction={() => setIsEditing(false)} />;
+		return <NoteEditor note={note} onCloseAction={() => setIsEditing(false)} />;
 	}
 
 	return (
 		<Card className={cn("group gap-0 py-3", isPending && "opacity-50")}>
-			<CardContent className="flex items-start gap-2">
+			<CardContent className="flex items-start gap-2 pl-3 py-0">
 				<button
 					type="button"
 					className="flex-1 cursor-text whitespace-pre-wrap text-left text-sm"

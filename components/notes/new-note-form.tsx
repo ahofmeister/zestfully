@@ -17,5 +17,13 @@ export function NewNoteForm({ date }: { date: Date }) {
 		);
 	}
 
-	return <NoteEditor date={date} onCloseAction={() => setIsOpen(false)} />;
+	return (
+		<NoteEditor
+			note={{
+				date,
+				text: "",
+			}}
+			onCloseAction={() => setIsOpen(false)}
+		/>
+	);
 }

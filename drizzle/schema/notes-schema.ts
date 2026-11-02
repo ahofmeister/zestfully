@@ -9,8 +9,8 @@ export const noteSchema = snakeCase.table.withRLS(
 		createdAt,
 		updatedAt,
 		userId,
-		text: text(),
-		date: date().notNull().defaultNow(),
+		text: text().notNull(),
+		date: date({ mode: "date" }).notNull().defaultNow(),
 	},
 	(table) => [
 		index("note_user_id_idx").on(table.userId),
