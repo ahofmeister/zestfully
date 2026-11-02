@@ -1,5 +1,7 @@
+import { format } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { SearchParams } from "nuqs/server";
+import { Suspense } from "react";
 import { MacroLegend } from "@/app/(app)/home/macro-legend";
 import { MacroValue } from "@/app/(app)/home/macro-value";
 import MealCard from "@/app/(app)/home/meal-card";
@@ -7,7 +9,11 @@ import { calculateNutrients, macroColors, round } from "@/app/(app)/home/nutriti
 import { DateLabel } from "@/components/date-label";
 import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
+import { NewNoteForm } from "@/components/notes/new-note-form";
+import { NoteCard } from "@/components/notes/note-card";
+import { NotesList } from "@/components/notes/notes-list";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { dbTransaction } from "@/drizzle/client";
 import { type MealItemWithFood, mealItemSchema, mealTypes } from "@/drizzle/schema";
 
@@ -86,6 +92,19 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 					const items = categories[type];
 					return <MealCard key={type} mealItems={items} type={type} date={date} foods={foods} />;
 				})}
+			</div>
+
+			<Separator className="my-4" />
+			<div className="flex flex-col gap-6 mt-2">
+				<header className="flex flex-col gap-1">
+					<h2 className="text-2xl font-semibold tracking-tight">Notes</h2>
+				</header>
+				<div className="flex flex-col gap-4">
+					<NewNoteForm date={date} />
+					<Suspense>
+						<NotesList date={date} />
+					</Suspense>
+				</div>
 			</div>
 		</div>
 	);

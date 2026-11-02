@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { getCurrentUser } from "@/app/auth/auth-actions";
 import MilestoneCard from "@/components/milestone/milestone-card";
 import { dbTransaction } from "@/drizzle/client";
-import { profileSchema } from "@/drizzle/schema";
+import { noteSchema } from "@/drizzle/schema";
 import { milestoneSchema } from "@/drizzle/schemas";
 
 export default async function MilestonesList({ username }: { username?: string }) {
@@ -13,9 +13,9 @@ export default async function MilestonesList({ username }: { username?: string }
 	if (username) {
 		const profile = await dbTransaction(async (tx) => {
 			return tx
-				.select({ userId: profileSchema.userId })
-				.from(profileSchema)
-				.where(eq(profileSchema.username, username))
+				.select({ userId: noteSchema.userId })
+				.from(noteSchema)
+				.where(eq(noteSchema.username, username))
 				.limit(1);
 		});
 
