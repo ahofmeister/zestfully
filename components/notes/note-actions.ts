@@ -16,12 +16,9 @@ export async function saveNote(
 	const [saved] = await dbTransaction((tx) =>
 		tx
 			.insert(noteSchema)
-			.values({
-				id: note.id,
-				text: trimmed,
-			})
+			.values({ ...note, text: trimmed })
 			.onConflictDoUpdate({ target: noteSchema.id, set: { text: trimmed } })
-			.returning({ id: noteSchema.id }),
+			.returning(),
 	);
 
 	return { id: saved.id };
