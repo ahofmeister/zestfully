@@ -8,7 +8,7 @@ import { calculateNutrients, macroColors, round } from "@/app/(app)/home/nutriti
 import { DateLabel } from "@/components/date-label";
 import { DateStepper } from "@/components/date-stepper";
 import { loadSearchParams } from "@/components/home/date-parser";
-import { NewNoteForm } from "@/components/notes/new-note-form";
+import { NotesSection } from "@/components/notes/home-notes-section";
 import { NotesList } from "@/components/notes/notes-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -93,16 +93,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 			</div>
 
 			<Separator className="my-4" />
-			<div className="flex flex-col gap-6 mt-2">
-				<header className="flex flex-col gap-1">
-					<h2 className="text-2xl font-semibold tracking-tight">Notes</h2>
-				</header>
-				<div className="flex flex-col gap-4">
-					<NewNoteForm date={date} />
+			<div className="mt-2">
+				<NotesSection date={date}>
 					<Suspense>
 						<NotesList date={date} />
 					</Suspense>
-				</div>
+				</NotesSection>
 			</div>
 		</div>
 	);
